@@ -37,7 +37,7 @@ from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 
 class Robot:
     """
-  A class that contains a robot object in jupyterbot.
+  A class that contains a robot object in uaibot.
 
   Parameters
   ----------
@@ -50,12 +50,12 @@ class Robot:
       The robot base's configuration.
       (default: 4x4 identity matrix).
 
-  list_base_3d_obj : list of 'jupyterbot.Model3D' objects
+  list_base_3d_obj : list of 'uaibot.Model3D' objects
       The list of 3d models of the base of the robot.
       If set to None, there is no base 3d object.
       (default: None).
 
-  links : A list of 'jupyterbot.Link' objects
+  links : A list of 'uaibot.Link' objects
       The list of link objects.
 
   q0 : nd numpy vector or array
@@ -128,21 +128,21 @@ class Robot:
             raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
 
         if not (str(type(links)) == "<class 'list'>"):
-            raise Exception("The parameter 'links' should be a list of 'jupyterbot.Link' objects.")
+            raise Exception("The parameter 'links' should be a list of 'uaibot.Link' objects.")
         else:
             for link in links:
-                if not Utils.get_jupyterbot_type(link) == "jupyterbot.Link":
-                    raise Exception("The parameter 'links' should be a list of 'jupyterbot.Link' objects.")
+                if not Utils.get_uaibot_type(link) == "uaibot.Link":
+                    raise Exception("The parameter 'links' should be a list of 'uaibot.Link' objects.")
 
         n = len(links)
 
         if not (str(type(list_base_3d_obj)) == "<class 'list'>" or (list_base_3d_obj is None)):
-            raise Exception("The parameter 'list_base_3d_obj' should be a list of 'jupyterbot.Model3D' objects.")
+            raise Exception("The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
         else:
             for i in range(len(list_base_3d_obj)):
-                if not (Utils.get_jupyterbot_type(list_base_3d_obj[i]) == "jupyterbot.Model3D"):
+                if not (Utils.get_uaibot_type(list_base_3d_obj[i]) == "uaibot.Model3D"):
                     raise Exception(
-                        "The parameter 'list_base_3d_obj' should be a list of 'jupyterbot.Model3D' objects.")
+                        "The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
 
         if not Utils.is_a_vector(q0, n):
             raise Exception("The parameter 'q0' should be a " + str(n) + " dimensional vector.")

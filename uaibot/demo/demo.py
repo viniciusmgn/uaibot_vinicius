@@ -54,8 +54,7 @@ class Demo:
     @staticmethod
     def control_demo_4():
         """
-    Show a robot manipulator that must achieve a pose while avoiding an
-    obstacle.
+    Show a robot manipulator that must achieve a pose inside a hole. Collision must be avoided.
 
     Perform second order kinematic control with constraints that enforce
     collision avoidance.

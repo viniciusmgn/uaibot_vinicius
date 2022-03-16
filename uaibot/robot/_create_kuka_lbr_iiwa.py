@@ -62,7 +62,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
     # Create 3d objects
 
     base_3d_obj = [Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/base_link.dae',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/base_link.dae',
         scale,
         Utils.rotx(3.14 / 2),
         MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5],
@@ -72,7 +72,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_1.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_1.dae',
             scale,
             Utils.trn([0, -(0.3105 + 0.0495), 0]) @ Utils.roty(-3.14),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -83,7 +83,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
     # Utils.trn([-0.29,0,0]) @ Utils.rotz(-3.14/2) @ Utils.rotx(-3.14/2+c*7.3)
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_2.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_2.dae',
             scale,
             Utils.rotz(3.14) @ Utils.rotx(3.14 / 2),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -93,7 +93,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_3.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_3.dae',
             scale,
             Utils.trn([0, 0.4 + 0.02, 0]) @ Utils.rotz(3.14),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -103,7 +103,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_4.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_4.dae',
             scale,
             Utils.rotz(3.14) @ Utils.rotx(3.14 / 2),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -113,7 +113,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_5.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_5.dae',
             scale,
             Utils.trn([0, -(0.39 + 0.01), 0]),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -122,7 +122,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
     )
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_6.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_6.dae',
             scale,
             Utils.rotx(3.14 / 2),
             MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -131,7 +131,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
     )
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/KukaLBRIIWA/link_7.dae',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/KukaLBRIIWA/link_7.dae',
             scale,
             Utils.trn([0, 0, -(0.08 + 0.05)]) @ Utils.rotx(3.14 / 2),
             MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#707070",

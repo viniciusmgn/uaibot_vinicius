@@ -546,17 +546,17 @@ class MeshMaterial:
 
         image_types = ["png", "bmp", "jpg", "jpeg"]
 
-        if not (alpha_map == "" or Utils.get_jupyterbot_type(alpha_map) == "jupyterbot.Texture"):
+        if not (alpha_map == "" or Utils.get_uaibot_type(alpha_map) == "uaibot.Texture"):
             alpha_map = Texture(alpha_map)
 
-        if not (ao_map == "" or Utils.get_jupyterbot_type(ao_map) == "jupyterbot.Texture"):
+        if not (ao_map == "" or Utils.get_uaibot_type(ao_map) == "uaibot.Texture"):
             ao_map = Texture(ao_map)
 
         if not Utils.is_a_number(ao_map_intensity) or ao_map_intensity < 0 or ao_map_intensity > 1:
             raise Exception(
                 "The parameter 'ao_map_intensity' should be a float between 0 (no occlusion) and 1 (occlusion).")
 
-        if not (bump_map == "" or Utils.get_jupyterbot_type(bump_map) == "jupyterbot.Texture"):
+        if not (bump_map == "" or Utils.get_uaibot_type(bump_map) == "uaibot.Texture"):
             bump_map = Texture(bump_map)
 
         if not Utils.is_a_number(bump_map_scale) or bump_map_scale < 0:
@@ -568,13 +568,13 @@ class MeshMaterial:
         if not Utils.is_a_color(emissive):
             raise Exception("The parameter 'emissive' should be a HTML-style color.")
 
-        if not (emissive_map == "" or Utils.get_jupyterbot_type(emissive_map) == "jupyterbot.Texture"):
+        if not (emissive_map == "" or Utils.get_uaibot_type(emissive_map) == "uaibot.Texture"):
             emissive_map = Texture(emissive_map)
 
         if not Utils.is_a_number(emissive_intensity) or emissive_intensity < 0:
             raise Exception("The parameter 'emissive_intensity' should be a float greater or equal than 0.")
 
-        if not (env_map == "" or Utils.get_jupyterbot_type(env_map) == "jupyterbot.Texture"):
+        if not (env_map == "" or Utils.get_uaibot_type(env_map) == "uaibot.Texture"):
             env_map = Texture(env_map)
 
         if not Utils.is_a_number(env_map_intensity) or env_map_intensity < 0:
@@ -583,22 +583,22 @@ class MeshMaterial:
         if not (str(type(flat_shading)) == "<class 'bool'>"):
             raise Exception("The parameter '_flat_shading' should be a boolean.")
 
-        if not (light_map == "" or Utils.get_jupyterbot_type(light_map) == "jupyterbot.Texture"):
+        if not (light_map == "" or Utils.get_uaibot_type(light_map) == "uaibot.Texture"):
             light_map = Texture(light_map)
 
         if not Utils.is_a_number(light_map_itensity) or light_map_itensity < 0:
             raise Exception("The parameter 'light_map_itensity' should be a float greater or equal than 0.")
 
-        if not (texture_map == "" or Utils.get_jupyterbot_type(texture_map) == "jupyterbot.Texture"):
+        if not (texture_map == "" or Utils.get_uaibot_type(texture_map) == "uaibot.Texture"):
             texture_map = Texture(texture_map)
 
         if not Utils.is_a_number(metalness) or metalness < 0 or metalness > 1:
             raise Exception("The parameter 'metalness' should be a float between 0 (non-metal) and 1 (metal).")
 
-        if not (metalness_map == "" or Utils.get_jupyterbot_type(metalness_map) == "jupyterbot.Texture"):
+        if not (metalness_map == "" or Utils.get_uaibot_type(metalness_map) == "uaibot.Texture"):
             metalness_map = Texture(metalness_map)
 
-        if not (normal_map == "" or Utils.get_jupyterbot_type(normal_map) == "jupyterbot.Texture"):
+        if not (normal_map == "" or Utils.get_uaibot_type(normal_map) == "uaibot.Texture"):
             normal_map = Texture(normal_map)
 
         if not Utils.is_a_vector(normal_scale, 2):
@@ -610,16 +610,16 @@ class MeshMaterial:
         if not Utils.is_a_number(roughness) or roughness < 0 or roughness > 1:
             raise Exception("The parameter 'roughness' should be a float between 0 (mirror) and 1 (fully diffuse).")
 
-        if not (roughness_map == "" or Utils.get_jupyterbot_type(roughness_map) == "jupyterbot.Texture"):
+        if not (roughness_map == "" or Utils.get_uaibot_type(roughness_map) == "uaibot.Texture"):
             roughness_map = Texture(roughness_map)
 
         if not Utils.is_a_number(clearcoat) or clearcoat < 0 or clearcoat > 1:
             raise Exception("The parameter 'clearcoat' should be a float between 0 and 1.")
 
-        if not (clearcoat_map == "" or Utils.get_jupyterbot_type(clearcoat_map) == "jupyterbot.Texture"):
+        if not (clearcoat_map == "" or Utils.get_uaibot_type(clearcoat_map) == "uaibot.Texture"):
             clearcoat_map = Texture(clearcoat_map)
 
-        if not (clearcoat_normal_map == "" or Utils.get_jupyterbot_type(clearcoat_normal_map) == "jupyterbot.Texture"):
+        if not (clearcoat_normal_map == "" or Utils.get_uaibot_type(clearcoat_normal_map) == "uaibot.Texture"):
             clearcoat_normal_map = Texture(clearcoat_normal_map)
 
         if not Utils.is_a_vector(clearcoat_normal_scale, 2):
@@ -628,8 +628,8 @@ class MeshMaterial:
         if not Utils.is_a_number(clearcoat_roughness) or clearcoat_roughness < 0 or clearcoat_roughness > 1:
             raise Exception("The parameter 'clearcoat_roughness' should be a float between 0 and 1.")
 
-        if not (clearcoat_roughness_map == "" or Utils.get_jupyterbot_type(
-                clearcoat_roughness_map) == "jupyterbot.Texture"):
+        if not (clearcoat_roughness_map == "" or Utils.get_uaibot_type(
+                clearcoat_roughness_map) == "uaibot.Texture"):
             clearcoat_roughness_map = Texture(clearcoat_roughness_map)
 
         if not Utils.is_a_number(ior) or ior < 1 or ior > 2.333:
@@ -644,32 +644,32 @@ class MeshMaterial:
         if not Utils.is_a_number(sheen_roughness) or sheen_roughness < 0 or sheen_roughness > 1:
             raise Exception("The parameter 'sheen_roughness' should be a float between 0 and 1.")
 
-        if not (sheen_roughness_map == "" or Utils.get_jupyterbot_type(sheen_roughness_map) == "jupyterbot.Texture"):
+        if not (sheen_roughness_map == "" or Utils.get_uaibot_type(sheen_roughness_map) == "uaibot.Texture"):
             sheen_roughness_map = Texture(sheen_roughness_map)
 
         if not Utils.is_a_color(sheen_color):
             raise Exception("The parameter 'sheen_color' should be a HTML-style color.")
 
-        if not (sheen_color_map == "" or Utils.get_jupyterbot_type(sheen_color_map) == "jupyterbot.Texture"):
+        if not (sheen_color_map == "" or Utils.get_uaibot_type(sheen_color_map) == "uaibot.Texture"):
             sheen_color_map = Texture(sheen_color_map)
 
         if not Utils.is_a_number(specular_intensity) or specular_intensity < 0 or specular_intensity > 1:
             raise Exception("The parameter 'specular_intensity' should be a float between 0 and 1.")
 
-        if not (specular_intensity_map == "" or Utils.get_jupyterbot_type(
-                specular_intensity_map) == "jupyterbot.Texture"):
+        if not (specular_intensity_map == "" or Utils.get_uaibot_type(
+                specular_intensity_map) == "uaibot.Texture"):
             specular_intensity_map = Texture(specular_intensity_map)
 
         if not Utils.is_a_color(specular_color):
             raise Exception("The parameter 'specular_color' should be a HTML-style color.")
 
-        if not (specular_color_map == "" or Utils.get_jupyterbot_type(specular_color_map) == "jupyterbot.Texture"):
+        if not (specular_color_map == "" or Utils.get_uaibot_type(specular_color_map) == "uaibot.Texture"):
             specular_color_map = Texture(specular_color_map)
 
         if not Utils.is_a_number(transmission) or transmission < 0 or transmission > 1:
             raise Exception("The parameter 'transmission' should be a float between 0 and 1.")
 
-        if not (transmission_map == "" or Utils.get_jupyterbot_type(transmission_map) == "jupyterbot.Texture"):
+        if not (transmission_map == "" or Utils.get_uaibot_type(transmission_map) == "uaibot.Texture"):
             transmission_map = Texture(transmission_map)
 
         if transmission > 0 and opacity < 1:

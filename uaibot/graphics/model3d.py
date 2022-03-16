@@ -18,11 +18,11 @@ class Model3D:
        (default: 1).
 
    htm : 4x4 numpy array or 4x4 nested list
-       The htm of the 3d models. This is used to tune the 'default' htm for the object in the jupyterbot simulator.
+       The htm of the 3d models. This is used to tune the 'default' htm for the object in the uaibot simulator.
        This is necessary because the 3d model can have a different 'defaut' pose than the desired one.
        (default: np.identity(4)).
 
-   mesh_material : 'jupyterbot.MeshMaterial' object
+   mesh_material : 'uaibot.MeshMaterial' object
        The mesh_material to be applied into the 3d model.
        (default: None).
    """
@@ -69,8 +69,8 @@ class Model3D:
         if not Utils.is_a_number(scale) or scale < 0:
             raise Exception("The parameter 'scale' should be a float.")
 
-        if not (Utils.get_jupyterbot_type(mesh_material) == "jupyterbot.MeshMaterial" or (mesh_material is None)):
-            raise Exception("The parameter 'mesh_material' should be a 'jupyterbot.MeshMaterial' object or 'None'.")
+        if not (Utils.get_uaibot_type(mesh_material) == "uaibot.MeshMaterial" or (mesh_material is None)):
+            raise Exception("The parameter 'mesh_material' should be a 'uaibot.MeshMaterial' object or 'None'.")
 
         # end error handling
 

@@ -112,9 +112,9 @@ class Cylinder:
         if not Utils.is_a_color(color):
             raise Exception("The parameter 'color' should be a HTML-compatible color.")
 
-        if not ((mesh_material is None) or (Utils.get_jupyterbot_type(mesh_material) == "jupyterbot.MeshMaterial")):
+        if not ((mesh_material is None) or (Utils.get_uaibot_type(mesh_material) == "uaibot.MeshMaterial")):
             raise Exception(
-                "The parameter 'mesh_material' should be either 'None' or a 'jupyterbot.MeshMaterial' object.")
+                "The parameter 'mesh_material' should be either 'None' or a 'uaibot.MeshMaterial' object.")
 
         if (not Utils.is_a_number(opacity)) or opacity < 0 or opacity > 1:
             raise Exception("The parameter 'opacity' should be a float between 0 and 1.")

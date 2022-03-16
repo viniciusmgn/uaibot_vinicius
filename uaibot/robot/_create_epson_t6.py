@@ -50,7 +50,7 @@ def _create_epson_t6(htm, name, color, opacity):
     # Create 3d objects
 
     base_3d_obj = [
-        Model3D('https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/EpsonT6/Base.obj',
+        Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/EpsonT6/Base.obj',
                 0.001,
                 Utils.rotx(3.14 / 2),
                 MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5],
@@ -59,12 +59,12 @@ def _create_epson_t6(htm, name, color, opacity):
     link_3d_obj = []
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/EpsonT6/T6Axis1.obj',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/EpsonT6/T6Axis1.obj',
                  0.001,
                  Utils.trn([-1.3 / 4, 0, 0]) @ Utils.rotx(3.14 / 2),
                  MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                               opacity=opacity)),
-         Model3D('https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/EpsonT6/T6Cable.obj',
+         Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/EpsonT6/T6Cable.obj',
                  0.001,
                  Utils.trn([0, 0, 0.22]) @ Utils.roty(3.14 / 2) @ Utils.rotz(3.14 / 2),
                  MeshMaterial(color="black", opacity=opacity))
@@ -72,7 +72,7 @@ def _create_epson_t6(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/EpsonT6/T6Axis2.obj',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/EpsonT6/T6Axis2.obj',
                  0.001,
                  Utils.trn([0, 0, -0.06]) @ Utils.rotx(-3.14 / 2),
                  MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -80,7 +80,7 @@ def _create_epson_t6(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/EpsonT6/T6Axis3.obj',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/EpsonT6/T6Axis3.obj',
                  0.001,
                  Utils.trn([0, 0, (-1.6) / 4]) @ Utils.rotx(-3.14 / 2),
                  MeshMaterial(metalness=0.3, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,

@@ -8,7 +8,7 @@ from scipy.linalg import null_space
 
 
 class Utils:
-    """A library that contains some utilities for jupyterbox. All of the functions are static."""
+    """A library that contains some utilities for UAIbot. All of the functions are static."""
 
     #######################################
     # Constants
@@ -21,19 +21,19 @@ class Utils:
     _CONSTI0HAT1 = 0.24273
     _CONSTI0HAT2 = 0.43023
 
-    JUPYTERBOT_NAME_TYPES = ['jupyterbot.', 'cylinder.', 'box.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
+    UAIBOT_NAME_TYPES = ['uaibot.', 'cylinder.', 'box.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
                              'texture.',
                              'pointlight.', 'frame.', 'model3d.', 'links.', 'pointcloud.', 'vector.', 'rigidobject.',
                              '.group', '.htmldiv']
 
-    IS_SIMPLE = ['jupyterbot.Ball', 'jupyterbot.Box', 'jupyterbot.Cylinder']
+    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder']
 
-    IS_GROUPABLE = ['jupyterbot.Ball', 'jupyterbot.Box', 'jupyterbot.Cylinder', 'jupyterbot.Frame',
-                    'jupyterbot.RigidObject', 'jupyterbot.Group', 'jupyterbot.Robot', 'jupyterbot.PointLight']
+    IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Frame',
+                    'uaibot.RigidObject', 'uaibot.Group', 'uaibot.Robot', 'uaibot.PointLight']
 
-    IS_OBJ_SIM = ['jupyterbot.Ball', 'jupyterbot.Box', 'jupyterbot.Cylinder', 'jupyterbot.Robot',
-                  'jupyterbot.PointLight', 'jupyterbot.Frame', 'jupyterbot.PointCloud', 'jupyterbot.Vector',
-                  'jupyterbot.RigidObject', 'jupyterbot.Group', 'jupyterbot.HTMLDiv']
+    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Robot',
+                  'uaibot.PointLight', 'uaibot.Frame', 'uaibot.PointCloud', 'uaibot.Vector',
+                  'uaibot.RigidObject', 'uaibot.Group', 'uaibot.HTMLDiv']
 
     #######################################
     # Basic functions
@@ -720,7 +720,7 @@ class Utils:
     @staticmethod
     def is_a_name(string):
         """
-      Check if the argument is a valid name for jupyterbot objects.
+      Check if the argument is a valid name for uaibot objects.
       Only characters [a-z], [A-z], [0-9] and '_' are allowed.
       However, variables should not begin with numbers.
 
@@ -744,10 +744,10 @@ class Utils:
             return False
 
     @staticmethod
-    def get_jupyterbot_type(obj):
+    def get_uaibot_type(obj):
         """
-      Return the jupyterbot type of the object. 
-      Return the empty string if it is not a jupyterbot object.
+      Return the uaibot type of the object. 
+      Return the empty string if it is not a uaibot object.
       
       Parameters
       ----------
@@ -757,14 +757,14 @@ class Utils:
       Returns
       -------
       obj_type: string
-          jupyterbot type.   
+          uaibot type.   
       """
         type_str = str(type(obj))
 
         ind = -1
         k = 0
-        while ind == -1 and k < len(Utils.JUPYTERBOT_NAME_TYPES):
-            ind = type_str.find(Utils.JUPYTERBOT_NAME_TYPES[k])
+        while ind == -1 and k < len(Utils.UAIBOT_NAME_TYPES):
+            ind = type_str.find(Utils.UAIBOT_NAME_TYPES[k])
             k += 1
 
         if ind == -1:
@@ -772,7 +772,7 @@ class Utils:
         else:
             ind1 = type_str.rfind('.')
             ind2 = type_str.rfind('>')
-            return "jupyterbot." + type_str[ind1 + 1:ind2 - 1]
+            return "uaibot." + type_str[ind1 + 1:ind2 - 1]
 
     @staticmethod
     def is_a_simple_object(obj):
@@ -790,7 +790,7 @@ class Utils:
       is_type: boolean
           If the object is of the type.
       """
-        return Utils.get_jupyterbot_type(obj) in Utils.IS_SIMPLE
+        return Utils.get_uaibot_type(obj) in Utils.IS_SIMPLE
 
     @staticmethod
     def is_a_groupable_object(obj):
@@ -808,7 +808,7 @@ class Utils:
       is_type: boolean
           If the object is of the type.   
       """
-        return Utils.get_jupyterbot_type(obj) in Utils.IS_GROUPABLE
+        return Utils.get_uaibot_type(obj) in Utils.IS_GROUPABLE
 
     @staticmethod
     def is_a_obj_sim(obj):
@@ -826,7 +826,7 @@ class Utils:
       is_type: boolean
           If the object is of the type.   
       """
-        return Utils.get_jupyterbot_type(obj) in Utils.IS_OBJ_SIM
+        return Utils.get_uaibot_type(obj) in Utils.IS_OBJ_SIM
 
     @staticmethod
     def is_url_available(url, types):

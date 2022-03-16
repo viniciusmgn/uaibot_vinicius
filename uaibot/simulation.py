@@ -18,8 +18,8 @@ class Simulation:
     _CAMERATYPE = ['perspective', 'orthographic']
     # Import the javascript code as a string
 
-    _URL = "https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/jupyterbot/threejs_sim.js"
-    #_URL = "D:\\PycharmProjects\\pyProj\\jupyterbot\\threejs_sim.js"
+    _URL = "https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/uaibot/threejs_sim.js"
+    #_URL = "D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js"
 
     _STRJAVASCRIPT = "<html>\n"
     _STRJAVASCRIPT += "<body>\n"
@@ -27,7 +27,7 @@ class Simulation:
     _STRJAVASCRIPT += "<div id='canvas_container_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative'>\n"
     _STRJAVASCRIPT += "<div id='loading_screen_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative; " \
                       "background-color: #19bd39;text-align:center;align-items:center;display:flex;justify-content:center'> \n "
-    _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/SVG" \
+    _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/SVG" \
                       "/logo_uai_bot.svg' style='width:200px;height:114px'/>\n "
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "<canvas id='scene_##SIMID##' width='##WIDTH##px' height='##HEIGHT##px'></canvas>\n"
@@ -37,7 +37,7 @@ class Simulation:
 
     _STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
 
-    #for line in open("D:\\PycharmProjects\\pyProj\\jupyterbot\\threejs_sim.js").readlines():
+    #for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
     #    _STRJAVASCRIPT += line
 
     _STRJAVASCRIPT += "\n </script>"
@@ -163,7 +163,7 @@ class Simulation:
         Simulation object.
     """
         mesh_ground = MeshMaterial(
-            texture_map='https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/Textures/factory_ground.png',
+            texture_map='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/factory_ground.png',
             roughness=1, metalness=1)
 
         ground = Box(name="ground", width=6, depth=6, height=0.01, htm=Utils.trn([0, 0, 0.005]),
@@ -174,7 +174,7 @@ class Simulation:
         light3 = PointLight(name="light3", color="white", intensity=2.5, htm=Utils.trn([ 1,-1, 1.5]))
         light4 = PointLight(name="light4", color="white", intensity=2.5, htm=Utils.trn([ 1, 1, 1.5]))
 
-        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/LDR/factory_"
+        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/LDR/factory_"
         ldr_list = [ldr_url + "px.png", ldr_url + "nx.png", ldr_url + "py.png", ldr_url + "ny.png", ldr_url + "nz.png",
                     ldr_url + "nz.png"]
 
@@ -261,7 +261,7 @@ class Simulation:
         string = Simulation._STRJAVASCRIPT
 
         for obj in self.list_of_objects:
-            if Utils.get_jupyterbot_type(obj) == "jupyterbot.HTMLDiv":
+            if Utils.get_uaibot_type(obj) == "uaibot.HTMLDiv":
                 string = re.sub("<!-- USER DIVS GO HERE -->",
                                 "<div id='" + obj.name + "'>" + obj.name + "</div>\n <!-- USER DIVS GO HERE -->",
                                 string)

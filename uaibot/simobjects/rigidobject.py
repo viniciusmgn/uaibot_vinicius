@@ -57,8 +57,8 @@ class RigidObject:
         if not Utils.is_a_matrix(htm, 4, 4):
             raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
 
-        if not Utils.get_jupyterbot_type(model_3d) == "jupyterbot.Model3D":
-            raise Exception("The parameter 'model_3d' should a 'jupyterbot.Model3D' object.")
+        if not Utils.get_uaibot_type(model_3d) == "uaibot.Model3D":
+            raise Exception("The parameter 'model_3d' should a 'uaibot.Model3D' object.")
         # end error handling
 
         self._htm = np.array(htm)

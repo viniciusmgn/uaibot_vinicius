@@ -11,14 +11,14 @@ def _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b):
         q_b = robot_b.q
 
     # Error handling
-    if not Utils.get_jupyterbot_type(robot_a) == 'jupyterbot.Robot':
-        raise Exception("The parameter 'robot_a' should be a 'jupyterbot.Robot' object.")
+    if not Utils.get_uaibot_type(robot_a) == 'uaibot.Robot':
+        raise Exception("The parameter 'robot_a' should be a 'uaibot.Robot' object.")
 
     if not Utils.is_a_vector(q_a, len(robot_a.links)):
         raise Exception("The parameter 'q_a' should be a " + str(len(robot_a.links)) + " dimensional vector.")
 
-    if not Utils.get_jupyterbot_type(robot_b) == 'jupyterbot.Robot':
-        raise Exception("The parameter 'robot_b' should be a 'jupyterbot.Robot' object.")
+    if not Utils.get_uaibot_type(robot_b) == 'uaibot.Robot':
+        raise Exception("The parameter 'robot_b' should be a 'uaibot.Robot' object.")
 
     if not Utils.is_a_vector(q_a, len(robot_b.links)):
         raise Exception("The parameter 'q_b' should be a " + str(len(robot_b.links)) + " dimensional vector.")

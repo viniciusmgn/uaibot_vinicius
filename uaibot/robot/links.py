@@ -29,7 +29,7 @@ class Link:
   joint_type : 0 or 1
       The joint type. "0" is rotative and "1" is prismatic.
 
-  list_model_3d : A list of 'jupyterbot.Model3D' objects
+  list_model_3d : A list of 'uaibot.Model3D' objects
       The 3d models that compose the links.
 
   mass : positive float
@@ -141,12 +141,12 @@ class Link:
             raise Exception("The 'joint_type' parameter should be either '0' (rotative) or '1' (prismatic).")
 
         if not (str(type(list_model_3d)) == "<class 'list'>"):
-            raise Exception("The parameter 'list_model_3d' should be a list of 'jupyterbot.Model3D' objects.")
+            raise Exception("The parameter 'list_model_3d' should be a list of 'uaibot.Model3D' objects.")
         else:
             for i in range(len(list_model_3d)):
-                if not (Utils.get_jupyterbot_type(list_model_3d[i]) == "jupyterbot.Model3D"):
+                if not (Utils.get_uaibot_type(list_model_3d[i]) == "uaibot.Model3D"):
                     raise Exception(
-                        "The parameter 'list_model_3d' should be a list of 'jupyterbot.Model3D' objects.")
+                        "The parameter 'list_model_3d' should be a list of 'uaibot.Model3D' objects.")
 
         if not Utils.is_a_number(mass) or mass < 0:
             raise Exception("The parameter 'mass' should be a positive float.")
