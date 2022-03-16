@@ -1,0 +1,9 @@
+colour==0.1.5
+cvxopt==1.2.7
+gym==0.21.0
+httplib2==0.20.4
+ipython==8.0.1
+numpy==1.21.5
+plotly==5.5.0
+scipy==1.7.3
+setuptools==58.0.4

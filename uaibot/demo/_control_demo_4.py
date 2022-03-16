@@ -1,0 +1,193 @@
+from simulation import *
+import numpy as np
+from simobjects.ball import *
+from simobjects.box import *
+from simobjects.cylinder import *
+from simobjects.pointlight import *
+from simobjects.pointcloud import *
+from simobjects.frame import *
+from utils import *
+import robot as rb
+from cvxopt import matrix, solvers
+from graphics.meshmaterial import *
+import sys
+
+
+def _control_demo_4():
+    solvers.options['show_progress'] = False
+    np.set_printoptions(precision=4, suppress=True, linewidth=150)
+
+    robot = rb.Robot.create_kuka_lbr_iiwa()
+
+    material_wall = MeshMaterial(
+        texture_map='https://raw.githubusercontent.com/viniciusmgn/jupyterbot_vinicius/test/contents/Textures/metal.png',
+        roughness=1, metalness=1)
+
+    wall1 = Box(name="wall1", htm=Utils.trn([0.3, -0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
+                mesh_material=material_wall)
+    wall2 = Box(name="wall2", htm=Utils.trn([0.3, 0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
+                mesh_material=material_wall)
+    wall3 = Box(name="wall3", htm=Utils.trn([0.3, 0, 0.25]), width=0.05, depth=0.4, height=0.5,
+                mesh_material=material_wall)
+    wall4 = Box(name="wall4", htm=Utils.trn([0.3, 0, 1.15]), width=0.05, depth=0.4, height=0.5,
+                mesh_material=material_wall)
+
+    def evaluate_error(r):
+        error_pos = max(abs(r[0:3]))
+        error_ori = (180 / np.pi) * max(abs(np.arccos(1 - r[3:6])))
+        ok1 = error_pos < 0.005
+        ok2 = error_ori < 5 if len(r.tolist()) > 3 else True
+
+        return ok1 and ok2, error_pos, error_ori
+
+    def dist_computation(q, old_struct, h):
+        dist_wall_1 = robot.compute_dist(obj=wall1, q=q, h=h, g=h, old_dist_struct=old_struct[0])
+        dist_wall_2 = robot.compute_dist(obj=wall2, q=q, h=h, g=h, old_dist_struct=old_struct[1])
+        dist_wall_3 = robot.compute_dist(obj=wall3, q=q, h=h, g=h, old_dist_struct=old_struct[2])
+        dist_wall_4 = robot.compute_dist(obj=wall4, q=q, h=h, g=h, old_dist_struct=old_struct[3])
+
+        struct = [dist_wall_1, dist_wall_2, dist_wall_3, dist_wall_4]
+
+        jac_dist = np.block(
+            [[dist_wall_1.jac_dist_mat], [dist_wall_2.jac_dist_mat], [dist_wall_3.jac_dist_mat],
+             [dist_wall_4.jac_dist_mat]])
+        dist_vect = np.block(
+            [[dist_wall_1.dist_vect], [dist_wall_2.dist_vect], [dist_wall_3.dist_vect], [dist_wall_4.dist_vect]])
+
+        return dist_vect, jac_dist, struct
+
+    # Target pose definition
+    pose_tg = []
+    pose_tg.append(Utils.trn([0.5, -0.3, 0.7]) @ Utils.rotx(3.14 / 2))
+    pose_tg.append(Utils.trn([0.5, 0, 0.7]) @ Utils.roty(3.14 / 2))
+    pose_tg.append(robot.fkm(axis="eef"))
+
+    # Create simulation
+    sim = Simulation.create_sim_factory([robot, wall1, wall2, wall3, wall4])
+    #robot.add_col_object(sim)
+
+    for k in range(len(pose_tg)):
+        sim.add(Frame(name="pose_tg_" + str(k), htm=pose_tg[k]))
+
+    # Parameters
+    dt = 0.03 #0.03
+    alpha = 2
+    beta = 0.005
+    gamma = 0.5  # 0.1
+    sigma = 0.5
+    d_proj_safe = 0.8
+    dist_safe = 0.2 #0.2
+    qddotmax = 3
+    qdot_max = (np.pi / 180) * np.array([[85], [85], [100], [75], [130], [135], [135]])
+    xi = 0.5
+    h = 0.05 #0.05
+
+    def cons(d, dd):
+        m = d.shape[0]
+        accel = np.zeros((m, 1))
+
+        for i in range(m):
+            if (d[i][0] - dist_safe) + dd[i][0] * (2 / gamma) > d_proj_safe:
+                accel[i] = -(gamma ** 2) * d_proj_safe
+            else:
+                accel[i] = -2 * gamma * dd[i][0] - (gamma ** 2) * (d[i][0] - dist_safe)
+
+        return accel
+
+    # Initializations
+    struct = [None, None, None, None]
+
+    i = 0
+    imax = round(48.9/dt)
+
+    hist_dist = []
+    hist_time = []
+    hist_r = []
+    hist_qddot = []
+    hist_qdot = []
+    hist_q = []
+
+    q = robot.q
+    qdot = np.zeros((7, 1))
+
+    error_qp = False
+    iteration_end = False
+
+
+    #Main loop
+    for k in range(len(pose_tg)):
+        converged = False
+        while not converged and not error_qp and not iteration_end:
+
+            if i % 50 == 0 or i == imax - 1:
+                sys.stdout.write('\r')
+                sys.stdout.write("[%-20s] %d%%" % ('=' * round(20 * i / (imax - 1)), round(100 * i / (imax - 1))))
+                sys.stdout.flush()
+
+            [r, jac_r] = robot.task_function(pose_tg[k], q=q)
+            [r_next, jac_r_next] = robot.task_function(pose_tg[k], q=q + qdot * dt)
+
+            r_dot = (r_next - r) / dt
+            jac_r_dot = (jac_r_next - jac_r) / dt
+
+            dist_vect, jac_dist, struct = dist_computation(q, struct, h)
+            dist_vect_next, jac_dist_next, struct = dist_computation(q + qdot * dt, struct, h)
+
+            dist_vect_dot = (dist_vect_next - dist_vect) / dt
+            jac_dist_dot = (jac_dist_next - jac_dist) / dt
+
+            A = jac_dist
+            b = -jac_dist_dot @ qdot + cons(dist_vect, dist_vect_dot)
+            H = 2 * (np.transpose(jac_r) @ jac_r) + 2 * beta * np.identity(7)
+            f = 2 * np.transpose(jac_r) @ (
+                    jac_r_dot @ qdot + 2 * alpha * r_dot + (alpha ** 2) * r) + 2 * beta * sigma * qdot
+
+            A = np.block([[A], [np.identity(7)]])
+            A = np.block([[A], [-np.identity(7)]])
+
+            #b = np.block([[b], [-qddotmax * np.ones((14, 1))]])
+            b = np.block([[b], [-xi * (qdot+qdot_max)], [xi * (qdot-qdot_max)]  ])
+
+            try:
+                qddot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
+            except:
+                qddot = np.zeros((7, 1))
+                error_qp = True
+
+            qddot = np.reshape(qddot, (7, 1))
+
+            q += qdot * dt
+            qdot += qddot * dt
+
+            #Add animation to simulation
+            robot.add_ani_frame(i * dt, q)
+            #robot.update_col_object(i * dt)
+
+            #Store information
+            dist_vect, _, _ = dist_computation(q, struct, 0.000001)
+
+            hist_time.append(i * dt)
+            hist_dist.append(np.amin(dist_vect))
+            hist_r.append(np.array(r.reshape((6,))))
+            hist_q.append(np.array(q.reshape((7,))))
+            hist_qdot.append(np.array(qdot.reshape((7,))))
+            hist_qddot.append(np.array(qddot.reshape((7,))))
+
+            #Continue the loop
+            i += 1
+            converged, error_pos, error_ori = evaluate_error(r)
+
+            #iteration_end  = i>500
+
+    # Run simulation
+    sim.run()
+
+    # Plot graphs
+    Utils.plot(hist_time, hist_dist, "", "Time (s)", "True distance (m)", "dist")
+    Utils.plot(hist_time, np.transpose(hist_q), "", "Time (s)", "Joint configuration (rad)", "q")
+    Utils.plot(hist_time, np.transpose(hist_qdot), "", "Time (s)", "Joint speed (rad/s)", "qdot")
+    Utils.plot(hist_time, np.transpose(hist_qddot), "", "Time (s)", "Joint acceleration (rad/s²)", "u")
+    fig = Utils.plot(hist_time, np.transpose(hist_r), "", "Time (s)", "Task function",
+                     ["posx", "posy", "posz", "orix", "oriy", "oriz"])
+
+    return sim
