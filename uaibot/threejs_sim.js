@@ -569,6 +569,7 @@ var manualTime=0;
 gui.add({Progress: 0}, "Progress", 0, maxTime, 0.01).onChange(function (value) {
     automaticPlay = false;
 	manualTime = value+0.0001;
+	btn.innerHTML = ">";
 })
 customContainer.getElementsByClassName('c')[0].style.width = (canvas.clientWidth-20).toString()+'px';
 customContainer.getElementsByClassName('dg main')[0].style.width = canvas.clientWidth.toString()+'px';
@@ -582,6 +583,33 @@ customContainer.getElementsByClassName('slider')[0].style.width = (canvas.client
 customContainer.getElementsByClassName('slider-fg')[0].style.backgroundColor = '#19bd39'
 customContainer.querySelectorAll("input[type=text]")[0].style.width = '50px';
 customContainer.querySelectorAll("input[type=text]")[0].style.color = '#19bd39';
+
+var recoveryCurrentTime = false;
+
+let btn = document.createElement("button");
+btn.style.backgroundColor = "#1a1a1a";
+btn.style.color = "#19bd39";
+btn.style.border= "none";
+btn.style.height= 28;
+btn.style.width= 28;
+btn.innerHTML = "||";
+btn.onclick = function () {
+
+	automaticPlay = !automaticPlay;
+
+	if(automaticPlay)
+	{
+		btn.innerHTML = "||";
+		recoveryCurrentTime = true;
+	}
+	else
+	{
+		btn.innerHTML = ">";
+	}
+
+};
+customContainer.getElementsByClassName('c')[0].style.verticalAlign= "middle"
+customContainer.getElementsByClassName('c')[0].appendChild(btn);
 //------------------------------------------------------------
 
 //Wait until all objects loaded
@@ -640,18 +668,33 @@ renderer.setAnimationLoop(() => {
 	}
 
 
-
 	//MAGIC HAPPENS HERE!!!
 	if(loadedAll && automaticPlay)
 	{
-		for (let i = 0; i < sceneElements.length; i++) {
-			sceneElements[i].nextFrame();
-			sceneElements[i].showFrame();
+
+		var currentSeconds;
+		if(!recoveryCurrentTime)
+		{
+
+			for (let i = 0; i < sceneElements.length; i++) {
+				sceneElements[i].nextFrame();
+				sceneElements[i].showFrame();
+			}
+
+			currentSeconds = Math.min(0.001*Math.max(elapsedMs()-startMs-delay,0),maxTime);
+
+			var percentage = (100 * currentSeconds / (0.000001 + maxTime)).toString();
+			customContainer.getElementsByClassName('slider-fg')[0].style.width = percentage + "%";
+			customContainer.querySelectorAll("input[type=text]")[0].value = Math.round(100 * currentSeconds) / 100;
 		}
-		var currentSeconds = Math.min(0.001*Math.max(elapsedMs()-startMs-delay,0),maxTime);
-		var percentage = (100*currentSeconds/(0.000001+maxTime)).toString();
-		customContainer.getElementsByClassName('slider-fg')[0].style.width = percentage+"%";
-		customContainer.querySelectorAll("input[type=text]")[0].value  = Math.round(100*currentSeconds)/100;
+		else
+		{
+			currentSeconds = customContainer.querySelectorAll("input[type=text]")[0].value;
+			startMs =  elapsedMs()-delay-1000*currentSeconds;
+			recoveryCurrentTime = false;
+
+		}
+
 	}
 	if(loadedAll && !automaticPlay)
 	{
