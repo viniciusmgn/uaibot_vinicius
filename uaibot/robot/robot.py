@@ -114,11 +114,16 @@ class Robot:
         """The list of 3d objects that form the base."""
         return self._list_object_3d_base
 
+    @property
+    def eef_frame_visible(self):
+        """If the frame attached to the end effector is visible"""
+        return self._eef_frame_visible
+
     #######################################
     # Constructor
     #######################################
 
-    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4), q0=None):
+    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4), q0=None, eef_frame_visible=True):
         # Error handling
 
         if not (Utils.is_a_name(name)):
@@ -148,6 +153,9 @@ class Robot:
         if not Utils.is_a_vector(q0, n):
             raise Exception("The parameter 'q0' should be a " + str(n) + " dimensional vector.")
 
+        if not str(type(eef_frame_visible)) == "<class 'bool'>":
+            raise Exception("The parameter 'eef_frame_visible' must be a boolean.")
+
         # end error handling
 
         self._frames = []
@@ -157,7 +165,9 @@ class Robot:
         self._attached_objects = []
         self._links = links
         self._htm_base_0 = htm_base_0
+        self._eef_frame_visible = eef_frame_visible
         self._max_time = 0
+
 
         if not (q0 is None):
             self._q0 = q0
@@ -604,7 +614,7 @@ class Robot:
     #######################################
 
     @staticmethod
-    def create_kuka_kr5(htm=np.identity(4), name='kukakr5', color="#df6c25", opacity=1):
+    def create_kuka_kr5(htm=np.identity(4), name='kukakr5', color="#df6c25", opacity=1, eef_frame_visible=True):
         """
     Create a Kuka KR5, a six-degree of freedom manipulator.
     Thanks Sugi-Tjiu for the 3d model (see https://grabcad.com/library/kuka-kr-5-r850).
@@ -634,10 +644,10 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, q0 = _create_kuka_kr5(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
 
     @staticmethod
-    def create_epson_t6(htm=np.identity(4), name='epsont6', color="white", opacity=1):
+    def create_epson_t6(htm=np.identity(4), name='epsont6', color="white", opacity=1, eef_frame_visible=True):
         """
     Create an Epson T6, a SCARA manipulator.
     Thanks KUA for the 3d model (see https://grabcad.com/library/epson-t6-scara-robot-1).
@@ -667,10 +677,10 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, q0 = _create_epson_t6(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
 
     @staticmethod
-    def create_staubli_tx60(htm=np.identity(4), name='staublitx60', color="#ff9b00", opacity=1):
+    def create_staubli_tx60(htm=np.identity(4), name='staublitx60', color="#ff9b00", opacity=1, eef_frame_visible=True):
         """
     Create a Staubli TX60, a six degree of freedom manipulator.
     Model taken from the ROS github repository (https://github.com/ros-industrial/staubli).
@@ -700,10 +710,10 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, q0 = _create_staubli_tx60(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
 
     @staticmethod
-    def create_kuka_lbr_iiwa(htm=np.identity(4), name='kukalbriiwa', color="silver", opacity=1):
+    def create_kuka_lbr_iiwa(htm=np.identity(4), name='kukalbriiwa', color="silver", opacity=1, eef_frame_visible=True):
         """
     Create a Kuka LBR IIWA 14 R820, a seven degree of freedom manipulator.
     Model taken from the ROS github repository (https://github.com/ros-industrial/kuka_experimental).
@@ -733,10 +743,10 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, q0 = _create_kuka_lbr_iiwa(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
 
     @staticmethod
-    def create_abb_crb(htm=np.identity(4), name='abbcrb', color="white", opacity=1):
+    def create_abb_crb(htm=np.identity(4), name='abbcrb', color="white", opacity=1, eef_frame_visible=True):
         """
     Create a ABB CRB 15000, a six degree of freedom manipulator.
     Model taken from the ROS github repository (https://github.com/ros-industrial/abb_experimental).
@@ -766,7 +776,7 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, q0 = _create_abb_crb(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
 
     #######################################
     # Advanced methods

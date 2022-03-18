@@ -35,10 +35,10 @@ class Simulation:
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "\n <script type=\"module\">\n"
 
-    _STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
+    #_STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
 
-    #for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
-    #    _STRJAVASCRIPT += line
+    for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
+        _STRJAVASCRIPT += line
 
     _STRJAVASCRIPT += "\n </script>"
     _STRJAVASCRIPT += "\n </body>"
@@ -83,12 +83,17 @@ class Simulation:
         """Height, in pixels, of the canvas"""
         return self._height
 
+    @property
+    def show_world_frame(self):
+        """If the world frame is shown"""
+        return self._show_world_frame
+
     #######################################
     # Constructor
     #######################################
 
     def __init__(self, obj_list=[], ambient_light_intensity=12, ldr_urls=None, camera_type="perspective", width=800,
-                 height=600):
+                 height=600, show_world_frame = True):
 
         if not Utils.is_a_number(ambient_light_intensity) or ambient_light_intensity < 0:
             raise Exception("The parameter 'ambient_light_intensity' should be a nonnegative float.")
@@ -102,6 +107,9 @@ class Simulation:
 
         if not Utils.is_a_number(height) or height <= 0:
             raise Exception("The parameter 'height' must be a positive float.")
+
+        if not str(type(show_world_frame)) == "<class 'bool'>":
+            raise Exception("The parameter 'show_world_frame' must be a boolean.")
 
         if not (ldr_urls is None):
             if not (str(type(ldr_urls)) == "<class 'list'>") or not (len(ldr_urls) == 6):
@@ -119,6 +127,7 @@ class Simulation:
         self._ldr_urls = ldr_urls
         self._width = width
         self._height = height
+        self._show_world_frame = show_world_frame
 
         if str(type(obj_list)) == "<class 'list'>":
             for obj in obj_list:
@@ -293,6 +302,9 @@ class Simulation:
                         string)
         string = re.sub("//SIMULATION PARAMETERS GO HERE",
                         "const sceneID= '" + sim_id + "'; \n //SIMULATION PARAMETERS GO HERE",
+                        string)
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const showWorldFrame="+("true" if self.show_world_frame else "false")+"; \n //SIMULATION PARAMETERS GO HERE",
                         string)
 
         string = re.sub("##WIDTH##", str(self.width), string)

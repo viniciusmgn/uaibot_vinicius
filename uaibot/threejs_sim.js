@@ -138,7 +138,7 @@ class PointCloud extends Objsim{
 class RigidObject extends Objsim
 {
 
-	constructor(_frames, _3dobject) {
+	constructor(_frames, _list_3dobject) {
 		super(_frames);
 
 		this.shape = new Group();
@@ -147,57 +147,60 @@ class RigidObject extends Objsim
 		const manager = new LoadingManager();
 
 		let loader;
-		if (_3dobject.type === 'obj') {
-			loader = new OBJLoader(manager);
-			loader.load(_3dobject.url, (root) => {
 
-				root.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
-				root.applyMatrix4(_3dobject.matrix)
+		for (let i = 0; i < _list_3dobject.length; i++) {
+			const _3dobject = _list_3dobject[i];
+			if (_3dobject.type === 'obj') {
+				loader = new OBJLoader(manager);
+				loader.load(_3dobject.url, (root) => {
 
-				root.traverse(function (child) {
-					if (child instanceof Mesh) {
-						child.material = _3dobject.mesh_material;
-					}
+					root.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
+					root.applyMatrix4(_3dobject.matrix)
+
+					root.traverse(function (child) {
+						if (child instanceof Mesh) {
+							child.material = _3dobject.mesh_material;
+						}
+					});
+
+					this.shape.add(root);
 				});
+			}
+			if (_3dobject.type === 'stl') {
+				loader = new STLLoader(manager);
+				loader.load(_3dobject.url, (root) => {
+					const mesh = new Mesh(root);
 
-				this.shape.add(root);
-			});
-		}
-		if (_3dobject.type === 'stl') {
-			loader = new STLLoader(manager);
-			loader.load(_3dobject.url, (root) => {
-				const mesh = new Mesh(root);
+					mesh.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
+					mesh.applyMatrix4(_3dobject.matrix)
 
-				mesh.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
-				mesh.applyMatrix4(_3dobject.matrix)
+					mesh.traverse(function (child) {
+						if (child instanceof Mesh) {
+							child.material = _3dobject.mesh_material;
+						}
+					});
 
-				mesh.traverse(function (child) {
-					if (child instanceof Mesh) {
-						child.material = _3dobject.mesh_material;
-					}
+					this.shape.add(mesh);
 				});
+			}
+			if (_3dobject.type === 'dae') {
+				loader = new ColladaLoader(manager);
+				loader.load(_3dobject.url, (root) => {
+					const group = root.scene;
 
-				this.shape.add(mesh);
-			});
-		}
-		if (_3dobject.type === 'dae') {
-			loader = new ColladaLoader(manager);
-			loader.load(_3dobject.url, (root) => {
-				const group = root.scene;
+					group.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
+					group.applyMatrix4(_3dobject.matrix)
 
-				group.scale.set(_3dobject.scale, _3dobject.scale, _3dobject.scale);
-				group.applyMatrix4(_3dobject.matrix)
+					group.traverse(function (child) {
+						if (child instanceof Mesh) {
+							child.material = _3dobject.mesh_material;
+						}
+					});
 
-				group.traverse(function (child) {
-					if (child instanceof Mesh) {
-						child.material = _3dobject.mesh_material;
-					}
+					this.shape.add(group);
 				});
-
-				this.shape.add(group);
-			});
+			}
 		}
-
 
 	}
 }
@@ -268,7 +271,7 @@ class HTMLDiv extends Objsim{
 
 class Robot extends Objsim{
 
-	constructor(_objBase, _link, _frames, _htm_base_0){
+	constructor(_objBase, _link, _frames, _htm_base_0, _eef_frame_visible){
 		super(_frames);
 
 		this.loadedObjs = 0
@@ -337,7 +340,7 @@ class Robot extends Objsim{
 		for (let i = 0; i < this.links.length-1; i++) {
 			this.loadObj(this.links[i].model3d,"link" + (i+1).toString(), "link" + (i).toString(), this.links[i].showFrame)
 		}
-		this.loadObj(this.links[this.links.length-1].model3d,"link" + (this.links.length).toString(), "link" + (this.links.length).toString(), true)
+		this.loadObj(this.links[this.links.length-1].model3d,"link" + (this.links.length).toString(), "link" + (this.links.length).toString(), _eef_frame_visible)
 
 		this.delta_config = []
 
@@ -503,11 +506,15 @@ renderer.setSize(canvas.clientWidth, canvas.clientHeight);//Set render size
 renderer.setPixelRatio(window.devicePixelRatio);//Set pixel ratio
 
 let sceneElements = [];
-const axesHelper = new AxesHelper( 0.5 ); //Create axis helper
-axesHelper.renderOrder = 1;
-scene.add( axesHelper );
 
-const gridHelper = new GridHelper( 3, 6);//Create grid helper
+if (showWorldFrame) {
+	const axesHelper = new AxesHelper(0.5);
+	axesHelper.renderOrder = 1;
+	scene.add(axesHelper);
+}
+
+
+const gridHelper = new GridHelper( 3, 6);
 scene.add( gridHelper );
 gridHelper.rotation.x = 3.14/2;
 

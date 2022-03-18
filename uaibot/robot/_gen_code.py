@@ -34,7 +34,7 @@ def _gen_code(self):
         self.htm_base_0[3][3]) + ");\n"
 
     string += "const var_" + self.name + " = new Robot(object3d_base_" + self.name + "_list, list_links_" + self.name + "," + str(
-        self._frames) + ", htm_" + self.name + "_base_0);\n"
+        self._frames) + ", htm_" + self.name + "_base_0," +( "true" if self.eef_frame_visible else "false" )+");\n"
     string += "sceneElements.push(var_" + self.name + ");\n"
     string += "//USER INPUT GOES HERE"
 

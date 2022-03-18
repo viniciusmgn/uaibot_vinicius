@@ -50,7 +50,7 @@ class PointCloud:
     @property
     def points(self):
         """The points that compose the point cloud."""
-        return self._points
+        return np.array(self._points)
 
     #######################################
     # Constructor
@@ -76,7 +76,7 @@ class PointCloud:
 
         self._name = name
         self._size = size
-        self._points = points
+        self._points = np.array(points)
         self._color = color
         self._frames = []
         self._max_time = 0
@@ -153,7 +153,7 @@ class PointCloud:
 
         string = "\n"
         string += "//BEGIN DECLARATION OF THE POINT CLOUD '" + self.name + "'\n\n"
-        string += "const var_" + self.name + " = new PointCloud(" + str(np.array(self.points).tolist()) + ", " + str(
+        string += "const var_" + self.name + " = new PointCloud(" + str(np.around(np.array(self.points),4).tolist()) + ", " + str(
             self._frames) + ", '" + self.color + "', " + str(
             self.size) + ");\n"
         string += "sceneElements.push(var_" + self.name + ");\n"

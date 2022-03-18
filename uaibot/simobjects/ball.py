@@ -169,9 +169,9 @@ class Ball:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, htm[0][0], htm[0][1], htm[0][2], htm[0][3],
-             htm[1][0], htm[1][1], htm[1][2], htm[1][3],
-             htm[2][0], htm[2][1], htm[2][2], htm[2][3],
+        f = [time, np.around(htm[0][0],4), np.around(htm[0][1],4), np.around(htm[0][2],4), np.around(htm[0][3],4),
+             np.around(htm[1][0],4), np.around(htm[1][1],4), np.around(htm[1][2],4), np.around(htm[1][3],4),
+             np.around(htm[2][0],4), np.around(htm[2][1],4), np.around(htm[2][2],4), np.around(htm[2][3],4),
              0, 0, 0, 1]
 
         self._htm = htm

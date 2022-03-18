@@ -19,7 +19,7 @@ class Model3D:
 
    htm : 4x4 numpy array or 4x4 nested list
        The htm of the 3d models. This is used to tune the 'default' htm for the object in the uaibot simulator.
-       This is necessary because the 3d model can have a different 'defaut' pose than the desired one.
+       This is necessary because the 3d model can have a different 'default' pose than the desired one.
        (default: np.identity(4)).
 
    mesh_material : 'uaibot.MeshMaterial' object

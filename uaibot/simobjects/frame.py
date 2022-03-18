@@ -129,7 +129,7 @@ class Frame:
     None
     """
 
-        self._ball.add_ani_frame(time, htm)
+        self._ball.add_ani_frame(time, htm )
         self._max_time = self._ball._max_time
 
     # Set config. Restart animation queue

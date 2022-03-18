@@ -124,9 +124,9 @@ class Vector:
         if length_vector < 0.0001:
             raise Exception("'origin' and 'vector' are too close to each other.")
 
-        self._origin = np.array(origin).tolist()
+        self._origin = np.around(np.array(origin),4).tolist()
         self._vector = np.array(vector).tolist()
-        dir = (np.array(vector) / length_vector).tolist()
+        dir = np.around((np.array(vector) / length_vector),4).tolist()
 
         self._frames.append([time, self.origin, dir, length_vector])
         self._max_time = max(self._max_time, time)

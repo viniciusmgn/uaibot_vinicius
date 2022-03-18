@@ -14,8 +14,8 @@ class RigidObject:
        The object's name.
        (default: 'genRigidObject').
 
-   model_3d : 'Model3D' object
-       The 3d model of the object.
+   list_model_3d : list of 'Model3D' objects
+       The 3d model that compose the object.
 
    htm : 4x4 numpy array or 4x4 nested list
        The object's configuration.
@@ -38,15 +38,15 @@ class RigidObject:
         return np.array(self._htm)
 
     @property
-    def model_3d(self):
-        """The 3d model of the object."""
-        return self._model_3d
+    def list_model_3d(self):
+        """The list of 3d models of the object."""
+        return self._list_model_3d
 
     #######################################
     # Constructor
     #######################################
 
-    def __init__(self, model_3d, name="genRigidObject", htm=np.identity(4)):
+    def __init__(self, list_model_3d, name="genRigidObject", htm=np.identity(4)):
 
         # Error handling
         if not (Utils.is_a_name(name)):
@@ -57,13 +57,19 @@ class RigidObject:
         if not Utils.is_a_matrix(htm, 4, 4):
             raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
 
-        if not Utils.get_uaibot_type(model_3d) == "uaibot.Model3D":
-            raise Exception("The parameter 'model_3d' should a 'uaibot.Model3D' object.")
+        if not (str(type(list_model_3d)) == "<class 'list'>"):
+            raise Exception("The parameter 'list_model_3d' should be a list of 'uaibot.Model3D' objects.")
+        else:
+            for i in range(len(list_model_3d)):
+                if not (Utils.get_uaibot_type(list_model_3d[i]) == "uaibot.Model3D"):
+                    raise Exception(
+                        "The parameter 'list_model_3d' should be a list of 'uaibot.Model3D' objects.")
+
         # end error handling
 
         self._htm = np.array(htm)
         self._name = name
-        self._model_3d = model_3d
+        self._list_model_3d = list_model_3d
         self._max_time = 0
 
         self.set_ani_frame(self._htm)
@@ -110,9 +116,9 @@ class RigidObject:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, htm[0][0], htm[0][1], htm[0][2], htm[0][3],
-             htm[1][0], htm[1][1], htm[1][2], htm[1][3],
-             htm[2][0], htm[2][1], htm[2][2], htm[2][3],
+        f = [time, np.around(htm[0][0],4), np.around(htm[0][1],4), np.around(htm[0][2],4), np.around(htm[0][3],4),
+             np.around(htm[1][0],4), np.around(htm[1][1],4), np.around(htm[1][2],4), np.around(htm[1][3],4),
+             np.around(htm[2][0],4), np.around(htm[2][1],4), np.around(htm[2][2],4), np.around(htm[2][3],4),
              0, 0, 0, 1]
 
         self._htm = htm
@@ -154,9 +160,14 @@ class RigidObject:
 
         string = "\n"
         string += "//BEGIN DECLARATION OF THE RIGID OBJECT '" + self.name + "'\n\n"
-        string += self.model_3d.gen_code(self.name) + "\n"
+
+        string += "var list_object3d_" + self.name + " = [];\n"
+        for i in range(len(self.list_model_3d)):
+            string += self.list_model_3d[i].gen_code(self.name + "_" + str(i)) + ";\n"
+            string += "list_object3d_" + self.name + ".push(object3d_" + self.name + "_" + str(i) + ");\n"
+
         string += "const var_" + self.name + " = new RigidObject(" + str(
-            self._frames) + ", object3d_" + self.name + ");\n"
+            self._frames) + ", list_object3d_" + self.name + ");\n"
         string += "sceneElements.push(var_" + self.name + ");\n"
         string += "//USER INPUT GOES HERE"
 
