@@ -64,41 +64,29 @@ def _control_demo_4():
 
     # Create simulation
     sim = Simulation.create_sim_factory([robot, wall1, wall2, wall3, wall4])
-    #robot.add_col_object(sim)
 
     for k in range(len(pose_tg)):
         sim.add(Frame(name="pose_tg_" + str(k), htm=pose_tg[k]))
 
     # Parameters
-    dt = 0.03 #0.03
+    dt = 0.03
     alpha = 2
     beta = 0.005
-    gamma = 0.5  # 0.1
+    gamma = 0.5
     sigma = 0.5
-    d_proj_safe = 0.8
-    dist_safe = 0.2 #0.2
-    qddotmax = 3
+    dist_safe = 0.2
     qdot_max = (np.pi / 180) * np.array([[85], [85], [100], [75], [130], [135], [135]])
+    qdot_min = -qdot_max
     xi = 0.5
-    h = 0.05 #0.05
-
-    def cons(d, dd):
-        m = d.shape[0]
-        accel = np.zeros((m, 1))
-
-        for i in range(m):
-            if (d[i][0] - dist_safe) + dd[i][0] * (2 / gamma) > d_proj_safe:
-                accel[i] = -(gamma ** 2) * d_proj_safe
-            else:
-                accel[i] = -2 * gamma * dd[i][0] - (gamma ** 2) * (d[i][0] - dist_safe)
-
-        return accel
+    h = 0.05
+    q = robot.q
+    qdot = np.zeros((7, 1))
 
     # Initializations
     struct = [None, None, None, None]
 
     i = 0
-    imax = round(48.9/dt)
+    imax = round(47.4/dt)
 
     hist_dist = []
     hist_time = []
@@ -106,38 +94,39 @@ def _control_demo_4():
     hist_qddot = []
     hist_qdot = []
     hist_q = []
-
-    q = robot.q
-    qdot = np.zeros((7, 1))
+    hist_V = []
 
     error_qp = False
     iteration_end = False
-
 
     #Main loop
     for k in range(len(pose_tg)):
         converged = False
         while not converged and not error_qp and not iteration_end:
 
+            #This is just for showing progress when the simulation is run
             if i % 50 == 0 or i == imax - 1:
                 sys.stdout.write('\r')
                 sys.stdout.write("[%-20s] %d%%" % ('=' * round(20 * i / (imax - 1)), round(100 * i / (imax - 1))))
                 sys.stdout.flush()
 
+            #Compute r and r_dot
             [r, jac_r] = robot.task_function(pose_tg[k], q=q)
             [r_next, jac_r_next] = robot.task_function(pose_tg[k], q=q + qdot * dt)
 
             r_dot = (r_next - r) / dt
             jac_r_dot = (jac_r_next - jac_r) / dt
 
+            #Compute dist_vect, dist_vect_dot and the distance Jacobian
             dist_vect, jac_dist, struct = dist_computation(q, struct, h)
             dist_vect_next, jac_dist_next, struct = dist_computation(q + qdot * dt, struct, h)
 
             dist_vect_dot = (dist_vect_next - dist_vect) / dt
             jac_dist_dot = (jac_dist_next - jac_dist) / dt
 
+            #Create the quadratic program parameters
             A = jac_dist
-            b = -jac_dist_dot @ qdot + cons(dist_vect, dist_vect_dot)
+            b = -jac_dist_dot @ qdot -2 * gamma * dist_vect_dot - (gamma ** 2) * (dist_vect - dist_safe)
             H = 2 * (np.transpose(jac_r) @ jac_r) + 2 * beta * np.identity(7)
             f = 2 * np.transpose(jac_r) @ (
                     jac_r_dot @ qdot + 2 * alpha * r_dot + (alpha ** 2) * r) + 2 * beta * sigma * qdot
@@ -145,9 +134,10 @@ def _control_demo_4():
             A = np.block([[A], [np.identity(7)]])
             A = np.block([[A], [-np.identity(7)]])
 
-            #b = np.block([[b], [-qddotmax * np.ones((14, 1))]])
-            b = np.block([[b], [-xi * (qdot+qdot_max)], [xi * (qdot-qdot_max)]  ])
 
+            b = np.block([[b], [-xi * (qdot-qdot_min)], [xi * (qdot-qdot_max)]  ])
+
+            #Solve the quadratic program
             try:
                 qddot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
             except:
@@ -156,14 +146,14 @@ def _control_demo_4():
 
             qddot = np.reshape(qddot, (7, 1))
 
+            #First order explicit Euler simulation
             q += qdot * dt
             qdot += qddot * dt
 
             #Add animation to simulation
             robot.add_ani_frame(i * dt, q)
-            #robot.update_col_object(i * dt)
 
-            #Store information
+            #Store data for showing the graphs later
             dist_vect, _, _ = dist_computation(q, struct, 0.000001)
 
             hist_time.append(i * dt)
@@ -172,8 +162,9 @@ def _control_demo_4():
             hist_q.append(np.array(q.reshape((7,))))
             hist_qdot.append(np.array(qdot.reshape((7,))))
             hist_qddot.append(np.array(qddot.reshape((7,))))
+            hist_V.append(alpha * (np.linalg.norm(r_dot + alpha * r) ** 2) + sigma * beta * (np.linalg.norm(qdot) ** 2))
 
-            #Continue the loop
+            #Continue the loop, check if converged
             i += 1
             converged, error_pos, error_ori = evaluate_error(r)
 
@@ -187,6 +178,7 @@ def _control_demo_4():
     Utils.plot(hist_time, np.transpose(hist_q), "", "Time (s)", "Joint configuration (rad)", "q")
     Utils.plot(hist_time, np.transpose(hist_qdot), "", "Time (s)", "Joint speed (rad/s)", "qdot")
     Utils.plot(hist_time, np.transpose(hist_qddot), "", "Time (s)", "Joint acceleration (rad/s²)", "u")
+    Utils.plot(hist_time, hist_V, "", "Time (s)", "Lyapunov function", "V")
     fig = Utils.plot(hist_time, np.transpose(hist_r), "", "Time (s)", "Task function",
                      ["posx", "posy", "posz", "orix", "oriy", "oriz"])
 

@@ -16,25 +16,25 @@ def _control_demo_2():
     # Create simulation and add objects to the scene
 
 
-    mesh_box = MeshMaterial(color="#242526", roughness=1, metalness=1)
-    mesh_plate = MeshMaterial(metalness=0.9, roughness=0.05, env_map_intensity=0.9, clearcoat=1, opacity=1, \
+    material_box = MeshMaterial(color="#242526", roughness=1, metalness=1)
+    material_glass = MeshMaterial(metalness=0.9, roughness=0.05, env_map_intensity=0.9, clearcoat=1, opacity=1, \
                               reflectivity=0.2, refraction_ratio=0.985, ior=1.52, specular_intensity=0.1,
                               specular_color="white", transmission=1, side="BackSide")
 
     robot_a = rb.Robot.create_kuka_kr5(name="robot_a", htm=Utils.trn([0, -0.9, 0.3]), color="#df6c25")
-    box_a = Box(name="box_a", width=0.3, depth=0.3, height=0.3, htm=Utils.trn([0, -0.9, 0.15]), mesh_material=mesh_box)
+    box_a = Box(name="box_a", width=0.3, depth=0.3, height=0.3, htm=Utils.trn([0, -0.9, 0.15]), mesh_material=material_box)
 
     robot_b = rb.Robot.create_kuka_kr5(name="robot_b", htm=Utils.rotz(np.pi) @ Utils.trn([0, -0.9, 0.3]),
                                        color="#4d6fc4")
-    box_b = Box(name="box_b", width=0.3, depth=0.3, height=0.3, htm=Utils.trn([0, 0.9, 0.15]), mesh_material=mesh_box)
+    box_b = Box(name="box_b", width=0.3, depth=0.3, height=0.3, htm=Utils.trn([0, 0.9, 0.15]), mesh_material=material_box)
 
     box_left = Box(name="box_left", width=0.3, depth=0.3, height=0.366, htm=Utils.trn([0.3, 0, 0.183]),
-                   mesh_material=mesh_box)
+                   mesh_material=material_box)
     box_right = Box(name="box_right", width=0.3, depth=0.3, height=0.366, htm=Utils.trn([-0.3, 0, 0.183]),
-                    mesh_material=mesh_box)
+                    mesh_material=material_box)
 
     plate = Box(name="plate", width=0.2, depth=0.489, height=0.02, htm=Utils.trn([-0.3, 0, 0.391]),
-                mesh_material=mesh_plate) #height=0.05
+                mesh_material=material_glass) #height=0.05
 
     sim = Simulation.create_sim_factory([robot_a, robot_b, box_a, box_b, box_left, box_right, plate])
 

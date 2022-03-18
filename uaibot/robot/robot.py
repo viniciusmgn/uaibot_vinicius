@@ -34,6 +34,7 @@ from ._create_kuka_kr5 import _create_kuka_kr5
 from ._create_epson_t6 import _create_epson_t6
 from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
+from ._create_abb_crb import _create_abb_crb
 
 class Robot:
     """
@@ -671,7 +672,7 @@ class Robot:
     @staticmethod
     def create_staubli_tx60(htm=np.identity(4), name='staublitx60', color="#ff9b00", opacity=1):
         """
-    Create a Staubli TX60.
+    Create a Staubli TX60, a six degree of freedom manipulator.
     Model taken from the ROS github repository (https://github.com/ros-industrial/staubli).
 
     Parameters
@@ -704,7 +705,7 @@ class Robot:
     @staticmethod
     def create_kuka_lbr_iiwa(htm=np.identity(4), name='kukalbriiwa', color="silver", opacity=1):
         """
-    Create a Kuka LBR IIWA 14 R820.
+    Create a Kuka LBR IIWA 14 R820, a seven degree of freedom manipulator.
     Model taken from the ROS github repository (https://github.com/ros-industrial/kuka_experimental).
 
     Parameters
@@ -734,6 +735,39 @@ class Robot:
         base_3d_obj, links, htm_base_0, q0 = _create_kuka_lbr_iiwa(htm, name, color, opacity)
         return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
 
+    @staticmethod
+    def create_abb_crb(htm=np.identity(4), name='abbcrb', color="white", opacity=1):
+        """
+    Create a ABB CRB 15000, a six degree of freedom manipulator.
+    Model taken from the ROS github repository (https://github.com/ros-industrial/abb_experimental).
+
+    Parameters
+    ----------
+    htm : 4x4 numpy array or 4x4 nested list
+        The initial base configuration for the robot.
+        (default: np.identity(4))
+
+    name : string
+        The robot name.
+        (default: 'abbcrb').
+
+    htm : color
+        A HTML-compatible string representing the object color.
+        (default: 'white')'.
+
+    opacity : positive float between 0 and 1
+        The opacity of the robot. 1 = fully opaque and 0 = transparent.
+        (default: 1)
+
+    Returns
+    -------
+    robot : Robot object
+        The robot.
+
+    """
+        base_3d_obj, links, htm_base_0, q0 = _create_abb_crb(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0)
+
     #######################################
     # Advanced methods
     #######################################
@@ -741,7 +775,7 @@ class Robot:
     def compute_dist(self, obj, h=0.00001, g=0.00001, q=None, htm=None, old_dist_struct=None, tol=0.0005,
                      no_iter_max=20):
         """
-    Compute (h,g) distance structure from each one of the robot's link to a 
+    Compute the (h,g) distance structure from each one of the robot's link to a
     'simple' external object (ball, box or cylinder), given a joint and base 
     configuration. If h and g are very small, this is simply the traditional
     distance.
