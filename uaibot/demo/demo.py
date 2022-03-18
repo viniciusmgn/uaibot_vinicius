@@ -9,6 +9,9 @@ from ._control_demo_2 import _control_demo_2
 from ._control_demo_3 import _control_demo_3
 from ._control_demo_4 import _control_demo_4
 
+
+from ._lesson_demo_3 import _lesson_demo_3
+
 class Demo:
     """
   A class that contains demonstrations in robotics.
@@ -60,3 +63,13 @@ class Demo:
     collision avoidance.
     """
         return _control_demo_4()
+
+    @staticmethod
+    def lesson_demo_3(robot_creator=None):
+        """
+    Show a robot manipulator that must achieve a pose inside a hole. Collision must be avoided.
+
+    Perform second order kinematic control with constraints that enforce
+    collision avoidance.
+    """
+        return _lesson_demo_3(robot_creator)

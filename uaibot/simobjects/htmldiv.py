@@ -11,7 +11,13 @@ class HTMLDiv:
       The object's name.
       (default: 'genHTMLDiv').
 
+  html_text : string
+      The html string.
+      (default: 'Text').
 
+  style : string
+      CSS style string  (example: 'position:absolute;top:200px,right:100px').
+      (default: 'Text').
   """
 
     #######################################
@@ -25,12 +31,12 @@ class HTMLDiv:
 
     @property
     def html_text(self):
-        """The html string representing text."""
+        """The HTML string representing the text. HTML markup is allowed here."""
         return self._html_text
 
     @property
     def style(self):
-        """The html string representing text."""
+        """The CSS style string."""
         return self._style
 
     #######################################

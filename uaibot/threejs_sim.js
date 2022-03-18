@@ -263,8 +263,8 @@ class HTMLDiv extends Objsim{
 		var element = document.getElementById(this.id);
 
 		element.innerHTML = this.frames[this.currentFrame][1];
-		element.style = this.frames[this.currentFrame][2];
 		element.style.position = "absolute";
+		element.style = this.frames[this.currentFrame][2];
 	}
 	setEnvMap(envMap) {}
 }

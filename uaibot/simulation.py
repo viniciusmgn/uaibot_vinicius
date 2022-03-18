@@ -272,7 +272,7 @@ class Simulation:
         for obj in self.list_of_objects:
             if Utils.get_uaibot_type(obj) == "uaibot.HTMLDiv":
                 string = re.sub("<!-- USER DIVS GO HERE -->",
-                                "<div id='" + obj.name + "'>" + obj.name + "</div>\n <!-- USER DIVS GO HERE -->",
+                                "<div id='" + obj.name + "'></div>\n <!-- USER DIVS GO HERE -->",
                                 string)
 
         string = re.sub("//USER INPUT GOES HERE",
