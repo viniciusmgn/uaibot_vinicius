@@ -590,8 +590,8 @@ let btn = document.createElement("button");
 btn.style.backgroundColor = "#1a1a1a";
 btn.style.color = "#19bd39";
 btn.style.border= "none";
-btn.style.height= 28;
-btn.style.width= 28;
+btn.style.height= "28px";
+btn.style.width= "28px";
 btn.innerHTML = "||";
 btn.onclick = function () {
 
@@ -604,6 +604,7 @@ btn.onclick = function () {
 	}
 	else
 	{
+		manualTime = parseFloat(customContainer.querySelectorAll("input[type=text]")[0].value)+0.0001;
 		btn.innerHTML = ">";
 	}
 
@@ -692,7 +693,6 @@ renderer.setAnimationLoop(() => {
 			currentSeconds = customContainer.querySelectorAll("input[type=text]")[0].value;
 			startMs =  elapsedMs()-delay-1000*currentSeconds;
 			recoveryCurrentTime = false;
-
 		}
 
 	}
