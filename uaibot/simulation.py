@@ -171,9 +171,12 @@ class Simulation:
     sim: 'Simulation' object
         Simulation object.
     """
-        mesh_ground = MeshMaterial(
-            texture_map='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/factory_ground.png',
-            roughness=1, metalness=1)
+
+        texture_ground = Texture(
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/factory_ground.png',
+            wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[4, 4])
+
+        mesh_ground = MeshMaterial(texture_map=texture_ground, metalness=1, roughness=1)
 
         ground = Box(name="ground", width=6, depth=6, height=0.01, htm=Utils.trn([0, 0, 0.005]),
                      mesh_material=mesh_ground)
