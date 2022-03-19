@@ -139,6 +139,8 @@ def _control_demo_3():
             hist_qddot.append(qddot.reshape((6,)))
             hp.append(dist_struct[4].point_object)
 
+            #print("time = "+str((i-1)*dt)+", q="+str(q.tolist()))
+
         except:
             end_loop = True
 

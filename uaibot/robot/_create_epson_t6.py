@@ -125,4 +125,8 @@ def _create_epson_t6(htm, name, color, opacity):
 
     q0 = [0.0, 0.0, 0.0]
 
-    return base_3d_obj, links, htm_base_0, q0
+    #Create joint limits
+    c = (np.pi/180)
+    joint_limits = np.array([[-c*132,c*132],[-c*141,c*141],[0+0.02,0.15+0.02]])
+
+    return base_3d_obj, links, htm_base_0, q0, joint_limits

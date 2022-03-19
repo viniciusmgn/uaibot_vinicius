@@ -62,6 +62,15 @@ class Robot:
   q0 : nd numpy vector or array
       The robot initial configuration.
       (default: zero vector).
+
+  eef_frame_visible : boolean
+      Set if the end-effector frame is visible.
+      (default: True).
+
+  joint_limit : n x 2 numpy array or None
+      A n x 2 numpy array containing the joint limits, either in rad or meters.
+      If set to 'None', use very large joint limits.
+      (default: None).
   """
 
     #######################################
@@ -119,11 +128,16 @@ class Robot:
         """If the frame attached to the end effector is visible"""
         return self._eef_frame_visible
 
+    @property
+    def joint_limit(self):
+        """A n x 2 numpy array containing the joint limits, either in rad or meters"""
+        return self._joint_limit
+
     #######################################
     # Constructor
     #######################################
 
-    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4), q0=None, eef_frame_visible=True):
+    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4), q0=None, eef_frame_visible=True, joint_limits = None):
         # Error handling
 
         if not (Utils.is_a_name(name)):
@@ -142,6 +156,11 @@ class Robot:
 
         n = len(links)
 
+        if not (q0 is None):
+            self._q0 = np.array(q0)
+        else:
+            self._q0 = np.zeros((n,))
+
         if not (str(type(list_base_3d_obj)) == "<class 'list'>" or (list_base_3d_obj is None)):
             raise Exception("The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
         else:
@@ -150,11 +169,24 @@ class Robot:
                     raise Exception(
                         "The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
 
-        if not Utils.is_a_vector(q0, n):
+        if not Utils.is_a_vector(self._q0, n):
             raise Exception("The parameter 'q0' should be a " + str(n) + " dimensional vector.")
 
         if not str(type(eef_frame_visible)) == "<class 'bool'>":
             raise Exception("The parameter 'eef_frame_visible' must be a boolean.")
+
+        if not joint_limits is None:
+            self._joint_limit = joint_limits
+        else:
+            self._joint_limit = np.block([-10 * np.ones((n, 1)) , 10 * np.ones((n, 1))])
+
+        if not Utils.is_a_matrix(self._joint_limit, n, 2):
+            raise Exception("The parameter 'joint_limits' should be a " + str(n) + " x 2 numpy array.")
+
+        for i in range(n):
+            if self._joint_limit[i, 0]>self._joint_limit[i, 0]:
+                raise Exception(
+                    "In the parameter 'joint_limits', the minimum value (first column) must be smaller or equal than the maximum value (second column)")
 
         # end error handling
 
@@ -167,12 +199,6 @@ class Robot:
         self._htm_base_0 = htm_base_0
         self._eef_frame_visible = eef_frame_visible
         self._max_time = 0
-
-
-        if not (q0 is None):
-            self._q0 = q0
-        else:
-            self._q0 = np.zeros((n,))
 
         # Set initial total configuration
         self.set_ani_frame(self._q0, self._htm)
@@ -201,7 +227,7 @@ class Robot:
     # Methods for configuration changing
     #######################################
 
-    def add_ani_frame(self, time, q=None, htm=None):
+    def add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits = False):
         """
     Add a single configuration to the object's animation queue.
 
@@ -214,14 +240,18 @@ class Robot:
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current HTM).
+    enforce_joint_limits: boolean
+        If True and some q violates the joint limits (seen in the attribute 'joint_limit'), the
+        respective q is clamped. Note that it DOES NOT issue any warning for this. So, be aware.
+        (default: False).
 
     Returns
     -------
     None
     """
-        return _add_ani_frame(self, time, q, htm)
+        return _add_ani_frame(self, time, q, htm, enforce_joint_limits)
 
-    def set_ani_frame(self, q=None, htm=None):
+    def set_ani_frame(self, q=None, htm=None, enforce_joint_limits = False):
         """
     Reset object's animation queue and add a single configuration to the 
     object's animation queue.
@@ -234,12 +264,15 @@ class Robot:
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current HTM).
-
+    enforce_joint_limits: boolean
+        If True and some q violates the joint limits (seen in the attribute 'joint_limit'), the
+        respective q is clamped. Note that it DOES NOT issue any warning for this. So, be aware.
+        (default: False).
     Returns
     -------
     None
     """
-        return _set_ani_frame(self, q, htm)
+        return _set_ani_frame(self, q, htm, enforce_joint_limits)
 
     #######################################
     # Methods for kinematics model
@@ -616,7 +649,7 @@ class Robot:
     @staticmethod
     def create_kuka_kr5(htm=np.identity(4), name='kukakr5', color="#df6c25", opacity=1, eef_frame_visible=True):
         """
-    Create a Kuka KR5, a six-degree of freedom manipulator.
+    Create a Kuka KR5 R850, a six-degree of freedom manipulator.
     Thanks Sugi-Tjiu for the 3d model (see https://grabcad.com/library/kuka-kr-5-r850).
 
     Parameters
@@ -643,8 +676,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0 = _create_kuka_kr5(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
+        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_kuka_kr5(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_epson_t6(htm=np.identity(4), name='epsont6', color="white", opacity=1, eef_frame_visible=True):
@@ -676,8 +709,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0 = _create_epson_t6(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
+        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_epson_t6(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_staubli_tx60(htm=np.identity(4), name='staublitx60', color="#ff9b00", opacity=1, eef_frame_visible=True):
@@ -709,8 +742,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0 = _create_staubli_tx60(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
+        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_staubli_tx60(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_kuka_lbr_iiwa(htm=np.identity(4), name='kukalbriiwa', color="silver", opacity=1, eef_frame_visible=True):
@@ -742,8 +775,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0 = _create_kuka_lbr_iiwa(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
+        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_kuka_lbr_iiwa(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_abb_crb(htm=np.identity(4), name='abbcrb', color="white", opacity=1, eef_frame_visible=True):
@@ -775,8 +808,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0 = _create_abb_crb(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible)
+        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_abb_crb(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
 
     #######################################
     # Advanced methods

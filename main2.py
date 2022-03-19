@@ -1,25 +1,35 @@
 from uaibot import *
+import numpy as np
 
-robot = Robot.create_kuka_lbr_iiwa()
+robot1 = Robot.create_kuka_kr5()
+robot2 = Robot.create_kuka_lbr_iiwa(Utils.trn([1,0,0]))
+robot3 = Robot.create_abb_crb(Utils.trn([-1,0,0]))
+robot4 = Robot.create_epson_t6(Utils.trn([0,1,0]),color="black")
+robot5 = Robot.create_staubli_tx60(Utils.trn([0,-1,0]))
 
-texture_wall = Texture(
-    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/metal.png',
-    wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[4, 4])
+robots = [robot1, robot2, robot3, robot4, robot5]
 
-material_wall = MeshMaterial(texture_map=texture_wall, roughness=1, metalness=1)
+dt=0.01
+k = 0
+i = 0
 
-wall1 = Box(name="wall1", htm=Utils.trn([0.3, -0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
-            mesh_material=material_wall)
-wall2 = Box(name="wall2", htm=Utils.trn([0.3, 0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
-            mesh_material=material_wall)
-wall3 = Box(name="wall3", htm=Utils.trn([0.3, 0, 0.25]), width=0.05, depth=0.4, height=0.5,
-            mesh_material=material_wall)
-wall4 = Box(name="wall4", htm=Utils.trn([0.3, 0, 1.15]), width=0.05, depth=0.4, height=0.5,
-            mesh_material=material_wall)
+
+
+for i in range(7):
+    for j in range(5):
+        if len(robots[j].links) > i:
+            for t in range(500):
+                alpha = 1 - t / 499
+                q = robots[j].q0
+                q[i] = alpha * robots[j].joint_limit[i, 0] + (1 - alpha) * robots[j].joint_limit[i, 1]
+                robots[j].add_ani_frame((k+t) * dt, q=q)
+
+    k += 500
+
 
 
 
 # Create simulation
-sim = Simulation.create_sim_factory([robot, wall1, wall2, wall3, wall4])
+sim = Simulation(robots, camera_type="orthographic")
 
-sim.save("D://","test_texture")
+sim.save("D://","robots")

@@ -19,9 +19,11 @@ def _control_demo_4():
 
     robot = rb.Robot.create_kuka_lbr_iiwa()
 
-    material_wall = MeshMaterial(
-        texture_map='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/metal.png',
-        roughness=1, metalness=1)
+    texture_wall = Texture(
+        url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/rough_metal.jpg',
+        wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[4, 4])
+
+    material_wall = MeshMaterial(texture_map=texture_wall, roughness=1, metalness=1)
 
     wall1 = Box(name="wall1", htm=Utils.trn([0.3, -0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
                 mesh_material=material_wall)

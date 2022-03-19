@@ -3,7 +3,7 @@ import numpy as np
 
 
 # Add config to animation queue
-def _add_ani_frame(self, time, q=None, htm=None):
+def _add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits=False):
     if q is None:
         q = self.q
 
@@ -21,14 +21,26 @@ def _add_ani_frame(self, time, q=None, htm=None):
 
     if not Utils.is_a_matrix(htm, 4, 4):
         raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix")
-    # end error handling
 
+    if not str(type(enforce_joint_limits)) == "<class 'bool'>":
+        raise Exception("The parameter 'enforce_joint_limits' must be a boolean.")
+
+    # end error handling
     self._q = np.array(q).reshape((n, 1))
 
-    f = [time, np.around(htm[0][0],4), np.around(htm[0][1],4), np.around(htm[0][2],4), np.around(htm[0][3],4),
-         np.around(htm[1][0],4), np.around(htm[1][1],4), np.around(htm[1][2],4), np.around(htm[1][3],4),
-         np.around(htm[2][0],4), np.around(htm[2][1],4), np.around(htm[2][2],4), np.around(htm[2][3],4),
-         0, 0, 0, 1, np.ndarray.tolist(np.around(np.array(q),4))]
+    if enforce_joint_limits:
+        for i in range(len(self.links)):
+            self._q[i,0] = min(max(self._q[i,0],self.joint_limit[i,0]),self.joint_limit[i,1])
+
+    f = [time, np.round(htm[0][0],6), np.round(htm[0][1],6), np.round(htm[0][2],6), np.round(htm[0][3],6),
+         np.round(htm[1][0],6), np.round(htm[1][1],6), np.round(htm[1][2],6), np.round(htm[1][3],6),
+         np.round(htm[2][0],6), np.round(htm[2][1],6), np.round(htm[2][2],6), np.round(htm[2][3],6),
+         0, 0, 0, 1, np.ndarray.tolist(np.round(np.array(self._q),6))]
+
+    f = [time, htm[0][0], htm[0][1], htm[0][2], htm[0][3],
+         htm[1][0], htm[1][1], htm[1][2], htm[1][3],
+         htm[2][0], htm[2][1], htm[2][2], htm[2][3],
+         0, 0, 0, 1, np.ndarray.tolist(np.array(self._q))]
 
     self._htm = htm
     self._frames.append(f)

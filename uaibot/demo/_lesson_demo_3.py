@@ -10,7 +10,7 @@ from graphics.meshmaterial import *
 from robot import *
 
 
-def _lesson_demo_3(robot_creator):
+def _lesson_demo_3(robot_creator, width, height):
 
 
     # Create the object and put into simulation
@@ -25,7 +25,7 @@ def _lesson_demo_3(robot_creator):
     except:
         raise Exception("The parameter 'robot_creator' must be a handle to a creator of robots.")
 
-    sim = Simulation([robot], camera_type="orthographic", show_world_frame=False)
+    sim = Simulation([robot], camera_type="orthographic", show_world_frame=False, width=width, height=height)
 
     # Create all objects that will be used during the simulation
 
@@ -98,8 +98,6 @@ def _lesson_demo_3(robot_creator):
         sim.add(y_axis[-1])
         sim.add(z_axis[-1])
 
-    width = sim.width
-    height = sim.height
     style = "top:" + str(0.85 * height) + "px;right:" + str(0) + "px;width:" + str(
         width) + "px;position:absolute;text-align:center;background-color:white;font-smooth:always;font-family:arial"
 
@@ -265,7 +263,7 @@ def _lesson_demo_3(robot_creator):
             explanation.add_ani_frame(k * dt, html_text="When joint "+txt_joint(j)+" moves, it moves "+txt_frame(i)+".")
 
             for l in range(floor(0.5 * deltak)):
-                q[j - 1] += dt
+                q[j - 1] += robot.joint_limit[j-1][0]/(floor(0.5 * deltak)-1)
                 htm_i = robot.fkm(axis="dh", q=q)[i - 1]
                 robot.add_ani_frame(k * dt, q=q)
                 x_axis[i].add_ani_frame(k * dt, htm=htm_i @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
@@ -275,7 +273,7 @@ def _lesson_demo_3(robot_creator):
                 k += 1
 
             for l in range(deltak):
-                q[j - 1] -= dt
+                q[j - 1] += (robot.joint_limit[j-1][1]-robot.joint_limit[j-1][0])/(deltak-1)
                 robot.add_ani_frame(k * dt, q=q)
                 htm_i = robot.fkm(axis="dh", q=q)[i - 1]
                 x_axis[i].add_ani_frame(k * dt, htm=htm_i @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
@@ -285,7 +283,7 @@ def _lesson_demo_3(robot_creator):
                 k += 1
 
             for l in range(floor(0.5 * deltak)):
-                q[j - 1] += dt
+                q[j - 1] += -robot.joint_limit[j-1][1]/(floor(0.5 * deltak)-1)
                 robot.add_ani_frame(k * dt, q=q)
                 htm_i = robot.fkm(axis="dh", q=q)[i - 1]
                 x_axis[i].add_ani_frame(k * dt, htm=htm_i @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
@@ -316,17 +314,17 @@ def _lesson_demo_3(robot_creator):
 
             q = robot.q0
             for l in range(floor(0.5 * deltak)):
-                q[i] += dt
+                q[i] += robot.joint_limit[i][0]/(floor(0.5 * deltak)-1)
                 robot.add_ani_frame(k * dt, q=q)
                 k += 1
 
             for l in range(deltak):
-                q[i] -= dt
+                q[i] += (robot.joint_limit[i][1]-robot.joint_limit[i][0])/(deltak-1)
                 robot.add_ani_frame(k * dt, q=q)
                 k += 1
 
             for l in range(floor(0.5 * deltak)):
-                q[i] += dt
+                q[i] += -robot.joint_limit[i][1]/(floor(0.5 * deltak)-1)
                 robot.add_ani_frame(k * dt, q=q)
                 k += 1
 

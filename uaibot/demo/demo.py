@@ -65,11 +65,11 @@ class Demo:
         return _control_demo_4()
 
     @staticmethod
-    def lesson_demo_3(robot_creator=None):
+    def lesson_demo_3(robot_creator=None, width=800, height=600):
         """
     Show a robot manipulator that must achieve a pose inside a hole. Collision must be avoided.
 
     Perform second order kinematic control with constraints that enforce
     collision avoidance.
     """
-        return _lesson_demo_3(robot_creator)
+        return _lesson_demo_3(robot_creator, width, height)

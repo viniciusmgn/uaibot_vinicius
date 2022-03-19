@@ -111,5 +111,7 @@ def _create_abb_crb(htm, name, color, opacity):
     # Define initial configuration
     q0 = [0.000, 0.000, 3.14, 0.000, 0.000, 0.000]
 
+    #Create joint limits
+    joint_limits = (np.pi/180)*np.array([[-180,180],[-180,180],[-225-200+10,85-200-20],[-180,180],[-180,180],[-180,180]])
 
-    return base_3d_obj, links, np.identity(4), q0
+    return base_3d_obj, links, np.identity(4), q0, joint_limits
