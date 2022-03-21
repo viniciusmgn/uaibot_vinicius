@@ -3,6 +3,8 @@ from graphics.meshmaterial import *
 import numpy as np
 
 
+
+
 class Model3D:
     """
    A class that represents a 3d model of an object.

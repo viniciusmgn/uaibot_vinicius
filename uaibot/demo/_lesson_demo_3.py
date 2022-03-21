@@ -98,7 +98,7 @@ def _lesson_demo_3(robot_creator, width, height):
         sim.add(y_axis[-1])
         sim.add(z_axis[-1])
 
-    style = "top:" + str(0.85 * height) + "px;right:" + str(0) + "px;width:" + str(
+    style = "top:" + str(0.8 * height) + "px;right:" + str(0) + "px;width:" + str(
         width) + "px;position:absolute;text-align:center;background-color:white;font-smooth:always;font-family:arial"
 
     explanation = HTMLDiv(html_text="", style=style)
@@ -168,14 +168,21 @@ def _lesson_demo_3(robot_creator, width, height):
         k += 3 * deltak
         text = ""
         if i > 0:
-            text += "Let us draw "+txt_pointA(i)+". This is the point in " + txt_line_orange(
-                i) + " that is closest to " + txt_line_purple(i+1) + ".<br>"
+
+            text += "Let us draw " + txt_pointA(i) + ". This is the point in " + txt_line_orange(
+                i) + " that is closest to " + txt_line_purple(i + 1) + ".<br>"
 
             points_A.add_ani_frame(k * dt, htm=htm[i - 1] @ Utils.trn([0, 0, robot.links[i - 1].d]))
 
-            text += "Let us draw "+txt_pointB(i+1)+". This is the point in " + txt_line_purple(i+1) + " that is closest "\
-                    "to " + txt_line_orange(i) + ".<br>"
+            text += "Let us draw " + txt_pointB(i + 1) + ". This is the point in " + txt_line_purple(
+                i + 1) + " that is closest " \
+                         "to " + txt_line_orange(i) + ".<br>"
 
+
+            if i < len(robot.links) and abs(1-abs(htm[i - 1][0:3, 2].transpose() @ htm[i][0:3, 2])) < 0.001:
+                text += "Since the lines " + txt_line_orange(
+                    i) + " and " + txt_line_purple(i + 1) + " are parallel, there are infinite pairs of " + txt_pointA(
+                    i) + " and " + txt_pointB(i + 1) + " to choose. We can choose one of these pairs arbitrarily.<br>"
 
         else:
             text += "For the first frame, " + txt_pointB(

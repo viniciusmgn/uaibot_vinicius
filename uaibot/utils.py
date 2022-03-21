@@ -5,6 +5,11 @@ import plotly.express as px
 import httplib2
 import string as st
 from scipy.linalg import null_space
+from scipy.spatial import KDTree
+from stl import mesh
+import pywavefront as py_obj
+import collada as py_col
+from httplib2 import *
 
 
 class Utils:
@@ -536,6 +541,234 @@ class Utils:
             return y
 
         return lambda t: aux_interpolate_multiple(points, t)
+
+    #######################################
+    # 3d objects manipulation
+    #######################################
+
+    @staticmethod
+    def _dist_triangle_point(point, triangle):
+
+        v0 = triangle[0,:].reshape((3,1))
+        v1 = triangle[1,:].reshape((3,1))
+        v2 = triangle[2,:].reshape((3,1))
+
+        A = np.block([v1-v0,v2-v0])
+        b = np.array(point).reshape((3,1))-v0
+
+        #Create the solutions
+
+        list_x = []
+
+        list_x.append(np.linalg.inv(np.transpose(A) @ A) @ (np.transpose(A) @ b))
+
+        prod0 = np.transpose(A[:, 0]) @ A[:, 0]
+        prod1 = np.transpose(A[:, 1]) @ A[:, 1]
+
+        val = float((np.transpose(A[:, 0]) @ b) / prod0)
+        list_x.append(np.array([[val],[0]]))
+
+        val = float((np.transpose(A[:, 1]) @ b) / prod1)
+        list_x.append(np.array([[0], [val]]))
+
+        val = float((np.transpose(A[:, 0]) @ (b-A[:, 1].reshape((3,1)))) / prod0)
+        list_x.append(np.array([[val], [1]]))
+
+        val = float((np.transpose(A[:, 1]) @ (b-A[:, 0].reshape((3,1)))) / prod1)
+        list_x.append(np.array([[1], [val]]))
+
+        list_x.append(np.array([[0],[0]]))
+        list_x.append(np.array([[0],[1]]))
+        list_x.append(np.array([[1],[0]]))
+        list_x.append(np.array([[1],[1]]))
+
+        val_min = float('inf')
+
+        for i in range(9):
+            if 1 >= list_x[i][0] >= 0 and 1 >= list_x[i][1]>=0:
+                val_min = min(val_min,np.linalg.norm(A @ list_x[i] - b))
+
+        return val_min
+
+    @staticmethod
+    def _distance_surface(point, mesh_triangle, kd_tree):
+
+        PARAM_NO_KD_TREE = 30
+
+        _, ind = kd_tree.query(point,PARAM_NO_KD_TREE)
+        list_val = []
+        for i in range(PARAM_NO_KD_TREE):
+            list_val.append(Utils._dist_triangle_point(point,mesh_triangle[ind[i]]))
+
+        val_min = min(list_val)
+        return val_min
+
+        #sum_exp=0
+        #for i in range(PARAM_NO_KD_TREE):
+        #    sum_exp+= exp(-(list_val[i]-val_min)/(h*h))
+        #
+        #return val_min - h * h * log(sum_exp/PARAM_NO_KD_TREE)
+
+    @staticmethod
+    def generate_connectivity_info(mesh_triangle, h):
+
+        PARAM_NO_POINTS_GRAPH = 300
+        PARAM_PERCENTAGE = 0.01
+
+        #Compute the limits
+        n = len(mesh_triangle)
+
+        xmin = float('inf')
+        ymin = float('inf')
+        zmin = float('inf')
+        xmax = -float('inf')
+        ymax = -float('inf')
+        zmax = -float('inf')
+
+        triangle_center=[]
+
+        for i in range(n):
+            xmin = min(xmin,mesh_triangle[i][0,0],mesh_triangle[i][1,0],mesh_triangle[i][2,0])
+            xmax = max(xmax,mesh_triangle[i][0,0],mesh_triangle[i][1,0],mesh_triangle[i][2,0])
+            ymin = min(ymin,mesh_triangle[i][0,1],mesh_triangle[i][1,1],mesh_triangle[i][2,1])
+            ymax = max(ymax,mesh_triangle[i][0,1],mesh_triangle[i][1,1],mesh_triangle[i][2,1])
+            zmin = min(zmin,mesh_triangle[i][0,2],mesh_triangle[i][1,2],mesh_triangle[i][2,2])
+            zmax = max(zmax,mesh_triangle[i][0,2],mesh_triangle[i][1,2],mesh_triangle[i][2,2])
+            triangle_center.append( (mesh_triangle[i][0,:]+mesh_triangle[i][1,:]+mesh_triangle[i][2,:])/3)
+
+        kd_tree = KDTree(triangle_center)
+        dx = xmax - xmin
+        dy = ymax - ymin
+        dz = zmax - zmin
+        limits = [xmin-0.15*dx, xmax+0.15*dx, ymin-0.15*dy, ymax+0.15*dy, zmin-0.15*dz, zmax+0.15*dz ]
+
+        points_inside=[]
+        points_outside =[]
+
+        for i in range(2):
+            for j in range(2):
+                for k in range(2):
+                    points_outside.append(np.array([limits[i], limits[2+j], limits[4+k]]))
+
+        def gen_point():
+            x = np.random.uniform(limits[0], limits[1])
+            y = np.random.uniform(limits[2], limits[3])
+            z = np.random.uniform(limits[4], limits[5])
+            return np.array([x,y,z])
+
+
+        def eval_fun(point):
+            return Utils._distance_surface(point,mesh_triangle, kd_tree)
+
+        EPSILON_DIST = PARAM_PERCENTAGE * max(dx,dy,dz)
+
+        def line_is_free(point_1,point_2):
+            dist_1 = eval_fun(point_1)
+            if dist_1 <= EPSILON_DIST:
+                return False
+
+            dist_2 = eval_fun(point_2)
+            if dist_2 <= EPSILON_DIST:
+                return False
+
+            dist_points = np.linalg.norm(point_1 - point_2)
+            delta = (dist_1 - dist_2 + dist_points) / 2
+
+            if dist_points < 0.5*EPSILON_DIST:
+                return True
+
+            if dist_1 - delta > 2*EPSILON_DIST:
+                return True
+            else:
+                point_middle = (point_1+point_2)/2
+                return line_is_free(point_1,point_middle) and line_is_free(point_middle, point_2)
+
+
+
+        #Generate a list of points outside
+        while len(points_outside) < PARAM_NO_POINTS_GRAPH/2:
+            rand_point = gen_point()
+            rand_point_outside = points_outside[np.random.randint(0,len(points_outside))]
+            if line_is_free(rand_point,rand_point_outside):
+                points_outside.append(rand_point)
+                print(len(points_outside))
+
+        #Generate a single point inside
+        while len(points_inside)==0:
+            rand_point = gen_point()
+            if eval_fun(rand_point) >  EPSILON_DIST:
+                connected_with_outside = False
+                j = 0
+                while not connected_with_outside and (j < len(points_outside)):
+                    connected_with_outside = line_is_free(rand_point,points_outside[j])
+                    j+= 1
+
+                if not connected_with_outside:
+                    points_inside.append(rand_point)
+
+        print("Point inside found!")
+        #Generate other points inside
+        while len(points_inside) < PARAM_NO_POINTS_GRAPH/2:
+            rand_point = gen_point()
+            rand_point_inside = points_inside[np.random.randint(0,len(points_inside))]
+            if line_is_free(rand_point,rand_point_inside):
+                points_inside.append(rand_point)
+                print(len(points_inside))
+            else:
+                print("Failed!")
+
+
+
+
+
+        return kd_tree, limits, points_outside, points_inside
+
+
+
+    @staticmethod
+    def get_data_from_model(path):
+        type = path[path.rfind(".") + 1:len(path) + 1]
+
+        points = np.zeros((0,3))
+        triangle = []
+
+        if type=="obj":
+            mesh_data = py_obj.Wavefront(path,encoding="iso-8859-1",parse=False,create_materials=True,collect_faces=True)
+            mesh_data.parse()
+
+            n = len(mesh_data.vertices)
+            points = np.zeros((n, 3))
+            for i in range(n):
+                points[i, 0] = mesh_data.vertices[i][0]
+                points[i, 1] = mesh_data.vertices[i][1]
+                points[i, 2] = mesh_data.vertices[i][2]
+
+            for i in range(len(mesh_data.mesh_list)):
+                for j in range(len(mesh_data.mesh_list[i].faces)):
+                    i1 = mesh_data.mesh_list[i].faces[j][0]
+                    i2 = mesh_data.mesh_list[i].faces[j][1]
+                    i3 = mesh_data.mesh_list[i].faces[j][2]
+                    tri = np.block([ [points[i1,:]],  [points[i2,:]],  [points[i3,:]]])
+                    triangle.append(tri)
+
+        if type=="stl":
+
+            mesh_data = mesh.Mesh.from_file(path)
+            points = np.unique(mesh_data.vectors.reshape((int(mesh_data.vectors.size/3),3)), axis=0)
+            triangle = mesh_data.vectors
+
+        if type=="dae":
+
+            mesh_data = py_col.Collada(path)
+            for i in range(len(mesh_data.geometries)):
+                for j in range(len(mesh_data.geometries[i].primitives[0])):
+                    tri = mesh_data.geometries[i].primitives[0][j].vertices
+                    triangle.append(tri)
+                    points = np.block([[points],[tri]])
+
+            points = np.unique(points,axis=0)
+
+        return points, triangle
 
     #######################################
     # Type check functions
