@@ -11,6 +11,7 @@ import robot as rb
 from cvxopt import matrix, solvers
 from graphics.meshmaterial import *
 import sys
+import time
 
 
 def _control_demo_4():
@@ -120,6 +121,7 @@ def _control_demo_4():
             jac_r_dot = (jac_r_next - jac_r) / dt
 
             #Compute dist_vect, dist_vect_dot and the distance Jacobian
+
             dist_vect, jac_dist, struct = dist_computation(q, struct, h)
             dist_vect_next, jac_dist_next, struct = dist_computation(q + qdot * dt, struct, h)
 
@@ -138,6 +140,7 @@ def _control_demo_4():
 
 
             b = np.block([[b], [-xi * (qdot-qdot_min)], [xi * (qdot-qdot_max)]  ])
+
 
             #Solve the quadratic program
             try:

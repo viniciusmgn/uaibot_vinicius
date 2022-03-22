@@ -13,7 +13,60 @@ import sys
 
 
 class Simulation:
-    """A simulation variable."""
+    """
+  A simulation variable.
+
+  Parameters
+  ----------
+  obj_list : A list of objects that can be simulated (see Utils.IS_OBJ_SIM)
+      The objects that will be added initially to the simulation.
+      (default: empty list)
+
+  ambient_light_intensity : float
+      The intensity of the ambient light.
+      (default: 12).
+
+  ldr_urls : a list of six url strings or None
+      A list containing the LDR lightning images in the following order:
+      [positive_x, negative_x, positive_y, negative_y, positive_z, negative_z].
+      If None, no LDR is used.
+      (default: None).
+
+  camera_type : string
+      The camera type, either "orthographic" or "perspective".
+      (default: "perspective").
+
+  width : positive float
+      The canvas width, in pixels.
+      (default: 800).
+
+  height : positive float
+      The canvas height, in pixels.
+      (default: 600).
+
+  show_world_frame: boolean
+      If the frame in the middle of the scenario is shown.
+      (default: True).
+
+  show_grid : boolean
+      If the grid in the scenario is shown.
+      (default: True).
+
+  load_screen_color : string, a HTML-compatible color
+      The color of the loading screen.
+      (default: "#19bd39").
+
+  background_color : string, a HTML-compatible color
+      The color of the background.
+      (default: "white").
+
+  camera_start_pose: vector or list with 7 entries, or None
+      The camera starting configuration. The first three elements is the camera position (x,y,z).
+      The next three is a point in which the camera is looking at.
+      The final one is the camera zoom.
+      If None, uses a default configuration for the camera.
+      (default: None).
+  """
 
     _CAMERATYPE = ['perspective', 'orthographic']
     # Import the javascript code as a string
@@ -22,16 +75,22 @@ class Simulation:
     #_URL = "D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js"
 
     _STRJAVASCRIPT = "<html>\n"
+
+    _STRJAVASCRIPT += "<style>\n"
+    _STRJAVASCRIPT += ".controller:hover{opacity:1 !important;}\n"
+    _STRJAVASCRIPT += "</style>\n"
+
     _STRJAVASCRIPT += "<body>\n"
 
     _STRJAVASCRIPT += "<div id='canvas_container_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative'>\n"
     _STRJAVASCRIPT += "<div id='loading_screen_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative; " \
-                      "background-color: #19bd39;text-align:center;align-items:center;display:flex;justify-content:center'> \n "
+                      "background-color: ##LOADSCREENCOLOR##;text-align:center;align-items:center;display:flex;justify-content:center'> \n "
     _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/SVG" \
                       "/logo_uai_bot.svg' style='width:200px;height:114px'/>\n "
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "<canvas id='scene_##SIMID##' width='##WIDTH##px' height='##HEIGHT##px'></canvas>\n"
     _STRJAVASCRIPT += "<!-- USER DIVS GO HERE -->"
+    _STRJAVASCRIPT += "<div class = 'controller' style='width:##WIDTH##px;height:30px;'></div>\n"
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "\n <script type=\"module\">\n"
 
@@ -88,12 +147,34 @@ class Simulation:
         """If the world frame is shown"""
         return self._show_world_frame
 
+    @property
+    def show_grid(self):
+        """If the grid in the world is shown"""
+        return self._show_grid
+
+    @property
+    def load_screen_color(self):
+        """Loading screen color"""
+        return self._load_screen_color
+
+    @property
+    def background_color(self):
+        """Color of the background of the scenario"""
+        return self._background_color
+
+    @property
+    def camera_start_pose(self):
+        """The camera starting pose. The first three elements are the starting camera position, the next three ones
+        is the starting point in which the camera is looking at and the last one is the zoom"""
+        return self._camera_start_pose
+
     #######################################
     # Constructor
     #######################################
 
     def __init__(self, obj_list=[], ambient_light_intensity=12, ldr_urls=None, camera_type="perspective", width=800,
-                 height=600, show_world_frame = True):
+                 height=600, show_world_frame = True, show_grid = True, load_screen_color="#19bd39", background_color="white",
+                 camera_start_pose = None):
 
         if not Utils.is_a_number(ambient_light_intensity) or ambient_light_intensity < 0:
             raise Exception("The parameter 'ambient_light_intensity' should be a nonnegative float.")
@@ -111,6 +192,15 @@ class Simulation:
         if not str(type(show_world_frame)) == "<class 'bool'>":
             raise Exception("The parameter 'show_world_frame' must be a boolean.")
 
+        if not str(type(show_grid)) == "<class 'bool'>":
+            raise Exception("The parameter 'show_grid' must be a boolean.")
+
+        if not Utils.is_a_color(load_screen_color):
+            raise Exception("The parameter 'load_screen_color' must be a HTML-compatible color.")
+
+        if not Utils.is_a_color(background_color):
+            raise Exception("The parameter 'background_color' must be a HTML-compatible color.")
+
         if not (ldr_urls is None):
             if not (str(type(ldr_urls)) == "<class 'list'>") or not (len(ldr_urls) == 6):
                 raise Exception("The parameter 'ldr_urls' should be a list of six urls or 'None'.")
@@ -120,6 +210,15 @@ class Simulation:
                     if not (error == "ok!"):
                         raise Exception("The parameter 'url' " + error)
 
+        if camera_start_pose is None:
+            if camera_type=="perspective":
+                camera_start_pose = [1.76, 1.10, 1.45, 0, 0, 0, 1]
+            else:
+                camera_start_pose = [1.3, 1.8, 2.7, 0, 0, 0, 4]
+
+        if not Utils.is_a_vector(camera_start_pose,7):
+            raise Exception("The parameter 'camera_start_pose' should be either None or a 6 element vector.")
+
         self._list_of_objects = []
         self._list_of_names = []
         self._ambient_light_intensity = ambient_light_intensity
@@ -128,6 +227,10 @@ class Simulation:
         self._width = width
         self._height = height
         self._show_world_frame = show_world_frame
+        self._show_grid = show_grid
+        self._load_screen_color = load_screen_color
+        self._background_color = background_color
+        self._camera_start_pose = np.array(camera_start_pose).tolist()
 
         if str(type(obj_list)) == "<class 'list'>":
             for obj in obj_list:
@@ -146,7 +249,10 @@ class Simulation:
         string += str(self.list_of_names)
         string += " Width: "+str(self.width)+"px, Height: "+str(self.height)+"px\n"
         string += " Camera type: "+str(self.camera_type)+"\n"
-        string += " Ambient light intensity: "+str(self.ambient_light_intensity)
+        string += " Ambient light intensity: " + str(self.ambient_light_intensity) + "\n"
+        string += " Show world frame: " + str(self.show_world_frame) + "\n"
+        string += " Show grid: " + str(self.show_grid) + "\n"
+        string += " Background color: " + str(self.background_color) + "\n"
 
         return string
 
@@ -246,17 +352,66 @@ class Simulation:
 
         return sim
 
-    def set_size(self, width, height):
+    def set_parameters(self, ambient_light_intensity=12, ldr_urls=None, camera_type="perspective", width=800,
+                 height=600, show_world_frame = True, show_grid = True, load_screen_color="#19bd39", background_color="white",
+                 camera_start_pose = None):
         """
-    Change the size of the simulator canvas.
+      Change the simulation parameters.
 
-    Parameters
-    ----------
-    width : positive float
-        The canvas width in pixels.
-    height : positive float
-        The canvas height in pixels.
-    """
+      Parameters
+      ----------
+      ambient_light_intensity : float
+          The intensity of the ambient light.
+          (default: 12).
+
+      ldr_urls : a list of six url strings or None
+          A list containing the LDR lightning images in the following order:
+          [positive_x, negative_x, positive_y, negative_y, positive_z, negative_z].
+          If None, no LDR is used.
+          (default: None).
+
+      camera_type : string
+          The camera type, either "orthographic" or "perspective".
+          (default: "perspective").
+
+      width : positive float
+          The canvas width, in pixels.
+          (default: 800).
+
+      height : positive float
+          The canvas height, in pixels.
+          (default: 600).
+
+      show_world_frame: boolean
+          If the frame in the middle of the scenario is shown.
+          (default: True).
+
+      show_grid : boolean
+          If the grid in the scenario is shown.
+          (default: True).
+
+      load_screen_color : string, a HTML-compatible color
+          The color of the loading screen.
+          (default: "#19bd39").
+
+      background_color : string, a HTML-compatible color
+          The color of the background.
+          (default: "white").
+
+      camera_start_pose: vector or list with 7 entries, or None
+          The camera starting configuration. The first three elements is the camera position (x,y,z).
+          The next three is a point in which the camera is looking at.
+          The final one is the camera zoom.
+          If None, uses a default configuration for the camera.
+          (default: None).
+      """
+
+        if not Utils.is_a_number(ambient_light_intensity) or ambient_light_intensity < 0:
+            raise Exception("The parameter 'ambient_light_intensity' should be a nonnegative float.")
+
+        if not (camera_type in Simulation._CAMERATYPE):
+            raise Exception("The parameter 'camera_type' must be one of the following strings: " + str(
+                Simulation._CAMERATYPE) + ".")
 
         if not Utils.is_a_number(width) or width <= 0:
             raise Exception("The parameter 'width' must be a positive float.")
@@ -264,8 +419,46 @@ class Simulation:
         if not Utils.is_a_number(height) or height <= 0:
             raise Exception("The parameter 'height' must be a positive float.")
 
+        if not str(type(show_world_frame)) == "<class 'bool'>":
+            raise Exception("The parameter 'show_world_frame' must be a boolean.")
+
+        if not str(type(show_grid)) == "<class 'bool'>":
+            raise Exception("The parameter 'show_grid' must be a boolean.")
+
+        if not Utils.is_a_color(load_screen_color):
+            raise Exception("The parameter 'load_screen_color' must be a HTML-compatible color.")
+
+        if not Utils.is_a_color(background_color):
+            raise Exception("The parameter 'background_color' must be a HTML-compatible color.")
+
+        if not (ldr_urls is None):
+            if not (str(type(ldr_urls)) == "<class 'list'>") or not (len(ldr_urls) == 6):
+                raise Exception("The parameter 'ldr_urls' should be a list of six urls or 'None'.")
+            else:
+                for url in ldr_urls:
+                    error = Utils.is_url_available(url, ['png', 'bmp', 'jpg', 'jpeg'])
+                    if not (error == "ok!"):
+                        raise Exception("The parameter 'url' " + error)
+
+        if camera_start_pose is None:
+            if camera_type=="perspective":
+                camera_start_pose = [1.76, 1.10, 1.45, 0, 0, 0, 1]
+            else:
+                camera_start_pose = [1.3, 1.8, 2.7, 0, 0, 0, 4]
+
+        if not Utils.is_a_vector(camera_start_pose,7):
+            raise Exception("The parameter 'camera_start_pose' should be either None or a 6 element vector.")
+
+        self._ambient_light_intensity = ambient_light_intensity
+        self._camera_type = camera_type
+        self._ldr_urls = self._ldr_urls if (ldr_urls is None) else ldr_urls
         self._width = width
         self._height = height
+        self._show_world_frame = show_world_frame
+        self._show_grid = show_grid
+        self._load_screen_color = load_screen_color
+        self._background_color = background_color
+        self._camera_start_pose = np.array(camera_start_pose).tolist()
 
     def gen_code(self):
         """Generate code for injection."""
@@ -277,15 +470,6 @@ class Simulation:
                 string = re.sub("<!-- USER DIVS GO HERE -->",
                                 "<div id='" + obj.name + "'></div>\n <!-- USER DIVS GO HERE -->",
                                 string)
-
-        string = re.sub("//USER INPUT GOES HERE",
-                        "ambientLight.intensity = " + str(self.ambient_light_intensity) + ";\n //USER INPUT GOES HERE",
-                        string)
-
-        string = re.sub("//USER INPUT GOES HERE",
-                        "const ldrUrls = " + (
-                            str(self.ldr_urls) if not (self.ldr_urls is None) else "[]") + ";\n //USER INPUT GOES HERE",
-                        string)
 
         string = re.sub("//SIMULATION PARAMETERS GO HERE", "const delay = 500; \n //SIMULATION PARAMETERS GO HERE",
                         string)
@@ -309,11 +493,28 @@ class Simulation:
         string = re.sub("//SIMULATION PARAMETERS GO HERE",
                         "const showWorldFrame="+("true" if self.show_world_frame else "false")+"; \n //SIMULATION PARAMETERS GO HERE",
                         string)
-
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const showGrid="+("true" if self.show_grid else "false")+"; \n //SIMULATION PARAMETERS GO HERE",
+                        string)
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const backgroundColor='"+self.background_color+"'; \n //SIMULATION PARAMETERS GO HERE",
+                        string)
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const ambientLightIntensity = " + str(self.ambient_light_intensity) + ";\n //SIMULATION PARAMETERS GO HERE",
+                        string)
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const ldrUrls = " + (
+                            str(self.ldr_urls) if not (self.ldr_urls is None) else "[]") + ";\n //SIMULATION PARAMETERS GO HERE",
+                        string)
+        string = re.sub("//SIMULATION PARAMETERS GO HERE",
+                        "const cameraStartPose = "+str(self.camera_start_pose)+";\n //SIMULATION PARAMETERS GO HERE",
+                        string)
         string = re.sub("##WIDTH##", str(self.width), string)
         string = re.sub("##HEIGHT##", str(self.height), string)
         string = re.sub("##HEIGHTLOGO##", str(round(0.57*self.width)), string)
+        string = re.sub("##LOADSCREENCOLOR##", self.load_screen_color, string)
         string = re.sub("##SIMID##", sim_id, string)
+
 
         return string
 
@@ -323,10 +524,30 @@ class Simulation:
         display(HTML(self.gen_code()))
 
     def save(self, address, file_name):
+        """
+    Save the simulation as a self-contained HTML file.
 
-        file = open(address + "/" + file_name + ".html", "w+")
-        file.write(self.gen_code())
-        file.close()
+    Parameters
+    ----------
+    address : string
+        The address of the path (example "D:\\").
+    file_name: string
+        The name of the file ("the .html" extension should not appear)
+
+    """
+        if not (str(type(address)) == "<class 'str'>"):
+            raise Exception(
+                "The parameter 'address' should be a string.")
+        if not (str(type(file_name)) == "<class 'str'>"):
+            raise Exception(
+                "The parameter 'file_name' should be a string.")
+
+        try:
+            file = open(address + "/" + file_name + ".html", "w+")
+            file.write(self.gen_code())
+            file.close()
+        except:
+            raise Exception("Could not open the path '"+address+"' and create the file '"+file_name+".html'.")
 
     def add(self, obj_sim):
         """

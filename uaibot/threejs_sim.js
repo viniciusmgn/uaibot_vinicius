@@ -478,23 +478,23 @@ Object3D.DefaultUp = new Vector3(0,0,1); //Pointing Z axis up
 const canvas = document.getElementById('scene_'+sceneID);// Selecting canvas
 
 const scene = new Scene();//Instantiate the Scene
-scene.background = new Color('white');//Set background color
+scene.background = new Color(backgroundColor);//Set background color
 
 let camera;
 
 if (cameraType == "perspective") {
 	camera = new PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 100);//Instantiate a camera
-	camera.position.set(1.76, 1.10, 1.45);
 }
 if (cameraType == "orthographic") {
 	camera = new OrthographicCamera(-3.2, 3.2, 2.4, -2.4, 0.01, 100);
-	camera.position.set(2, 2, 2);
-	camera.lookAt(0, 0, 0);
 }
-
-
+	camera.position.set(cameraStartPose[0], cameraStartPose[1], cameraStartPose[2]);
+	camera.lookAt(cameraStartPose[3], cameraStartPose[4], cameraStartPose[5]);
+	camera.zoom = cameraStartPose[6];
+	camera.updateProjectionMatrix();
 
 var ambientLight = new HemisphereLight('white','darkslategrey', 3);//Instantiate Ambient light
+ambientLight.intensity = ambientLightIntensity;
 scene.add(ambientLight);
 
 const controls = new OrbitControls(camera, canvas);	//Instantiate orbit controls
@@ -513,10 +513,12 @@ if (showWorldFrame) {
 	scene.add(axesHelper);
 }
 
+if (showGrid) {
+	const gridHelper = new GridHelper(3, 6);
+	scene.add(gridHelper);
+	gridHelper.rotation.x = 3.14 / 2;
+}
 
-const gridHelper = new GridHelper( 3, 6);
-scene.add( gridHelper );
-gridHelper.rotation.x = 3.14/2;
 
 
 
@@ -626,7 +628,8 @@ var startMs =  elapsedMs()
 var heightScene;
 var heightBar;
 
-
+document.getElementsByClassName('controller')[0].appendChild(customContainer.getElementsByClassName('dg main')[0])
+document.getElementsByClassName('controller')[0].style.opacity="0"
 
 heightScene = document.getElementById('scene_'+sceneID).style.height;
 document.getElementById('scene_'+sceneID).style.visibility='hidden';
@@ -704,7 +707,8 @@ renderer.setAnimationLoop(() => {
 		}
 	}
 
-	//console.log(camera.position)
+	console.log(camera.position)
+	console.log(camera.zoom)
 	renderer.render(scene, camera);
 });
 //------------------------------------------------------------

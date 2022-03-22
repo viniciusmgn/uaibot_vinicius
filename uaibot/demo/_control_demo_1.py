@@ -22,6 +22,7 @@ def _control_demo_1():
 
     sim = Simulation.create_sim_factory([robot, board])
 
+
     # Create curve
     theta = np.linspace(0, 2 * np.pi, num=300)
     curve = []
