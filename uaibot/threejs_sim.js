@@ -589,9 +589,9 @@ customContainer.getElementsByClassName('slider-fg')[0].style.backgroundColor = '
 customContainer.querySelectorAll("input[type=text]")[0].style.width = '50px';
 customContainer.querySelectorAll("input[type=text]")[0].style.color = '#19bd39';
 
-customContainer.getElementsByClassName('dg')[0].style.borderLeft = '4px solid black'
-customContainer.getElementsByClassName('cr')[0].style.borderLeft = '4px solid black'
-customContainer.getElementsByClassName('number')[0].style.borderLeft = '4px solid black'
+customContainer.getElementsByClassName('dg')[0].style.borderLeft = '4px solid #1a1a1a'
+customContainer.getElementsByClassName('cr')[0].style.borderLeft = '4px solid #1a1a1a'
+customContainer.getElementsByClassName('number')[0].style.borderLeft = '4px solid #1a1a1a'
 var recoveryCurrentTime = false;
 
 let btn = document.createElement("button");
