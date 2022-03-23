@@ -488,17 +488,20 @@ if (cameraType == "perspective") {
 if (cameraType == "orthographic") {
 	camera = new OrthographicCamera(-3.2, 3.2, 2.4, -2.4, 0.01, 100);
 }
-	camera.position.set(cameraStartPose[0], cameraStartPose[1], cameraStartPose[2]);
-	camera.lookAt(cameraStartPose[3], cameraStartPose[4], cameraStartPose[5]);
-	camera.zoom = cameraStartPose[6];
-	camera.updateProjectionMatrix();
+
+
 
 var ambientLight = new HemisphereLight('white','darkslategrey', 3);//Instantiate Ambient light
 ambientLight.intensity = ambientLightIntensity;
 scene.add(ambientLight);
 
 const controls = new OrbitControls(camera, canvas);	//Instantiate orbit controls
-controls.target.set(0, 0, 0);//Point camera at the origin
+//controls.target.set(0, 0, 0);//Point camera at the origin
+
+camera.position.set(cameraStartPose[0], cameraStartPose[1], cameraStartPose[2]);
+camera.rotation.set(cameraStartPose[3], cameraStartPose[4], cameraStartPose[5]);
+camera.zoom = cameraStartPose[6];
+camera.updateProjectionMatrix();
 
 const renderer = new WebGLRenderer({canvas, antialias: true});//Instantiate renderer
 renderer.physicallyCorrectLights = true;//Enable physically Correct Lights
@@ -586,6 +589,9 @@ customContainer.getElementsByClassName('slider-fg')[0].style.backgroundColor = '
 customContainer.querySelectorAll("input[type=text]")[0].style.width = '50px';
 customContainer.querySelectorAll("input[type=text]")[0].style.color = '#19bd39';
 
+customContainer.getElementsByClassName('dg')[0].style.borderLeft = '4px solid black'
+customContainer.getElementsByClassName('cr')[0].style.borderLeft = '4px solid black'
+customContainer.getElementsByClassName('number')[0].style.borderLeft = '4px solid black'
 var recoveryCurrentTime = false;
 
 let btn = document.createElement("button");
@@ -707,8 +713,6 @@ renderer.setAnimationLoop(() => {
 		}
 	}
 
-	console.log(camera.position)
-	console.log(camera.zoom)
 	renderer.render(scene, camera);
 });
 //------------------------------------------------------------

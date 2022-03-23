@@ -212,9 +212,9 @@ class Simulation:
 
         if camera_start_pose is None:
             if camera_type=="perspective":
-                camera_start_pose = [1.76, 1.10, 1.45, 0, 0, 0, 1]
+                camera_start_pose = [1.76, 1.10, 1.45, -0.64, 0.76, 2.39, 1]
             else:
-                camera_start_pose = [1.3, 1.8, 2.7, 0, 0, 0, 4]
+                camera_start_pose = [1.3, 1.8, 2.7, -0.58, 0.38, 2.63, 4]
 
         if not Utils.is_a_vector(camera_start_pose,7):
             raise Exception("The parameter 'camera_start_pose' should be either None or a 6 element vector.")

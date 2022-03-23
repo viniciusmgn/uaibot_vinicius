@@ -84,7 +84,7 @@ def _create_abb_crb(htm, name, color, opacity):
         [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_5.stl',
                  scale,
                  Utils.trn([-0.08, 0, 0]) @ Utils.rotz(3.14 / 2) @ Utils.roty(-3.14 / 2) @ Utils.rotx(3.14 / 2),
-                 MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="white",
+                 MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                               opacity=opacity))]
     )
 

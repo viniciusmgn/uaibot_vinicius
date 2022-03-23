@@ -4,13 +4,14 @@ import numpy as np
 
 # Add config to animation queue
 def _add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits=False):
+
+    n = len(self.links)
+
     if q is None:
         q = self.q
 
     if htm is None:
         htm = self.htm
-
-    n = len(self.links)
 
     # Error handling
     if not Utils.is_a_vector(q, n):
@@ -32,15 +33,10 @@ def _add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits=False):
         for i in range(len(self.links)):
             self._q[i,0] = min(max(self._q[i,0],self.joint_limit[i,0]),self.joint_limit[i,1])
 
-    f = [time, np.round(htm[0][0],6), np.round(htm[0][1],6), np.round(htm[0][2],6), np.round(htm[0][3],6),
-         np.round(htm[1][0],6), np.round(htm[1][1],6), np.round(htm[1][2],6), np.round(htm[1][3],6),
-         np.round(htm[2][0],6), np.round(htm[2][1],6), np.round(htm[2][2],6), np.round(htm[2][3],6),
-         0, 0, 0, 1, np.ndarray.tolist(np.round(np.array(self._q),6))]
-
     f = [time, htm[0][0], htm[0][1], htm[0][2], htm[0][3],
          htm[1][0], htm[1][1], htm[1][2], htm[1][3],
          htm[2][0], htm[2][1], htm[2][2], htm[2][3],
-         0, 0, 0, 1, np.ndarray.tolist(np.array(self._q))]
+         0, 0, 0, 1, np.array(q).reshape((n,)).tolist()]
 
     self._htm = htm
     self._frames.append(f)
