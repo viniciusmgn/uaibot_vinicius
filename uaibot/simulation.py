@@ -94,10 +94,10 @@ class Simulation:
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "\n <script type=\"module\">\n"
 
-    #_STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
+    _STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
 
-    for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
-        _STRJAVASCRIPT += line
+    #for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
+    #    _STRJAVASCRIPT += line
 
     _STRJAVASCRIPT += "\n </script>"
     _STRJAVASCRIPT += "\n </body>"
