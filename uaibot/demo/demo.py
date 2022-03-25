@@ -7,7 +7,6 @@ sys.path.append(parentdir)
 from ._control_demo_1 import _control_demo_1
 from ._control_demo_2 import _control_demo_2
 from ._control_demo_3 import _control_demo_3
-from ._control_demo_4 import _control_demo_4
 
 
 from ._lesson_demo_3 import _lesson_demo_3
@@ -46,23 +45,12 @@ class Demo:
     @staticmethod
     def control_demo_3():
         """
-    Show a robot manipulator that must achieve a pose while avoiding an
-    obstacle.
-
-    Perform second order kinematic control with constraints that enforce
-    collision avoidance.
-    """
-        return _control_demo_3()
-
-    @staticmethod
-    def control_demo_4():
-        """
     Show a robot manipulator that must achieve a pose inside a hole. Collision must be avoided.
 
     Perform second order kinematic control with constraints that enforce
     collision avoidance.
     """
-        return _control_demo_4()
+        return _control_demo_3()
 
     @staticmethod
     def lesson_demo_3(robot_creator=None, width=800, height=600):

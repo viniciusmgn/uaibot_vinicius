@@ -11,150 +11,179 @@ import robot as rb
 from cvxopt import matrix, solvers
 from graphics.meshmaterial import *
 import sys
+import time
 
 
 def _control_demo_3():
     solvers.options['show_progress'] = False
+    np.set_printoptions(precision=4, suppress=True, linewidth=150)
 
-    # Create obstacle object and robots
+    robot = rb.Robot.create_kuka_lbr_iiwa()
 
-    # Create simulation and add objects to the scene
-    robot = rb.Robot.create_kuka_kr5(np.identity(4), "robot")
-    mesh_obstacle = MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="green")
-    obstacle = Box(htm=Utils.trn([0.09, 0.5, 0.6]), name='obstacle', width=0.14, height=0.14, depth=0.14,
-                   mesh_material=mesh_obstacle)
+    texture_wall = Texture(
+        url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/rough_metal.jpg',
+        wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[4, 4])
 
+    material_wall = MeshMaterial(texture_map=texture_wall, roughness=1, metalness=1)
 
-    desired_eef_frame = Frame(axis_color=["darkred", "green", "darkblue"], size=0.33)
+    wall1 = Box(name="wall1", htm=Utils.trn([0.3, -0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
+                mesh_material=material_wall)
+    wall2 = Box(name="wall2", htm=Utils.trn([0.3, 0.5, 0.7]), width=0.05, depth=0.6, height=1.4,
+                mesh_material=material_wall)
+    wall3 = Box(name="wall3", htm=Utils.trn([0.3, 0, 0.25]), width=0.05, depth=0.4, height=0.5,
+                mesh_material=material_wall)
+    wall4 = Box(name="wall4", htm=Utils.trn([0.3, 0, 1.15]), width=0.05, depth=0.4, height=0.5,
+                mesh_material=material_wall)
 
-    sim = Simulation.create_sim_factory([robot, obstacle, desired_eef_frame])
+    def evaluate_error(r):
+        error_pos = max(abs(r[0:3]))
+        error_ori = (180 / np.pi) * max(abs(np.arccos(1 - r[3:6])))
+        ok1 = error_pos < 0.005
+        ok2 = error_ori < 5 if len(r.tolist()) > 3 else True
 
-    # Starting pose for the end-effector
-    htm0 = Utils.trn([-0.2, 0, -0.2]) @ robot.fkm()
+        return ok1 and ok2, error_pos, error_ori
 
-    # Use inverse kinematics to set the robot to the starting pose
-    q = robot.ikm(htm0, q0=robot.q)
-    robot.add_ani_frame(0, q)
+    def dist_computation(q, old_struct, h):
+        dist_wall_1 = robot.compute_dist(obj=wall1, q=q, h=h, g=h, old_dist_struct=old_struct[0])
+        dist_wall_2 = robot.compute_dist(obj=wall2, q=q, h=h, g=h, old_dist_struct=old_struct[1])
+        dist_wall_3 = robot.compute_dist(obj=wall3, q=q, h=h, g=h, old_dist_struct=old_struct[2])
+        dist_wall_4 = robot.compute_dist(obj=wall4, q=q, h=h, g=h, old_dist_struct=old_struct[3])
 
-    # Set desired pose
-    htm_des = Utils.trn([0.5, 0, 0]) @ robot.fkm()
-    desired_eef_frame.set_ani_frame(htm_des)
+        struct = [dist_wall_1, dist_wall_2, dist_wall_3, dist_wall_4]
 
-    # Simulation parameters
-    time_max = 16  # 20
-    dt = 0.01
-    alpha = 1.5  # 3
-    gamma = 0.1  # 0.5 0.3 0.1
+        jac_dist = np.block(
+            [[dist_wall_1.jac_dist_mat], [dist_wall_2.jac_dist_mat], [dist_wall_3.jac_dist_mat],
+             [dist_wall_4.jac_dist_mat]])
+        dist_vect = np.block(
+            [[dist_wall_1.dist_vect], [dist_wall_2.dist_vect], [dist_wall_3.dist_vect], [dist_wall_4.dist_vect]])
+
+        return dist_vect, jac_dist, struct
+
+    # Target pose definition
+    pose_tg = []
+    pose_tg.append(Utils.trn([0.5, -0.3, 0.7]) @ Utils.rotx(3.14 / 2))
+    pose_tg.append(Utils.trn([0.5, 0, 0.7]) @ Utils.roty(3.14 / 2))
+    pose_tg.append(robot.fkm(axis="eef"))
+
+    # Create simulation
+    sim = Simulation.create_sim_factory([robot, wall1, wall2, wall3, wall4])
+
+    for k in range(len(pose_tg)):
+        sim.add(Frame(name="pose_tg_" + str(k), htm=pose_tg[k]))
+
+    # Parameters
+    dt = 0.03
+    alpha = 2
     beta = 0.005
-    h = 0.05  # 0.05
-    qddotmax = 5
+    gamma = 0.5
+    sigma = 0.5
+    dist_safe = 0.2
+    qdot_max = (np.pi / 180) * np.array([[85], [85], [100], [75], [130], [135], [135]])
+    qdot_min = -qdot_max
+    xi = 0.5
+    h = 0.05
+    q = robot.q
+    qdot = np.zeros((7, 1))
 
     # Initializations
+    struct = [None, None, None, None]
+
+    i = 0
+    imax = round(47.4/dt)
+
     hist_dist = []
     hist_time = []
     hist_r = []
     hist_qddot = []
     hist_qdot = []
     hist_q = []
-    hp = []
-    dist_struct = None
-    imax = round(time_max / dt)
+    hist_V = []
 
-    qdot = np.zeros((6,1))
-    end_loop = False
-    i = 0
+    error_qp = False
+    iteration_end = False
 
-    # Main loop
-    while (not end_loop) and (i < imax):
+    #Main loop
+    for k in range(len(pose_tg)):
+        converged = False
+        while not converged and not error_qp and not iteration_end:
 
-        if i % 50 == 0 or i == imax - 1:
-            sys.stdout.write('\r')
-            sys.stdout.write("[%-20s] %d%%" % ('=' * round(20 * i / (imax - 1)), round(100 * i / (imax - 1))))
-            sys.stdout.flush()
+            #This is just for showing progress when the simulation is run
+            if i % 50 == 0 or i == imax - 1:
+                sys.stdout.write('\r')
+                sys.stdout.write("[%-20s] %d%%" % ('=' * round(20 * i / (imax - 1)), round(100 * i / (imax - 1))))
+                sys.stdout.flush()
 
-        # Compute the task function and task jacobian
-        r, jac_r = robot.task_function(htm_des, np.array(q))
-        # r[3:6] = np.sqrt(r[3:6])
+            #Compute r and r_dot
+            [r, jac_r] = robot.task_function(pose_tg[k], q=q)
+            [r_next, jac_r_next] = robot.task_function(pose_tg[k], q=q + qdot * dt)
 
-        # Compute the task function and task jacobian in the next configuration
-        r_next, jac_r_next = robot.task_function(htm_des, np.array(q + qdot * dt))
-        # r_next[3:6] = np.sqrt(r_next[3:6])
+            r_dot = (r_next - r) / dt
+            jac_r_dot = (jac_r_next - jac_r) / dt
 
-        # Compute the time derivative of the jacobian and task function
-        r_dot = (r_next - r) / dt
-        jac_r_dot = (jac_r_next - jac_r) / dt
+            #Compute dist_vect, dist_vect_dot and the distance Jacobian
 
-        # Create the h distance struct data
-        dist_struct = robot.compute_dist(obstacle, h, h, np.array(q), old_dist_struct=dist_struct)
-        dist_struct_next = robot.compute_dist(obstacle, h, h, np.array(q + qdot * dt), old_dist_struct=dist_struct)
+            dist_vect, jac_dist, struct = dist_computation(q, struct, h)
+            dist_vect_next, jac_dist_next, struct = dist_computation(q + qdot * dt, struct, h)
 
-        jac_dist = dist_struct.jac_dist_mat
-        jac_dist_next = dist_struct_next.jac_dist_mat
+            dist_vect_dot = (dist_vect_next - dist_vect) / dt
+            jac_dist_dot = (jac_dist_next - jac_dist) / dt
 
-        dist_vect = dist_struct.dist_vect
-        dist_vect_next = dist_struct_next.dist_vect
+            #Create the quadratic program parameters
+            A = jac_dist
+            b = -jac_dist_dot @ qdot -2 * gamma * dist_vect_dot - (gamma ** 2) * (dist_vect - dist_safe)
+            H = 2 * (np.transpose(jac_r) @ jac_r) + 2 * beta * np.identity(7)
+            f = 2 * np.transpose(jac_r) @ (
+                    jac_r_dot @ qdot + 2 * alpha * r_dot + (alpha ** 2) * r) + 2 * beta * sigma * qdot
 
-        jac_dist_dot = (jac_dist_next - jac_dist) / dt
-        dist_vect_dot = (dist_vect_next - dist_vect) / dt
+            A = np.block([[A], [np.identity(7)]])
+            A = np.block([[A], [-np.identity(7)]])
 
-        # Create the true distance struct data
-        true_dist_struct = robot.compute_dist(obstacle, 0.0001, 0.0001, np.array(q), old_dist_struct=dist_struct)
 
-        # Create the optimization problem and solve it for the joint acceleration
-        a_hat = -Utils.dp_inv(jac_r, 0.001) @ (jac_r_dot @ qdot + alpha * r_dot)
+            b = np.block([[b], [-xi * (qdot-qdot_min)], [xi * (qdot-qdot_max)]  ])
 
-        H = 2 * (np.transpose(jac_r) @ jac_r) + 2 * beta * np.identity(6)
-        f = 2 * np.transpose(jac_r) @ (jac_r_dot @ qdot + 2 * alpha * r_dot + alpha * alpha * r) - 2 * beta * a_hat
-        A = jac_dist
-        b = -jac_dist_dot @ qdot - 2 * gamma * dist_vect_dot - gamma * gamma * dist_vect
 
-        A = A[4, :]
-        b = b[4, :]
+            #Solve the quadratic program
+            try:
+                qddot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
+            except:
+                qddot = np.zeros((7, 1))
+                error_qp = True
 
-        A = np.vstack((A, np.identity(6)))
-        A = np.vstack((A, -np.identity(6)))
+            qddot = np.reshape(qddot, (7, 1))
 
-        m = np.shape(b)[0]
+            #First order explicit Euler simulation
+            q += qdot * dt
+            qdot += qddot * dt
 
-        b = np.vstack((b.reshape((m, 1)), -qddotmax * np.ones((6, 1))))
-        b = np.vstack((b.reshape((m + 6, 1)), -qddotmax * np.ones((6, 1))))
-
-        try:
-            # u = quadprog.solve_qp(H, -f, np.transpose(A), b.reshape(m + 12, ))[0]
-            qddot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b.reshape(m + 12, )))['x']
-            qddot = np.reshape(qddot, (6,1))
-
-            # Integrate the joint acceleration
-            q = q + qdot * dt
-            qdot = qdot + qddot * dt
+            #Add animation to simulation
             robot.add_ani_frame(i * dt, q)
 
+            #Store data for showing the graphs later
+            dist_vect, _, _ = dist_computation(q, struct, 0.000001)
 
-            # Record data for later plotting
-            hist_dist.append(true_dist_struct[4].distance)
-            hist_time.append((i - 1) * dt)
-            hist_r.append(r.reshape((6,)))
-            hist_q.append(q.reshape((6,)))
-            hist_qdot.append(qdot.reshape((6,)))
-            hist_qddot.append(qddot.reshape((6,)))
-            hp.append(dist_struct[4].point_object)
+            hist_time.append(i * dt)
+            hist_dist.append(np.amin(dist_vect))
+            hist_r.append(np.array(r.reshape((6,))))
+            hist_q.append(np.array(q.reshape((7,))))
+            hist_qdot.append(np.array(qdot.reshape((7,))))
+            hist_qddot.append(np.array(qddot.reshape((7,))))
+            hist_V.append(alpha * (np.linalg.norm(r_dot + alpha * r) ** 2) + sigma * beta * (np.linalg.norm(qdot) ** 2))
 
-            #print("time = "+str((i-1)*dt)+", q="+str(q.tolist()))
+            #Continue the loop, check if converged
+            i += 1
+            converged, error_pos, error_ori = evaluate_error(r)
 
-        except:
-            end_loop = True
-
-        i += 1
+            #iteration_end  = i>500
 
     # Run simulation
     sim.run()
 
     # Plot graphs
-
     Utils.plot(hist_time, hist_dist, "", "Time (s)", "True distance (m)", "dist")
     Utils.plot(hist_time, np.transpose(hist_q), "", "Time (s)", "Joint configuration (rad)", "q")
     Utils.plot(hist_time, np.transpose(hist_qdot), "", "Time (s)", "Joint speed (rad/s)", "qdot")
     Utils.plot(hist_time, np.transpose(hist_qddot), "", "Time (s)", "Joint acceleration (rad/s²)", "u")
+    Utils.plot(hist_time, hist_V, "", "Time (s)", "Lyapunov function", "V")
     fig = Utils.plot(hist_time, np.transpose(hist_r), "", "Time (s)", "Task function",
                      ["posx", "posy", "posz", "orix", "oriy", "oriz"])
 

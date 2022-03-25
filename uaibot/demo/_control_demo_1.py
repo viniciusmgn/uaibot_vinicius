@@ -13,21 +13,22 @@ import sys
 
 def _control_demo_1():
     # Create simulation and add objects to the scene
-    robot = rb.Robot.create_kuka_lbr_iiwa(np.identity(4), "robo")
+    robot = rb.Robot.create_abb_crb(Utils.trn([-0.2,0,0.3]), "robo")
     n = len(robot.links)
 
     mesh_board = MeshMaterial(roughness=1, metalness=0.9)
     board = Box(htm=Utils.trn([0.6, 0, 0.5]), width=0.05, depth=0.9, height=0.8, color="white",
                 mesh_material=mesh_board)
-
-    sim = Simulation.create_sim_factory([robot, board])
+    material_box = MeshMaterial(color="#242526", roughness=1, metalness=1)
+    base = Cylinder(htm=Utils.trn([-0.2, 0, 0.15]), radius=0.1, height=0.3, mesh_material = material_box)
+    sim = Simulation.create_sim_factory([robot, board, base])
 
 
     # Create curve
     theta = np.linspace(0, 2 * np.pi, num=300)
     curve = []
     for t in theta:
-        curve.append([0.575, 0.2 * cos(t), 0.2 * sin(t) + 0.5])
+        curve.append([0.56, 0.2 * cos(t), 0.2 * sin(t) + 0.5])
 
     # Create vector field
     vf = rb.Robot.vector_field(curve, 10, 0.3)

@@ -352,8 +352,8 @@ class Simulation:
 
         return sim
 
-    def set_parameters(self, ambient_light_intensity=12, ldr_urls=None, camera_type="perspective", width=800,
-                 height=600, show_world_frame = True, show_grid = True, load_screen_color="#19bd39", background_color="white",
+    def set_parameters(self, ambient_light_intensity=None, ldr_urls=None, camera_type=None, width=None,
+                 height=None, show_world_frame = None, show_grid = None, load_screen_color=None, background_color=None,
                  camera_start_pose = None):
         """
       Change the simulation parameters.
@@ -362,73 +362,81 @@ class Simulation:
       ----------
       ambient_light_intensity : float
           The intensity of the ambient light.
-          (default: 12).
+          If None, does not change the current value.
+          (default: None).
 
       ldr_urls : a list of six url strings or None
           A list containing the LDR lightning images in the following order:
           [positive_x, negative_x, positive_y, negative_y, positive_z, negative_z].
-          If None, no LDR is used.
+          If None, does not change the current value.
           (default: None).
 
       camera_type : string
           The camera type, either "orthographic" or "perspective".
-          (default: "perspective").
+          If None, does not change the current value.
+          (default: None).
 
       width : positive float
           The canvas width, in pixels.
-          (default: 800).
+          If None, does not change the current value.
+          (default: None).
 
       height : positive float
           The canvas height, in pixels.
-          (default: 600).
+          If None, does not change the current value.
+          (default: None).
 
       show_world_frame: boolean
           If the frame in the middle of the scenario is shown.
-          (default: True).
+          If None, does not change the current value.
+          (default: None).
 
       show_grid : boolean
           If the grid in the scenario is shown.
-          (default: True).
+          If None, does not change the current value.
+          (default: None).
 
       load_screen_color : string, a HTML-compatible color
           The color of the loading screen.
-          (default: "#19bd39").
+          If None, does not change the current value.
+          (default: None).
 
       background_color : string, a HTML-compatible color
           The color of the background.
-          (default: "white").
+          If None, does not change the current value.
+          (default: None).
 
       camera_start_pose: vector or list with 7 entries, or None
           The camera starting configuration. The first three elements is the camera position (x,y,z).
           The next three is a point in which the camera is looking at.
           The final one is the camera zoom.
-          If None, uses a default configuration for the camera.
+          If None, does not change the current value.
           (default: None).
       """
 
-        if not Utils.is_a_number(ambient_light_intensity) or ambient_light_intensity < 0:
+        if (not ambient_light_intensity is None) and (not Utils.is_a_number(ambient_light_intensity) or ambient_light_intensity < 0):
             raise Exception("The parameter 'ambient_light_intensity' should be a nonnegative float.")
 
-        if not (camera_type in Simulation._CAMERATYPE):
+        if (not camera_type is None) and  (not (camera_type in Simulation._CAMERATYPE) or (not ambient_light_intensity is None)):
             raise Exception("The parameter 'camera_type' must be one of the following strings: " + str(
                 Simulation._CAMERATYPE) + ".")
 
-        if not Utils.is_a_number(width) or width <= 0:
+        if (not width is None) and  (not Utils.is_a_number(width) or width <= 0):
             raise Exception("The parameter 'width' must be a positive float.")
 
-        if not Utils.is_a_number(height) or height <= 0:
+        if (not height is None) and  (not Utils.is_a_number(height) or height <= 0):
             raise Exception("The parameter 'height' must be a positive float.")
 
-        if not str(type(show_world_frame)) == "<class 'bool'>":
+        if (not show_world_frame is None) and (not str(type(show_world_frame)) == "<class 'bool'>"):
             raise Exception("The parameter 'show_world_frame' must be a boolean.")
 
-        if not str(type(show_grid)) == "<class 'bool'>":
+        if (not show_grid is None) and (not str(type(show_grid)) == "<class 'bool'>"):
             raise Exception("The parameter 'show_grid' must be a boolean.")
 
-        if not Utils.is_a_color(load_screen_color):
+        if (not load_screen_color is None) and (not Utils.is_a_color(load_screen_color)):
             raise Exception("The parameter 'load_screen_color' must be a HTML-compatible color.")
 
-        if not Utils.is_a_color(background_color):
+        if (not background_color is None) and  (not Utils.is_a_color(background_color)):
             raise Exception("The parameter 'background_color' must be a HTML-compatible color.")
 
         if not (ldr_urls is None):
@@ -440,25 +448,39 @@ class Simulation:
                     if not (error == "ok!"):
                         raise Exception("The parameter 'url' " + error)
 
-        if camera_start_pose is None:
-            if camera_type=="perspective":
-                camera_start_pose = [1.76, 1.10, 1.45, 0, 0, 0, 1]
-            else:
-                camera_start_pose = [1.3, 1.8, 2.7, 0, 0, 0, 4]
 
-        if not Utils.is_a_vector(camera_start_pose,7):
+        if (not camera_start_pose is None) and (not Utils.is_a_vector(camera_start_pose,7)):
             raise Exception("The parameter 'camera_start_pose' should be either None or a 6 element vector.")
 
-        self._ambient_light_intensity = ambient_light_intensity
-        self._camera_type = camera_type
-        self._ldr_urls = self._ldr_urls if (ldr_urls is None) else ldr_urls
-        self._width = width
-        self._height = height
-        self._show_world_frame = show_world_frame
-        self._show_grid = show_grid
-        self._load_screen_color = load_screen_color
-        self._background_color = background_color
-        self._camera_start_pose = np.array(camera_start_pose).tolist()
+        if not ambient_light_intensity is None:
+            self._ambient_light_intensity = ambient_light_intensity
+
+        if not camera_type is None:
+            self._camera_type = camera_type
+
+        if not ldr_urls is None:
+            self._ldr_urls = ldr_urls
+
+        if not width is None:
+            self._width = width
+
+        if not height is None:
+            self._height = height
+
+        if not show_world_frame is None:
+            self._show_world_frame = show_world_frame
+
+        if not show_grid is None:
+            self._show_grid = show_grid
+
+        if not load_screen_color is None:
+            self._load_screen_color = load_screen_color
+
+        if not background_color is None:
+            self._background_color = background_color
+
+        if not camera_start_pose is None:
+            self._camera_start_pose = np.array(camera_start_pose).tolist()
 
     def gen_code(self):
         """Generate code for injection."""
