@@ -242,6 +242,23 @@ class Utils:
         return axis, angle
 
     @staticmethod
+    def euler_angles(htm):
+
+        Q = np.array(htm[0:3, 0:3])
+        sy = sqrt(Q[0, 0] ** 2 + Q[1, 0] ** 2)
+
+        if abs(sy) > 0.001:
+            gamma = np.arctan2(Q[2, 1], Q[2, 2])
+            beta = np.arctan2(-Q[2, 0], sy)
+            alpha = np.arctan2(Q[1, 0], Q[0, 0])
+        else:
+            gamma = np.arctan2(-Q[1, 2], Q[1, 1])
+            beta = np.arctan2(-Q[2, 0], sy)
+            alpha = 0
+
+        return alpha, beta, gamma
+
+    @staticmethod
     def dp_inv(mat, eps = 0.001):
         """
       Compute the damped pseudoinverse of the matrix 'mat''.
