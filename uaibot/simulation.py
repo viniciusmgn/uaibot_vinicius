@@ -88,6 +88,7 @@ class Simulation:
     _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/SVG" \
                       "/logo_uai_bot.svg' style='width:200px;height:114px'/>\n "
     _STRJAVASCRIPT += "</div>\n"
+    _STRJAVASCRIPT += "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js'></script>\n"
     _STRJAVASCRIPT += "<canvas id='scene_##SIMID##' width='##WIDTH##px' height='##HEIGHT##px'></canvas>\n"
     _STRJAVASCRIPT += "<!-- USER DIVS GO HERE -->"
     _STRJAVASCRIPT += "<div class = 'controller' style='width:##WIDTH##px;height:30px;'></div>\n"
