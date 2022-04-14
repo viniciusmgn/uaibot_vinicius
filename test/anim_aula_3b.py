@@ -152,16 +152,16 @@ def txt_alpha(i):
 def txt_a(i):
     return "a<sub>" + str(i) + "</sub>"
 
-def create_table(table):
+def create_table(table, i_max, j_max):
     strtable = "<table style=\'color:white; width:300px; text-align:right; border: 1px solid white\'>"
     strtable += "<tr> <th>i</th> <th>&#952<sub>i</sub></th> <th>d<sub>i</dub></th> <th>&#945<sub>i</sub></th> <th>a<sub>i</dub></th> </tr>"
     for i in range(len(table)):
         strtable += "<tr>"
         strtable += "<td width=\'8%\'>" + str(i+1) + "</td>"
-        strtable += "<td width=\'23%\'>" + table[i][0] + "</td>"
-        strtable += "<td width=\'23%\'>" + table[i][1] + "</td>"
-        strtable += "<td width=\'23%\'>" + table[i][2] + "</td>"
-        strtable += "<td width=\'23%\'>" + table[i][3] + "</td>"
+        strtable += "<td width=\'23%\'>" + (table[i][0] if i+1<=i_max or (i <= i_max and j_max > 0) else "") + "</td>"
+        strtable += "<td width=\'23%\'>" + (table[i][1] if i+1<=i_max or (i <= i_max and j_max > 1) else "") + "</td>"
+        strtable += "<td width=\'23%\'>" + (table[i][2] if i+1<=i_max or (i <= i_max and j_max > 2) else "") + "</td>"
+        strtable += "<td width=\'23%\'>" + (table[i][3] if i+1<=i_max or (i <= i_max and j_max > 3) else "") + "</td>"
         strtable += "</tr>"
 
     strtable += "</table>"
@@ -210,7 +210,7 @@ for i in range(len(robot.links) + 1):
 
 for i in range(len(robot.links)):
 
-    table_html.add_ani_frame(k*dt, create_table(table_info))
+    table_html.add_ani_frame(k*dt, create_table(table_info,i,0))
     explanation.add_ani_frame(k * dt,
                               "Faremos a transformação de " + txt_frame(i) + " para " + txt_frame(i+1)+".")
 
@@ -241,12 +241,14 @@ for i in range(len(robot.links)):
         explanation.add_ani_frame(k * dt,
                                   "No caso, é <b>"+ str(q_c) + "</b> graus.")
 
+    table_html.add_ani_frame(k * dt, create_table(table_info, i, 1))
     for j in range(3 * deltak):
         htm[i] = htm[i] @ Utils.rotz((np.pi/180) * q_c/(3 * deltak-1))
         k+= 1
         x_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         y_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, vector_length / 2]))
+
 
     explanation.add_ani_frame(k * dt,"Note que os dois eixos x estão alinhados!")
 
@@ -269,6 +271,7 @@ for i in range(len(robot.links)):
         explanation.add_ani_frame(k * dt,
                                   "No caso, é <b>"+ str(q_c) + "</b> metros.")
 
+    table_html.add_ani_frame(k * dt, create_table(table_info, i, 2))
     for j in range(3 * deltak):
         htm[i] = htm[i] @ Utils.trn([0,0, q_c/(3 * deltak-1)])
         k+= 1
@@ -289,6 +292,7 @@ for i in range(len(robot.links)):
     q_c = round((180 / np.pi) * robot.links[i].alpha)
     explanation.add_ani_frame(k * dt,
                                   "No caso, é <b>"+ str(q_c) + "</b> graus.")
+    table_html.add_ani_frame(k * dt, create_table(table_info, i, 3))
 
     for j in range(3 * deltak):
         htm[i] = htm[i] @ Utils.rotx((np.pi/180) * q_c/(3 * deltak-1))
@@ -310,6 +314,8 @@ for i in range(len(robot.links)):
     q_c = round(1000 * robot.links[i].a)/1000
     explanation.add_ani_frame(k * dt,
                                   "No caso, é <b>"+ str(q_c) + "</b> metros.")
+
+    table_html.add_ani_frame(k * dt, create_table(table_info, i, 4))
 
     for j in range(3 * deltak):
         htm[i] = htm[i] @ Utils.trn([q_c/(3 * deltak-1),0,0])
