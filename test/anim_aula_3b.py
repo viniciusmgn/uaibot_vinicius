@@ -5,10 +5,11 @@ width=800
 height=600
 
 robot = Robot.create_kuka_kr5(opacity=0.7, color="gray", eef_frame_visible=False)
-robot = Robot.create_abb_crb(opacity=0.7, color="gray", eef_frame_visible=False)
+#robot = Robot.create_abb_crb(opacity=0.7, color="gray", eef_frame_visible=False)
 robot = Robot.create_epson_t6(opacity=0.7, color="gray", eef_frame_visible=False)
 
 robot.add_ani_frame(0,q=[np.pi/4,-np.pi/3,0.1])
+#robot.add_ani_frame(0,q=[np.pi/4,-np.pi/4,np.pi/9,-np.pi/9,0,np.pi/2])
 
 sim = Simulation([robot], load_screen_color="#191919", background_color="#222224", camera_type="orthographic",
                  show_world_frame=False, width=width, height=height)
@@ -47,7 +48,7 @@ vector_length = 0.12
 lines_purple = Cylinder(name="linePurple", htm=far, radius=0.002, height=2, color="purple")
 lines_orange = Cylinder(name="lineOrange", htm=far, radius=0.002, height=2, color="#FFA500")
 points_A = Ball(name="pointA", htm=far, radius=0.015, color="cyan")
-points_B = Ball(name="pointB", htm=far, radius=0.015, color="green")
+
 
 line_between_points = []
 start_lines = []
@@ -74,11 +75,8 @@ if np.shape(line_between_points)[0]==0:
 line_between_points_pc = PointCloud(name="lineBetweenPoints", points=line_between_points, size=2, color="white")
 line_between_points_pc.add_ani_frame(0, 0, 0)
 
-sim.add(lines_purple)
-sim.add(lines_orange)
 sim.add(points_A)
-sim.add(points_B)
-sim.add(line_between_points_pc)
+
 
 for i in range(len(robot.links) + 1):
     x_axis.append(Cylinder(name="xAxis" + str(i), color="red", htm=far, radius=0.003, height=vector_length))
@@ -194,7 +192,7 @@ deltak = 200
 
 # Show all DH frames for a while
 
-explanation.add_ani_frame(k * dt, "Considere todos os eixos DH do robô. Faremos a transformação de um para o outro.")
+explanation.add_ani_frame(k * dt, "Considere todos os eixos DH do rob&ocirc. Faremos a transforma&ccedil&atildeo de um para o outro.")
 
 for i in range(len(robot.links) + 1):
     x_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
@@ -212,7 +210,7 @@ for i in range(len(robot.links)):
 
     table_html.add_ani_frame(k*dt, create_table(table_info,i,0))
     explanation.add_ani_frame(k * dt,
-                              "Faremos a transformação de " + txt_frame(i) + " para " + txt_frame(i+1)+".")
+                              "Faremos a transforma&ccedil&atildeo de " + txt_frame(i) + " para " + txt_frame(i+1)+".")
 
     x_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.roty(3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
     y_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
@@ -226,20 +224,20 @@ for i in range(len(robot.links)):
 
     #Início theta
     explanation.add_ani_frame(k * dt,
-                              "Começamos com uma rotação no eixo z atual de " + txt_theta(
-                                  i+1) + ".  O objetivo é alinhar os dois eixos x.")
+                              "Come&ccedilamos com uma rota&ccedil&atildeo no eixo z atual de " + txt_theta(
+                                  i+1) + ".  O objetivo &eacute alinhar os dois eixos x.")
     k += 2 * deltak
 
     if robot.links[i].joint_type == 0:
         q_c = round((180/np.pi) * robot.q[i,0])
         explanation.add_ani_frame(k * dt,
                                   "Como a " + txt_joint(
-                                      i) + " é rotativa, esse valor é <span style=\'color:gold\'>variável</span>.<br> No caso, é <b><span style=\'color:gold\'>"
+                                      i) + " &eacute rotativa, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
                                   + str(q_c) + "</span></b> graus.")
     else:
         q_c = round( (180/np.pi) * robot.links[i].theta )
         explanation.add_ani_frame(k * dt,
-                                  "No caso, é <b>"+ str(q_c) + "</b> graus.")
+                                  "No caso, &eacute <b>"+ str(q_c) + "</b> graus.")
 
     table_html.add_ani_frame(k * dt, create_table(table_info, i, 1))
     for j in range(3 * deltak):
@@ -250,26 +248,32 @@ for i in range(len(robot.links)):
         z_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, vector_length / 2]))
 
 
-    explanation.add_ani_frame(k * dt,"Note que os dois eixos x estão alinhados!")
+    explanation.add_ani_frame(k * dt,"Note que os dois eixos x est&atildeo alinhados!")
 
     k += 2 * deltak
 
     #Início d
     explanation.add_ani_frame(k * dt,
-                              "Começamos com uma translação no eixo z atual de " + txt_d(
-                                  i+1) + ".  O objetivo é fazer com que o centro do referencial atual vá para "+txt_pointA(i)+".")
+                              "Come&ccedilamos com uma transla&ccedil&atildeo no eixo z atual de " + txt_d(
+                                  i+1) + ".  O objetivo &eacute fazer com que o centro do referencial atual v&aacute para "+txt_pointA(i+1)+".")
+
+    if robot.links[i].joint_type == 0:
+        points_A.add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, robot.links[i].d]))
+    else:
+        points_A.add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, robot.q[i,0]]))
+
     k += 2 * deltak
 
     if robot.links[i].joint_type == 1:
         q_c = round(100 * robot.q[i,0])/100
         explanation.add_ani_frame(k * dt,
                                   "Como a " + txt_joint(
-                                      i) + " é linear, esse valor é <span style=\'color:gold\'>variável</span>.<br> No caso, é <b><span style=\'color:gold\'>"
+                                      i) + " &eacute linear, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
                                   + str(q_c) + "</span></b> metros.")
     else:
         q_c = round( 1000 * robot.links[i].d )/1000
         explanation.add_ani_frame(k * dt,
-                                  "No caso, é <b>"+ str(q_c) + "</b> metros.")
+                                  "No caso, &eacute <b>"+ str(q_c) + "</b> metros.")
 
     table_html.add_ani_frame(k * dt, create_table(table_info, i, 2))
     for j in range(3 * deltak):
@@ -279,19 +283,20 @@ for i in range(len(robot.links)):
         y_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, vector_length / 2]))
 
-    explanation.add_ani_frame(k * dt,"Note que o centro do referencial coincide com "+txt_pointA(i)+".")
+    explanation.add_ani_frame(k * dt,"Note que o centro do referencial coincide com "+txt_pointA(i+1)+".")
 
     k += 2 * deltak
+    points_A.add_ani_frame(k * dt, htm=far)
 
     #Início alpha
     explanation.add_ani_frame(k * dt,
-                              "Começamos com uma rotação no eixo x atual de " + txt_alpha(
-                                  i+1) + ".  O objetivo é fazer com que os eixos z dos dois referenciais fiquem alinhados.")
+                              "Come&ccedilamos com uma rota&ccedil&atildeo no eixo x atual de " + txt_alpha(
+                                  i+1) + ".  O objetivo &eacute fazer com que os eixos z dos dois referenciais fiquem alinhados.")
     k += 2 * deltak
 
     q_c = round((180 / np.pi) * robot.links[i].alpha)
     explanation.add_ani_frame(k * dt,
-                                  "No caso, é <b>"+ str(q_c) + "</b> graus.")
+                                  "No caso, &eacute <b>"+ str(q_c) + "</b> graus.")
     table_html.add_ani_frame(k * dt, create_table(table_info, i, 3))
 
     for j in range(3 * deltak):
@@ -301,19 +306,19 @@ for i in range(len(robot.links)):
         y_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, vector_length / 2]))
 
-    explanation.add_ani_frame(k * dt,"Note que todos os eixos estão alinhados agora!")
+    explanation.add_ani_frame(k * dt,"Note que todos os eixos est&atildeo alinhados agora!")
 
     k += 2 * deltak
 
     #Início a
     explanation.add_ani_frame(k * dt,
-                              "Começamos com uma translação no eixo x atual de " + txt_a(
-                                  i+1) + ".  O objetivo é fazer com que os dois referenciais finalmente coincidam.")
+                              "Come&ccedilamos com uma transla&ccedil&atildeo no eixo x atual de " + txt_a(
+                                  i+1) + ".  O objetivo &eacute fazer com que os dois referenciais finalmente coincidam.")
     k += 2 * deltak
 
     q_c = round(1000 * robot.links[i].a)/1000
     explanation.add_ani_frame(k * dt,
-                                  "No caso, é <b>"+ str(q_c) + "</b> metros.")
+                                  "No caso, &eacute <b>"+ str(q_c) + "</b> metros.")
 
     table_html.add_ani_frame(k * dt, create_table(table_info, i, 4))
 
@@ -324,7 +329,7 @@ for i in range(len(robot.links)):
         y_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[i].add_ani_frame(k * dt, htm=htm[i] @ Utils.trn([0, 0, vector_length / 2]))
 
-    explanation.add_ani_frame(k * dt,"Note que todos os dois referenciais são iguais agora!")
+    explanation.add_ani_frame(k * dt,"Note que todos os dois referenciais s&atildeo iguais agora!")
 
     k += 2 * deltak
 
@@ -333,4 +338,4 @@ for i in range(len(robot.links)):
         y_axis[j].add_ani_frame(k * dt, htm=far @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[j].add_ani_frame(k * dt, htm=far @ Utils.trn([0, 0, vector_length / 2]))
 
-sim.save("D:\\PycharmProjects\\aulas_manipuladores\\presentation\\images\\aula3","anim4")
+sim.save("D:\\PycharmProjects\\aulas_manipuladores\\presentation\\images\\aula3","anim6")

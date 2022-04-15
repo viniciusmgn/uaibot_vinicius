@@ -157,9 +157,9 @@ class Robot:
         n = len(links)
 
         if not (q0 is None):
-            self._q0 = np.array(q0)
+            self._q0 = np.array(q0).reshape((n,1))
         else:
-            self._q0 = np.zeros((n,))
+            self._q0 = np.zeros((n,1))
 
         if not (str(type(list_base_3d_obj)) == "<class 'list'>" or (list_base_3d_obj is None)):
             raise Exception("The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
