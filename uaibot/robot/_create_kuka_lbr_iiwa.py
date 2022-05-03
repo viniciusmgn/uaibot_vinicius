@@ -139,6 +139,7 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
         ]
     )
 
+
     # Create links
 
     links = []

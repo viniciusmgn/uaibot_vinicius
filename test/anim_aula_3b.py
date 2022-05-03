@@ -6,10 +6,10 @@ height=600
 
 robot = Robot.create_kuka_kr5(opacity=0.7, color="gray", eef_frame_visible=False)
 #robot = Robot.create_abb_crb(opacity=0.7, color="gray", eef_frame_visible=False)
-robot = Robot.create_epson_t6(opacity=0.7, color="gray", eef_frame_visible=False)
+#robot = Robot.create_epson_t6(opacity=0.7, color="gray", eef_frame_visible=False)
 
-robot.add_ani_frame(0,q=[np.pi/4,-np.pi/3,0.1])
-#robot.add_ani_frame(0,q=[np.pi/4,-np.pi/4,np.pi/9,-np.pi/9,0,np.pi/2])
+#robot.add_ani_frame(0,q=[np.pi/4,-np.pi/3,0.1])
+robot.add_ani_frame(0,q=[np.pi/4,-np.pi/4,np.pi/9,-np.pi/9,0,np.pi/2])
 
 sim = Simulation([robot], load_screen_color="#191919", background_color="#222224", camera_type="orthographic",
                  show_world_frame=False, width=width, height=height)
@@ -232,7 +232,7 @@ for i in range(len(robot.links)):
         q_c = round((180/np.pi) * robot.q[i,0])
         explanation.add_ani_frame(k * dt,
                                   "Como a " + txt_joint(
-                                      i) + " &eacute rotativa, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
+                                      i+1) + " &eacute rotativa, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
                                   + str(q_c) + "</span></b> graus.")
     else:
         q_c = round( (180/np.pi) * robot.links[i].theta )
@@ -268,7 +268,7 @@ for i in range(len(robot.links)):
         q_c = round(100 * robot.q[i,0])/100
         explanation.add_ani_frame(k * dt,
                                   "Como a " + txt_joint(
-                                      i) + " &eacute linear, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
+                                      i+1) + " &eacute linear, esse valor &eacute <span style=\'color:gold\'>vari&aacutevel</span>.<br> No caso, &eacute <b><span style=\'color:gold\'>"
                                   + str(q_c) + "</span></b> metros.")
     else:
         q_c = round( 1000 * robot.links[i].d )/1000
@@ -338,4 +338,4 @@ for i in range(len(robot.links)):
         y_axis[j].add_ani_frame(k * dt, htm=far @ Utils.rotx(-3.14 / 2) @ Utils.trn([0, 0, vector_length / 2]))
         z_axis[j].add_ani_frame(k * dt, htm=far @ Utils.trn([0, 0, vector_length / 2]))
 
-sim.save("D:\\PycharmProjects\\aulas_manipuladores\\presentation\\images\\aula3","anim6")
+sim.save("D:\\PycharmProjects\\aulas_manipuladores\\presentation\\images\\aula3","anim5")
