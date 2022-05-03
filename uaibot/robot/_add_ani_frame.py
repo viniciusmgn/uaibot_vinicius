@@ -46,4 +46,4 @@ def _add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits=False):
     if len(self.attached_objects) > 0:
         htm = self.fkm(q, 'eef', htm)
         for obj in self.attached_objects:
-            obj[0].add_ani_frame(htm @ obj[1])
+            obj[0].add_ani_frame(time, htm @ obj[1])
