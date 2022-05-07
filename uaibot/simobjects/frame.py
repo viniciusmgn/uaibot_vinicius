@@ -47,7 +47,7 @@ class Frame:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._ball.htm)
+        return np.matrix(self._ball.htm)
 
     @property
     def axis_color(self):
@@ -94,7 +94,7 @@ class Frame:
         self._max_time = 0
 
         # Set initial total configuration
-        self.set_ani_frame(np.array(htm))
+        self.set_ani_frame(np.matrix(htm))
 
     #######################################
     # Std. Print

@@ -83,14 +83,14 @@ class _DistStructRobotObj:
         """
 		Return the matrix in which each row we have the distance Jacobian (gradient) for each robot link.
 		"""
-        return np.array(self._jac_dist_mat)
+        return np.matrix(self._jac_dist_mat)
 
     @property
     def dist_vect(self):
         """
 		Return the column vector in which each row we have the distance for each robot link.
 		"""
-        return np.array(self._dist_vect).reshape((self.no_items, 1))
+        return np.matrix(self._dist_vect).reshape((self.no_items, 1))
 
     @property
     def no_items(self):
@@ -114,7 +114,7 @@ class _DistStructRobotObj:
 
         n = len(robot.links)
         self._list_info = []
-        self._jac_dist_mat = np.zeros((0, n))
+        self._jac_dist_mat = np.matrix(np.zeros((0, n)))
         self._dist_vect = []
 
     #######################################

@@ -26,9 +26,10 @@ def _control_demo_1():
 
     # Create curve
     theta = np.linspace(0, 2 * np.pi, num=300)
-    curve = []
-    for t in theta:
-        curve.append([0.56, 0.2 * cos(t), 0.2 * sin(t) + 0.5])
+    curve = np.matrix(np.zeros(  (3, len(theta))))
+    for i in range(len(theta)):
+        t = theta[i]
+        curve[:,i] = np.matrix([ [0.56], [0.2 * cos(t)], [0.2 * sin(t) + 0.5]])
 
     # Create vector field
     vf = rb.Robot.vector_field(curve, 10, 0.3)
@@ -41,13 +42,13 @@ def _control_demo_1():
 
     # Initializations
     hist_time = []
-    hist_qdot = []
-    hist_q = []
-    hist_error_ori = []
+    hist_qdot = np.matrix(np.zeros((6,0)))
+    hist_q = np.matrix(np.zeros((6,0)))
+    hist_error_ori = np.matrix(np.zeros((3,0)))
 
-    x_des = np.array([0, 0, 1]).reshape((3, 1))
-    y_des = np.array([0, -1, 0]).reshape((3, 1))
-    z_des = np.array([1, 0, 0]).reshape((3, 1))
+    x_des = np.matrix([0, 0, 1]).reshape((3, 1))
+    y_des = np.matrix([0, -1, 0]).reshape((3, 1))
+    z_des = np.matrix([1, 0, 0]).reshape((3, 1))
 
     # Main loop
     draw_points = np.zeros((3, 0))
@@ -67,33 +68,35 @@ def _control_demo_1():
         y_eef = htm_eef[0:3, 1]
         z_eef = htm_eef[0:3, 2]
 
-        target = np.zeros((6,))
-        target[0:3] = vf(p_eef).reshape((3,))
-        target[3] = -K * sqrt(max(1 - np.transpose(x_des) @ x_eef, 0))
-        target[4] = -K * sqrt(max(1 - np.transpose(y_des) @ y_eef, 0))
-        target[5] = -K * sqrt(max(1 - np.transpose(z_des) @ z_eef, 0))
+        target = np.matrix(np.zeros((6,1)))
+        target[0:3] = vf(p_eef)
+        target[3] = -K * sqrt(max(1 - x_des.T * x_eef, 0))
+        target[4] = -K * sqrt(max(1 - y_des.T * y_eef, 0))
+        target[5] = -K * sqrt(max(1 - z_des.T * z_eef, 0))
 
-        jac_target = np.zeros((6, n))
+        jac_target = np.matrix(np.zeros((6, n)))
         jac_target[0:3, :] = jac_eef[0:3, :]
-        jac_target[3, :] = np.transpose(x_des) @ Utils.S(x_eef) @ jac_eef[3:6, :]
-        jac_target[4, :] = np.transpose(y_des) @ Utils.S(y_eef) @ jac_eef[3:6, :]
-        jac_target[5, :] = np.transpose(z_des) @ Utils.S(z_eef) @ jac_eef[3:6, :]
+        jac_target[3, :] = x_des.T * Utils.S(x_eef) * jac_eef[3:6, :]
+        jac_target[4, :] = y_des.T * Utils.S(y_eef) * jac_eef[3:6, :]
+        jac_target[5, :] = z_des.T * Utils.S(z_eef) * jac_eef[3:6, :]
 
-        qdot = Utils.dp_inv(jac_target, 0.002) @ target
+        qdot = Utils.dp_inv(jac_target, 0.002) * target
 
-        q_prox = np.array(robot.q).reshape((n,)) + qdot * dt
+        q_prox = robot.q + qdot * dt
 
         robot.add_ani_frame(i * dt, q_prox)
 
         hist_time.append(i * dt)
-        hist_q.append(robot.q.reshape((n,)))
-        hist_error_ori.append([(180 / (np.pi)) * acos(1 - min(num * num / (K * K),2)) for num in target[3:6]])
-        hist_qdot.append(qdot)
+        hist_q = np.block([hist_q, robot.q])
+        error_ori = np.matrix([(180 / (np.pi)) * acos(1 - min(num * num / (K * K),2)) for num in target[3:6]]).reshape((3,1))
+        hist_error_ori = np.block([hist_error_ori, error_ori])
+        hist_qdot = np.block([hist_qdot, qdot])
 
         # See if the end-effector is close to the board to add to the point cloud
-        draw_points = np.hstack((draw_points, p_eef.reshape((3, 1))))
+        draw_points = np.block([draw_points, p_eef])
 
-        if (not reached_board) and (abs(p_eef[0] - board.htm[0][3]) < board.width / 2 + 0.001):
+
+        if (not reached_board) and (abs(p_eef[0,0] - board.htm[0,3]) < board.width / 2 + 0.001):
             reached_board = True
             ind_reached = i
 
@@ -110,8 +113,8 @@ def _control_demo_1():
     sim.run()
 
     # Plot graphs
-    Utils.plot(hist_time, np.transpose(hist_q), "", "Time (s)", "Joint configuration  (rad)", "q")
-    Utils.plot(hist_time, np.transpose(hist_qdot), "", "Time (s)", "Joint speed (rad/s)", "u")
-    Utils.plot(hist_time, np.transpose(hist_error_ori), "", "Time (s)", "Orientation error (degrees)", ['x', 'y', 'z'])
+    Utils.plot(hist_time, hist_q, "", "Time (s)", "Joint configuration  (rad)", "q")
+    Utils.plot(hist_time, hist_qdot, "", "Time (s)", "Joint speed (rad/s)", "u")
+    Utils.plot(hist_time, hist_error_ori, "", "Time (s)", "Orientation error (degrees)", ['x', 'y', 'z'])
 
     return sim

@@ -47,7 +47,7 @@ def _evolve_config(self, q, p_tol, a_tol, htm_target, iter_remain, ignore_orient
 def _ikm(self, htm_target, q0=None, p_tol=0.005, a_tol=5, no_iter_max=2000, ignore_orientation=False):
     n = len(self._links)
     if q0 is None:
-        q0 = np.reshape((2 * np.pi) * np.random.rand(n) - np.pi, (n, 1))
+        q0 = np.matrix(np.reshape((2 * np.pi) * np.random.rand(n) - np.pi, (n, 1)))
 
         # Error handling
     if not Utils.is_a_matrix(htm_target, 4, 4):
@@ -72,14 +72,14 @@ def _ikm(self, htm_target, q0=None, p_tol=0.005, a_tol=5, no_iter_max=2000, igno
 
     j = 0
     found = False
-    q = np.array(q0).reshape((n, 1))
+    q = np.matrix(q0).reshape((n, 1))
     no_iter_remain = no_iter_max
 
     while not found and no_iter_remain >= 0:
         found, i, q = _evolve_config(self, q, p_tol, a_tol, htm_target, no_iter_remain, ignore_orientation)
         no_iter_remain -= i
         if not found:
-            q = np.reshape((2 * np.pi) * np.random.rand(n), (n, 1))
+            q = np.matrix(np.reshape((2 * np.pi) * np.random.rand(n), (n, 1)))
 
     if not found:
         raise Exception("Solution for IK not found. You can try the following: \n" \

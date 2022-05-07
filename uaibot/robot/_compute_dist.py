@@ -59,7 +59,7 @@ def _compute_dist(self, obj, h, g, q=None, htm=None, old_dist_struct=None, tol=0
         for j in range(len(self.links[i].col_objects)):
             temp_copy = self.links[i].col_objects[j][0].copy()
             htmd = self.links[i].col_objects[j][1]
-            temp_copy.set_ani_frame(mth_dh[i, :, :] @ htmd)
+            temp_copy.set_ani_frame(mth_dh[i][:, :] * htmd)
             col_object_copy[i].append(temp_copy)
 
     # Compute the distance structure
@@ -67,14 +67,14 @@ def _compute_dist(self, obj, h, g, q=None, htm=None, old_dist_struct=None, tol=0
         for j in range(len(self.links[i].col_objects)):
 
             if old_dist_struct is None:
-                p_obj_0 = np.random.uniform(-100, 100, size=(3,))
+                p_obj_0 = np.matrix(np.random.uniform(-100, 100, size=(3,1)))
             else:
                 p_obj_0 = old_dist_struct.get_item(i, j).point_object
 
             p_obj, p_obj_col, d = Utils.compute_dist(obj, col_object_copy[i][j], h, g, p_obj_0, tol, no_iter_max)
 
-            jac_obj_col = jac_dh[i, 0:3, :] - Utils.S(p_obj_col - mth_dh[i, 0:3, 3]) @ jac_dh[i, 3:6, :]
-            jac_dist = (np.transpose(p_obj_col - p_obj) @ jac_obj_col) / d
+            jac_obj_col = jac_dh[i][0:3, :] - Utils.S(p_obj_col - mth_dh[i][0:3, 3]) * jac_dh[i][3:6, :]
+            jac_dist = ((p_obj_col - p_obj).T * jac_obj_col) / d
 
             dist_struct._append(i, j, d, p_obj_col, p_obj, jac_dist)
 

@@ -63,7 +63,7 @@ class Cylinder:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def mass(self):
@@ -122,7 +122,7 @@ class Cylinder:
 
         self._radius = radius
         self._height = height
-        self._htm = np.array(htm)
+        self._htm = np.matrix(htm)
         self._name = name
         self._mass = 1
         self._frames = []
@@ -183,9 +183,9 @@ class Cylinder:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, np.around(htm[0][0],4), np.around(htm[0][2],4), np.around(-htm[0][1],4), np.around(htm[0][3],4),
-             np.around(htm[1][0],4), np.around(htm[1][2],4), np.around(-htm[1][1],4), np.around(htm[1][3],4),
-             np.around(htm[2][0],4), np.around(htm[2][2],4), np.around(-htm[2][1],4), np.around(htm[2][3],4),
+        f = [time, np.around(htm[0,0],4), np.around(htm[0,2],4), np.around(-htm[0,1],4), np.around(htm[0,3],4),
+             np.around(htm[1,0],4), np.around(htm[1,2],4), np.around(-htm[1,1],4), np.around(htm[1,3],4),
+             np.around(htm[2,0],4), np.around(htm[2,2],4), np.around(-htm[2,1],4), np.around(htm[2,3],4),
              0, 0, 0, 1]
 
         self._htm = htm
@@ -266,7 +266,7 @@ class Cylinder:
         Q = htm[0:3, 0:3]
         S = Utils.S(htm[0:3, 3])
 
-        return Q @ np.diag([Ixx, Iyy, Izz]) @ np.transpose(Q) - self.mass * S @ S
+        return Q * np.diag([Ixx, Iyy, Izz]) * Q.T - self.mass * S * S
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
@@ -313,24 +313,24 @@ class Cylinder:
         if not Utils.is_a_number(h) or h <= 0:
             raise Exception("The optional parameter 'h' should be a positive number")
         # end error handling
-        tpoint = np.transpose(htm[0:3, 0:3]) @ (point - htm[0:3, 3])
+        tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
         delta = 0.001
 
-        r = sqrt(tpoint[0] * tpoint[0] + tpoint[1] * tpoint[1])
+        r = sqrt(tpoint[0,0] ** 2 + tpoint[1,0] ** 2)
 
         drf = Utils.fun_Cir(r + delta, h, self.radius)
         drb = Utils.fun_Cir(r - delta, h, self.radius)
 
-        dzf = Utils.fun_Int(tpoint[2] + delta, h, 0.5 * self.height)
-        dzb = Utils.fun_Int(tpoint[2] - delta, h, 0.5 * self.height)
+        dzf = Utils.fun_Int(tpoint[2,0] + delta, h, 0.5 * self.height)
+        dzb = Utils.fun_Int(tpoint[2,0] - delta, h, 0.5 * self.height)
 
         dr = (drf - drb) / (2 * delta)
 
-        x = tpoint[0] - dr * tpoint[0] / (r + 0.00001)
-        y = tpoint[1] - dr * tpoint[1] / (r + 0.00001)
-        z = tpoint[2] - (dzf - dzb) / (2 * delta)
+        x = tpoint[0,0] - dr * tpoint[0,0] / (r + 0.00001)
+        y = tpoint[1,0] - dr * tpoint[1,0] / (r + 0.00001)
+        z = tpoint[2,0] - (dzf - dzb) / (2 * delta)
 
         d = 0.5 * (drf + drb + dzf + dzb)
 
-        return htm[0:3, 0:3] @ np.array([x, y, z]) + htm[0:3, 3], d
+        return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

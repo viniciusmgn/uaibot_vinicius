@@ -119,14 +119,14 @@ class Vector:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        length_vector = np.linalg.norm(np.array(vector))
+        length_vector = np.linalg.norm(np.matrix(vector))
 
         #if length_vector < 0.0001:
         #    raise Exception("'origin' and 'vector' are too close to each other.")
 
-        self._origin = np.around(np.array(origin),4).tolist()
-        self._vector = np.array(vector).tolist()
-        dir = np.around((np.array(vector) / (0.0001+length_vector)),4).tolist()
+        self._origin = np.around(np.matrix(origin),4).tolist()
+        self._vector = np.matrix(vector).tolist()
+        dir = np.around((np.matrix(vector) / (0.0001+length_vector)),4).tolist()
 
         self._frames.append([time, self.origin, dir, length_vector])
         self._max_time = max(self._max_time, time)
@@ -141,8 +141,8 @@ class Vector:
     def gen_code(self):
         """Generate code for injection."""
 
-        length_vector = np.linalg.norm(np.array(self.vector))
-        dir = (np.array(self.vector) / (length_vector+0.00001)).tolist()
+        length_vector = np.linalg.norm(np.matrix(self.vector))
+        dir = (np.matrix(self.vector) / (length_vector+0.00001)).tolist()
 
         string = "\n"
         string += "//BEGIN DECLARATION OF THE VECTOR '" + self.name + "'\n\n"

@@ -78,7 +78,7 @@ def _control_demo_3():
     gamma = 0.5
     sigma = 0.5
     dist_safe = 0.2
-    qdot_max = (np.pi / 180) * np.array([[85], [85], [100], [75], [130], [135], [135]])
+    qdot_max = (np.pi / 180) * np.matrix([[85], [85], [100], [75], [130], [135], [135]])
     qdot_min = -qdot_max
     xi = 0.5
     h = 0.05
@@ -93,10 +93,10 @@ def _control_demo_3():
 
     hist_dist = []
     hist_time = []
-    hist_r = []
-    hist_qddot = []
-    hist_qdot = []
-    hist_q = []
+    hist_r = np.matrix(np.zeros((6,0)))
+    hist_q = np.matrix(np.zeros((7, 0)))
+    hist_qddot = np.matrix(np.zeros((7,0)))
+    hist_qdot = np.matrix(np.zeros((7,0)))
     hist_V = []
 
     error_qp = False
@@ -131,8 +131,8 @@ def _control_demo_3():
             #Create the quadratic program parameters
             A = jac_dist
             b = -jac_dist_dot @ qdot -2 * gamma * dist_vect_dot - (gamma ** 2) * (dist_vect - dist_safe)
-            H = 2 * (np.transpose(jac_r) @ jac_r) + 2 * beta * np.identity(7)
-            f = 2 * np.transpose(jac_r) @ (
+            H = 2 * (np.transpose(jac_r) * jac_r) + 2 * beta * np.identity(7)
+            f = 2 * np.transpose(jac_r) * (
                     jac_r_dot @ qdot + 2 * alpha * r_dot + (alpha ** 2) * r) + 2 * beta * sigma * qdot
 
             A = np.block([[A], [np.identity(7)]])
@@ -146,7 +146,7 @@ def _control_demo_3():
             try:
                 qddot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
             except:
-                qddot = np.zeros((7, 1))
+                qddot = np.matrix(np.zeros((7, 1)))
                 error_qp = True
 
             qddot = np.reshape(qddot, (7, 1))
@@ -163,11 +163,12 @@ def _control_demo_3():
 
             hist_time.append(i * dt)
             hist_dist.append(np.amin(dist_vect))
-            hist_r.append(np.array(r.reshape((6,))))
-            hist_q.append(np.array(q.reshape((7,))))
-            hist_qdot.append(np.array(qdot.reshape((7,))))
-            hist_qddot.append(np.array(qddot.reshape((7,))))
-            hist_V.append(alpha * (np.linalg.norm(r_dot + alpha * r) ** 2) + sigma * beta * (np.linalg.norm(qdot) ** 2))
+            hist_r = np.block([hist_r,r])
+            hist_q = np.block([hist_q,q])
+            hist_qdot = np.block([hist_qdot,qdot])
+            hist_qddot = np.block([hist_qddot,qddot])
+            V=alpha * (np.linalg.norm(r_dot + alpha * r) ** 2) + sigma * beta * (np.linalg.norm(qdot) ** 2)
+            hist_V.append(V)
 
             #Continue the loop, check if converged
             i += 1
@@ -180,11 +181,11 @@ def _control_demo_3():
 
     # Plot graphs
     Utils.plot(hist_time, hist_dist, "", "Time (s)", "True distance (m)", "dist")
-    Utils.plot(hist_time, np.transpose(hist_q), "", "Time (s)", "Joint configuration (rad)", "q")
-    Utils.plot(hist_time, np.transpose(hist_qdot), "", "Time (s)", "Joint speed (rad/s)", "qdot")
-    Utils.plot(hist_time, np.transpose(hist_qddot), "", "Time (s)", "Joint acceleration (rad/s²)", "u")
+    Utils.plot(hist_time, hist_q, "", "Time (s)", "Joint configuration (rad)", "q")
+    Utils.plot(hist_time, hist_qdot, "", "Time (s)", "Joint speed (rad/s)", "qdot")
+    Utils.plot(hist_time, hist_qddot, "", "Time (s)", "Joint acceleration (rad/s²)", "u")
     Utils.plot(hist_time, hist_V, "", "Time (s)", "Lyapunov function", "V")
-    fig = Utils.plot(hist_time, np.transpose(hist_r), "", "Time (s)", "Task function",
+    fig = Utils.plot(hist_time, hist_r, "", "Time (s)", "Task function",
                      ["posx", "posy", "posz", "orix", "oriy", "oriz"])
 
     return sim

@@ -6,7 +6,7 @@ def _jac_jac_geo(self, q=None, axis='eef', htm=None):
     if q is None:
         q = self.q
     if htm is None:
-        htm = np.array(self.htm)
+        htm = np.matrix(self.htm)
 
     n = len(self.links)
 
@@ -32,26 +32,26 @@ def _jac_jac_geo(self, q=None, axis='eef', htm=None):
 
     jj_geo = []
 
-    htm0 = htm @ self._htm_base_0
+    htm0 = htm * self._htm_base_0
 
     for i in range(n):
         p_i = htm_dh[i][0:3, 3]
         L_i = []
         for j in range(i + 1):
 
-            L_ij = np.zeros((6, n))
+            L_ij = np.matrix(np.zeros((6, n)))
 
             if j > 0:
                 p_j_ant = htm_dh[j - 1][0:3, 3]
                 z_j_ant = htm_dh[j - 1][0:3, 2]
 
                 if self.links[j].joint_type == 0:
-                    L_ij[0:3, :] = Utils.S(p_i - p_j_ant) @ Utils.S(z_j_ant) @ jac_geo[j - 1][3:6, :] + Utils.S(
-                        z_j_ant) @ (jac_geo[i][0:3, :] - jac_geo[j - 1][0:3, :])
-                    L_ij[3:6, :] = -Utils.S(z_j_ant) @ jac_geo[j - 1][3:6, :]
+                    L_ij[0:3, :] = Utils.S(p_i - p_j_ant) * Utils.S(z_j_ant) @ jac_geo[j - 1][3:6, :] + Utils.S(
+                        z_j_ant) * (jac_geo[i][0:3, :] - jac_geo[j - 1][0:3, :])
+                    L_ij[3:6, :] = -Utils.S(z_j_ant) * jac_geo[j - 1][3:6, :]
 
                 if self.links[j].joint_type == 1:
-                    L_ij[0:3, :] = -Utils.S(z_j_ant) @ jac_geo[j - 1][3:6, :]
+                    L_ij[0:3, :] = -Utils.S(z_j_ant) * jac_geo[j - 1][3:6, :]
                     # L_ij[3:6, :] = np.zeros((3, n))
 
             else:
@@ -59,7 +59,7 @@ def _jac_jac_geo(self, q=None, axis='eef', htm=None):
                 z_j_ant = htm0[0:3, 2]
 
                 if self.links[j].joint_type == 0:
-                    L_ij[0:3, :] = Utils.S(z_j_ant) @ jac_geo[i][0:3, :]
+                    L_ij[0:3, :] = Utils.S(z_j_ant) * jac_geo[i][0:3, :]
                     # L_ij[3:6, :] = np.zeros((3, n))
 
                 # if self.links[j].joint_type == 1:

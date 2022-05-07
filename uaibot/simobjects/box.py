@@ -72,7 +72,7 @@ class Box:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def mass(self):
@@ -135,7 +135,7 @@ class Box:
         self._width = width
         self._height = height
         self._depth = depth
-        self._htm = np.array(htm)
+        self._htm = np.matrix(htm)
         self._name = name
         self._mass = 1
         self._frames = []
@@ -197,9 +197,9 @@ class Box:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, np.around(htm[0][0],4), np.around(htm[0][2],4), np.around(-htm[0][1],4), np.around(htm[0][3],4),
-             np.around(htm[1][0],4), np.around(htm[1][2],4), np.around(-htm[1][1],4), np.around(htm[1][3],4),
-             np.around(htm[2][0],4), np.around(htm[2][2],4), np.around(-htm[2][1],4), np.around(htm[2][3],4),
+        f = [time, np.around(htm[0,0],4), np.around(htm[0,2],4), np.around(-htm[0,1],4), np.around(htm[0,3],4),
+             np.around(htm[1,0],4), np.around(htm[1,2],4), np.around(-htm[1,1],4), np.around(htm[1,3],4),
+             np.around(htm[2,0],4), np.around(htm[2,2],4), np.around(-htm[2,1],4), np.around(htm[2,3],4),
              0, 0, 0, 1]
 
         self._htm = htm
@@ -279,7 +279,7 @@ class Box:
         Q = htm[0:3, 0:3]
         S = Utils.S(htm[0:3, 3])
 
-        return Q @ np.diag([Ixx, Iyy, Izz]) @ np.transpose(Q) - self.mass * S @ S
+        return Q * np.diag([Ixx, Iyy, Izz]) * Q.T - self.mass * S * S
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
@@ -326,22 +326,22 @@ class Box:
         if not Utils.is_a_number(h) or h <= 0:
             raise Exception("The optional parameter 'h' should be a positive number.")
         # end error handling
-        tpoint = np.transpose(htm[0:3, 0:3]) @ (point - htm[0:3, 3])
+        tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
         delta = 0.001
 
-        dxf = Utils.fun_Int(tpoint[0] + delta, h, 0.5 * self.width)
-        dxb = Utils.fun_Int(tpoint[0] - delta, h, 0.5 * self.width)
+        dxf = Utils.fun_Int(tpoint[0,0] + delta, h, 0.5 * self.width)
+        dxb = Utils.fun_Int(tpoint[0,0] - delta, h, 0.5 * self.width)
 
-        dyf = Utils.fun_Int(tpoint[1] + delta, h, 0.5 * self.depth)
-        dyb = Utils.fun_Int(tpoint[1] - delta, h, 0.5 * self.depth)
+        dyf = Utils.fun_Int(tpoint[1,0] + delta, h, 0.5 * self.depth)
+        dyb = Utils.fun_Int(tpoint[1,0] - delta, h, 0.5 * self.depth)
 
-        dzf = Utils.fun_Int(tpoint[2] + delta, h, 0.5 * self.height)
-        dzb = Utils.fun_Int(tpoint[2] - delta, h, 0.5 * self.height)
+        dzf = Utils.fun_Int(tpoint[2,0] + delta, h, 0.5 * self.height)
+        dzb = Utils.fun_Int(tpoint[2,0] - delta, h, 0.5 * self.height)
 
         d = 0.5 * (dxf + dxb + dyf + dyb + dzf + dzb)
-        x = tpoint[0] - (dxf - dxb) / (2 * delta)
-        y = tpoint[1] - (dyf - dyb) / (2 * delta)
-        z = tpoint[2] - (dzf - dzb) / (2 * delta)
+        x = tpoint[0,0] - (dxf - dxb) / (2 * delta)
+        y = tpoint[1,0] - (dyf - dyb) / (2 * delta)
+        z = tpoint[2,0] - (dzf - dzb) / (2 * delta)
 
-        return htm[0:3, 0:3] @ np.array([x, y, z]) + htm[0:3, 3], d
+        return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

@@ -54,7 +54,7 @@ class Ball:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def mass(self):
@@ -109,7 +109,7 @@ class Ball:
         # end error handling
 
         self._radius = radius
-        self._htm = np.array(htm)
+        self._htm = np.matrix(htm)
         self._name = name
         self._mass = 1
         self._frames = []
@@ -169,9 +169,9 @@ class Ball:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, np.around(htm[0][0],4), np.around(htm[0][1],4), np.around(htm[0][2],4), np.around(htm[0][3],4),
-             np.around(htm[1][0],4), np.around(htm[1][1],4), np.around(htm[1][2],4), np.around(htm[1][3],4),
-             np.around(htm[2][0],4), np.around(htm[2][1],4), np.around(htm[2][2],4), np.around(htm[2][3],4),
+        f = [time, np.around(htm[0,0],4), np.around(htm[0,1],4), np.around(htm[0,2],4), np.around(htm[0,3],4),
+             np.around(htm[1,0],4), np.around(htm[1,1],4), np.around(htm[1,2],4), np.around(htm[1,3],4),
+             np.around(htm[2,0],4), np.around(htm[2,1],4), np.around(htm[2,2],4), np.around(htm[2,3],4),
              0, 0, 0, 1]
 
         self._htm = htm
@@ -250,7 +250,7 @@ class Ball:
         S = Utils.S(htm[0:3, 3])
         I = (2 / 5) * self.mass * (self._radius * self._radius)
 
-        return I * np.identity(3) - self.mass * S @ S
+        return I * np.identity(3) - self.mass * S * S
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
@@ -297,7 +297,7 @@ class Ball:
         if not Utils.is_a_number(h) or h <= 0:
             raise Exception("The optional parameter 'h' should be a positive number.")
         # end error handling
-        tpoint = np.transpose(htm[0:3, 0:3]) @ (point - htm[0:3, 3])
+        tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
         delta = 0.001
         r = np.linalg.norm(tpoint)
@@ -309,4 +309,4 @@ class Ball:
         d = 0.5 * (drf + drb)
         ppoint = tpoint - (dr / (r + 0.00001)) * tpoint
 
-        return htm[0:3, 0:3] @ ppoint + htm[0:3, 3], d
+        return htm[0:3, 0:3] * ppoint + htm[0:3, 3], d

@@ -107,14 +107,14 @@ class Model3D:
         string = self.mesh_material.gen_code(name)
         string += "const htm_" + name + " = new Matrix4(); \n"
         string += "htm_" + name + ".set(" \
-                  + str(self.htm[0][0]) + "," + str(self.htm[0][1]) + "," + str(self.htm[0][2]) + "," + str(
-            self.htm[0][3]) + "," \
-                  + str(self.htm[1][0]) + "," + str(self.htm[1][1]) + "," + str(self.htm[1][2]) + "," + str(
-            self.htm[1][3]) + "," \
-                  + str(self.htm[2][0]) + "," + str(self.htm[2][1]) + "," + str(self.htm[2][2]) + "," + str(
-            self.htm[2][3]) + "," \
-                  + str(self.htm[3][0]) + "," + str(self.htm[3][1]) + "," + str(self.htm[3][2]) + "," + str(
-            self.htm[3][3]) + ");\n"
+                  + str(self.htm[0,0]) + "," + str(self.htm[0,1]) + "," + str(self.htm[0,2]) + "," + str(
+            self.htm[0,3]) + "," \
+                  + str(self.htm[1,0]) + "," + str(self.htm[1,1]) + "," + str(self.htm[1,2]) + "," + str(
+            self.htm[1,3]) + "," \
+                  + str(self.htm[2,0]) + "," + str(self.htm[2,1]) + "," + str(self.htm[2,2]) + "," + str(
+            self.htm[2,3]) + "," \
+                  + str(self.htm[3,0]) + "," + str(self.htm[3,1]) + "," + str(self.htm[3,2]) + "," + str(
+            self.htm[3,3]) + ");\n"
 
         string += "const object3d_" + name + "={\n"
         string += "url: '" + self.url + "',\n"

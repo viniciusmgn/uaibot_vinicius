@@ -151,7 +151,7 @@ class Link:
         if not Utils.is_a_number(mass) or mass < 0:
             raise Exception("The parameter 'mass' should be a positive float.")
 
-        if not Utils.is_a_pd_matrix(np.array(inertia_matrix), 3):
+        if not Utils.is_a_pd_matrix(np.matrix(inertia_matrix), 3):
             raise Exception("The parameter 'inertia_matrix' should be a symmetric positive definite 3x3 matrix.")
 
         if not Utils.is_a_vector(com_coordinates, 3):
@@ -169,10 +169,10 @@ class Link:
         self._joint_type = joint_type
         self._col_objects = []
         self._list_model_3d = list_model_3d
-        self._com_coordinates = com_coordinates
+        self._com_coordinates = np.matrix(np.array(com_coordinates).reshape((3,1)))
         self._show_frame = show_frame
         self._mass = mass
-        self._inertia_matrix = np.array(inertia_matrix)
+        self._inertia_matrix = np.matrix(inertia_matrix)
 
     #######################################
     # Std. Print

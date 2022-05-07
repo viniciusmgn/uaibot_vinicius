@@ -35,7 +35,7 @@ class RigidObject:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def list_model_3d(self):
@@ -67,7 +67,7 @@ class RigidObject:
 
         # end error handling
 
-        self._htm = np.array(htm)
+        self._htm = np.matrix(htm)
         self._name = name
         self._list_model_3d = list_model_3d
         self._max_time = 0
@@ -116,9 +116,9 @@ class RigidObject:
             raise Exception("The parameter 'time' should be a positive float.")
         # end error handling
 
-        f = [time, np.around(htm[0][0],4), np.around(htm[0][1],4), np.around(htm[0][2],4), np.around(htm[0][3],4),
-             np.around(htm[1][0],4), np.around(htm[1][1],4), np.around(htm[1][2],4), np.around(htm[1][3],4),
-             np.around(htm[2][0],4), np.around(htm[2][1],4), np.around(htm[2][2],4), np.around(htm[2][3],4),
+        f = [time, np.around(htm[0,0],4), np.around(htm[0,1],4), np.around(htm[0,2],4), np.around(htm[0,3],4),
+             np.around(htm[1,0],4), np.around(htm[1,1],4), np.around(htm[1,2],4), np.around(htm[1,3],4),
+             np.around(htm[2,0],4), np.around(htm[2,1],4), np.around(htm[2,2],4), np.around(htm[2,3],4),
              0, 0, 0, 1]
 
         self._htm = htm

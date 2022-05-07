@@ -53,7 +53,7 @@ class PointLight:
     @property
     def htm(self):
         """Object pose. A 4x4 homogeneous transformation matrix written is scenario coordinates."""
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def max_distance(self):

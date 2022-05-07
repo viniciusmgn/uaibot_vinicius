@@ -7,7 +7,7 @@ def _jac_geo(self, q=None, axis='eef', htm=None):
     if q is None:
         q = self.q
     if htm is None:
-        htm = np.array(self.htm)
+        htm = np.matrix(self.htm)
 
     n = len(self.links)
 
@@ -31,31 +31,31 @@ def _jac_geo(self, q=None, axis='eef', htm=None):
     if axis == 'com':
         htm_for_jac = self.fkm(q, 'com', htm)
 
-    jac = np.zeros((n, 6, n))
+    jac = [np.matrix(np.zeros((6,n))) for i in range(n)]
 
-    htm_world_0 = htm @ self.htm_base_0
+    htm_world_0 = htm * self.htm_base_0
 
     for i in range(n):
-        p_i = htm_for_jac[i, 0:3, 3]
+        p_i = htm_for_jac[i][0:3, 3]
         for j in range(i + 1):
 
             if j == 0:
                 p_j_ant = htm_world_0[0:3, 3]
                 z_j_ant = htm_world_0[0:3, 2]
             else:
-                p_j_ant = htm_for_jac[j - 1, 0:3, 3]
-                z_j_ant = htm_for_jac[j - 1, 0:3, 2]
+                p_j_ant = htm_for_jac[j - 1][0:3, 3]
+                z_j_ant = htm_for_jac[j - 1][0:3, 2]
 
             if self.links[j].joint_type == 0:
-                jac[i, 0:3, j] = Utils.S(z_j_ant) @ (p_i - p_j_ant)
-                jac[i, 3:6, j] = z_j_ant
+                jac[i][0:3, j] = Utils.S(z_j_ant) * (p_i - p_j_ant)
+                jac[i][3:6, j] = z_j_ant
 
             if self.links[j].joint_type == 1:
-                jac[i, 0:3, j] = z_j_ant
-                jac[i, 3:6, j] = np.zeros((3,))
+                jac[i][0:3, j] = z_j_ant
+                jac[i][3:6, j] = np.matrix(np.zeros((3,)))
 
     if axis == 'dh' or axis == 'com':
         return jac, htm_for_jac
 
     if axis == 'eef':
-        return jac[-1, :, :], htm_for_jac[-1, :, :]
+        return jac[-1][:, :], htm_for_jac[-1][:, :]

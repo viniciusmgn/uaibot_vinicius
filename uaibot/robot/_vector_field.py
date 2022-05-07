@@ -9,7 +9,7 @@ def _vector_field(curve, alpha, const_vel):
     if not Utils.is_a_matrix(curve):
         raise Exception("The parameter 'curve' should be a matrix of float numbers.")
 
-    vector_size = len(curve[0])
+    vector_size =  np.shape(curve)[0]
 
     if not Utils.is_a_number(alpha) or alpha <= 0:
         raise Exception("The parameter 'alpha' should be a positive float.")
@@ -34,25 +34,28 @@ def _vector_field_vel(p, curve, alpha, const_vel, vector_size):
     abs_const_vel = abs(const_vel)
     sgn = const_vel / (abs_const_vel + 0.00001)
 
-    return (abs_const_vel * (fun_g * vec_n + sgn * fun_h * vec_t)).reshape((vector_size, 1))
+    return abs_const_vel * (fun_g * vec_n + sgn * fun_h * vec_t)
 
 
 def _compute_ntd(curve, p):
     min_dist = float('inf')
     ind_min = -1
-    for i in range(len(curve)):
-        dist_temp = np.linalg.norm(np.array(p) - np.array(curve[i]))
+
+    pr = np.matrix(p).reshape((3,1))
+
+    for i in range(np.shape(curve)[1]):
+        dist_temp = np.linalg.norm(pr - curve[:,i])
         if dist_temp < min_dist:
             min_dist = dist_temp
             ind_min = i
 
-    vec_n = np.array(curve[ind_min]) - np.array(p)
+    vec_n = curve[:,ind_min] - pr
     vec_n = vec_n / (np.linalg.norm(vec_n) + 0.0001)
 
-    if ind_min == len(curve) - 1:
-        vec_t = np.array(curve[1]) - np.array(curve[ind_min])
+    if ind_min == np.shape(curve)[1] - 1:
+        vec_t = curve[:,1] - curve[:,ind_min]
     else:
-        vec_t = np.array(curve[ind_min + 1]) - np.array(curve[ind_min])
+        vec_t = curve[:,ind_min + 1] - curve[:,ind_min]
 
     vec_t = vec_t / (np.linalg.norm(vec_t) + 0.0001)
 

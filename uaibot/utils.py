@@ -61,10 +61,10 @@ class Utils:
       S : 3x3 numpy matrix
           A matrix that implements the cross product with v.
       """
-        vv = np.reshape(v, (3,))
-        return np.array([[0, -vv[2], vv[1]],
-                         [vv[2], 0, -vv[0]],
-                         [-vv[1], vv[0], 0]])
+        vv = np.matrix(v).reshape((3,1))
+        return np.matrix([[0, -vv[2,0], vv[1,0]],
+                         [vv[2,0], 0, -vv[0,0]],
+                         [-vv[1,0], vv[0,0], 0]])
 
     @staticmethod
     def rot(axis, angle):
@@ -89,7 +89,7 @@ class Utils:
         a = a / np.linalg.norm(a)
         K = Utils.S(a)
         Q = np.identity(3) + sin(angle) * K + (1 - cos(angle)) * (K @ K)
-        return np.hstack([np.vstack([Q, np.array([0, 0, 0])]), np.array([[0], [0], [0], [1]])])
+        return np.hstack([np.vstack([Q, np.matrix([0, 0, 0])]), np.matrix([[0], [0], [0], [1]])])
 
     @staticmethod
     def trn(vector):
@@ -108,7 +108,7 @@ class Utils:
           The homogeneous transformation matrix.
       """
         v = np.reshape(vector, (3,))
-        return np.array([[1, 0, 0, v[0]],
+        return np.matrix([[1, 0, 0, v[0]],
                          [0, 1, 0, v[1]],
                          [0, 0, 1, v[2]],
                          [0, 0, 0, 1]])
@@ -129,7 +129,7 @@ class Utils:
       htm : 4x4 numpy matrix
           The homogeneous transformation matrix.
       """
-        return np.array([[1, 0, 0, 0],
+        return np.matrix([[1, 0, 0, 0],
                          [0, cos(angle), -sin(angle), 0],
                          [0, sin(angle), cos(angle), 0],
                          [0, 0, 0, 1]])
@@ -150,7 +150,7 @@ class Utils:
       htm : 4x4 numpy matrix
           The homogeneous transformation matrix.
       """
-        return np.array([[cos(angle), 0, sin(angle), 0],
+        return np.matrix([[cos(angle), 0, sin(angle), 0],
                          [0, 1, 0, 0],
                          [-sin(angle), 0, cos(angle), 0],
                          [0, 0, 0, 1]])
@@ -171,7 +171,7 @@ class Utils:
       htm : 4x4 numpy matrix
           The homogeneous transformation matrix.
       """
-        return np.array([[cos(angle), -sin(angle), 0, 0],
+        return np.matrix([[cos(angle), -sin(angle), 0, 0],
                          [sin(angle), cos(angle), 0, 0],
                          [0, 0, 1, 0],
                          [0, 0, 0, 1]])
@@ -195,12 +195,12 @@ class Utils:
         Q = htm[0:3, 0:3]
         p = htm[0:3, 3]
 
-        inv_htm = np.zeros((4, 4))
-        inv_htm[0:3, 0:3] = np.transpose(Q)
-        inv_htm[0:3, 3] = - np.transpose(Q) @ p
+        inv_htm = np.matrix(np.zeros((4, 4)))
+        inv_htm[0:3, 0:3] = Q.T
+        inv_htm[0:3, 3] = - Q.T * p
         inv_htm[3, 3] = 1
 
-        return inv_htm
+        return np.matrix(inv_htm)
 
     @staticmethod
     def axis_angle(htm):
@@ -227,14 +227,14 @@ class Utils:
         G = Q @ Q - 2 * cos(angle) * Q + np.identity(3)
         ok = False
         while not ok:
-            v = np.random.uniform(-100, 100, size=(3,))
-            w = np.random.uniform(-100, 100, size=(3,))
-            r = G @ v
+            v = np.matrix(np.random.uniform(-100, 100, size=(3,1)))
+            w = np.matrix(np.random.uniform(-100, 100, size=(3,1)))
+            r = G * v
             nr = np.linalg.norm(r)
-            prod = np.transpose(w) @ r
+            prod = w.T * r
             if nr > 0.01:
-                ortr = w - prod * r / (nr * nr)
-                axis = Utils.S(ortr) @ (Q @ ortr)
+                ortr = w -  (r * prod) / (nr * nr)
+                axis = Utils.S(ortr) * (Q * ortr)
                 naxis = np.linalg.norm(axis)
                 ok = naxis > 0.01
 
@@ -244,7 +244,7 @@ class Utils:
     @staticmethod
     def euler_angles(htm):
 
-        Q = np.array(htm[0:3, 0:3])
+        Q = np.matrix(htm[0:3, 0:3])
         sy = sqrt(Q[0, 0] ** 2 + Q[1, 0] ** 2)
 
         if abs(sy) > 0.001:
@@ -277,8 +277,8 @@ class Utils:
       pinvA: mxn numpy array
           The damped pseudoinverse of 'mat'.
       """
-        n = len(mat[0, :])
-        return np.linalg.inv(np.transpose(mat) @ mat + eps * np.identity(n)) @ np.transpose(mat)
+        n = np.shape(mat)[1]
+        return np.linalg.inv(mat.T * mat + eps * np.identity(n)) * mat.T
 
     @staticmethod
     def jac(f, x, delta=0.0001):
@@ -330,12 +330,12 @@ class Utils:
             raise Exception("The parameter 'f' must be a function that maps 'm' dimensional vectors" \
                             ", in which 'm' is the size of the vector 'x', into 'n' dimensional vectors.")
 
-        jac = np.zeros((n, m))
-        idm = np.identity(m)
+        jac = np.matrix(np.zeros((n, m)))
+        idm = np.matrix(np.identity(m))
 
         for j in range(m):
-            yp = np.array(f(x.reshape((m,)) + idm[:, j] * delta)).reshape((n,))
-            yn = np.array(f(x.reshape((m,)) - idm[:, j] * delta)).reshape((n,))
+            yp = f(x + idm[:, j] * delta)
+            yn = f(x - idm[:, j] * delta)
             jac[:, j] = (yp - yn) / (2 * delta)
 
         return jac
@@ -410,7 +410,7 @@ class Utils:
       """
 
 
-        x_sol = Utils.dp_inv(mat_a[0], eps) @ mat_b[0]
+        x_sol = Utils.dp_inv(mat_a[0], eps) * mat_b[0]
 
         if len(mat_a) > 1:
 
@@ -420,11 +420,11 @@ class Utils:
                 mat_a_mod = []
                 mat_b_mod = []
                 for i in range(1, len(mat_a)):
-                    mat_a_mod.append(mat_a[i] @ null_mat_a)
-                    mat_b_mod.append(mat_b[i] - mat_a[i] @ x_sol)
+                    mat_a_mod.append(mat_a[i] * null_mat_a)
+                    mat_b_mod.append(mat_b[i] - mat_a[i] * x_sol)
 
                 y_sol = Utils.hierarchical_solve(mat_a_mod, mat_b_mod, eps)
-                return x_sol + null_mat_a @ y_sol
+                return x_sol + null_mat_a * y_sol
             else:
                 return x_sol
         else:
@@ -555,7 +555,7 @@ class Utils:
                 fun_out = np.array(fun_out).reshape((1, len(fun_out)))
                 y = np.block([[y], [fun_out]])
 
-            return y
+            return np.matrix(y)
 
         return lambda t: aux_interpolate_multiple(points, t)
 
@@ -851,7 +851,7 @@ class Utils:
           If the object is of the type.   
       """
 
-        if str(type(obj)) == "<class 'numpy.ndarray'>":
+        if str(type(obj)) == "<class 'numpy.ndarray'>" or str(type(obj)) == "<class 'numpy.matrix'>":
             return Utils.is_a_matrix(obj.tolist(), n, m)
         else:
             if str(type(obj)) == "<class 'list'>":
@@ -1173,7 +1173,7 @@ class Utils:
         # end error handling
         if n > 1:
             for i in range(n):
-                fig.add_scatter(x=xv, y=yv[i], mode="lines", name=list_names[i])
+                fig.add_scatter(x=xv, y=yv[i,:], mode="lines", name=list_names[i])
         else:
             fig.add_scatter(x=xv, y=yv, mode="lines", name=list_names[0])
 
@@ -1269,7 +1269,7 @@ class Utils:
                 c * (h * h * (a1 - a2) / v + 2 * r * exp((0.5 * (v - r) * (v - r) - Utils.fun_Int(v, h, r)) / (h * h))))
 
     @staticmethod
-    def compute_dist(obj_a, obj_b, h=0.0001, g=0.0001, p_a_init=None, tol=0.001, no_iter_max=20):
+    def compute_dist(obj_a, obj_b, h=0.000001, g=0.000001, p_a_init=None, tol=0.001, no_iter_max=20):
 
         # Error handling
 

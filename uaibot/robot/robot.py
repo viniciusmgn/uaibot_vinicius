@@ -80,12 +80,12 @@ class Robot:
     @property
     def q(self):
         """The current joint configuration."""
-        return np.array(self._q)
+        return np.matrix(self._q)
 
     @property
     def q0(self):
         """The default joint configuration."""
-        return np.array(self._q0)
+        return np.matrix(self._q0)
 
     @property
     def htm(self):
@@ -93,7 +93,7 @@ class Robot:
         The current base configuration in scenario coordinates.
         A 4x4 homogeneous matrix written is scenario coordinates.
         """
-        return np.array(self._htm)
+        return np.matrix(self._htm)
 
     @property
     def htm_base_0(self):
@@ -101,7 +101,7 @@ class Robot:
         The constant homogeneous transformation between the HTM of the base and
         the HTM of the first Denavit-Hartenberg frame.
         """
-        return np.array(self._htm_base_0)
+        return np.matrix(self._htm_base_0)
 
     @property
     def links(self):
@@ -157,9 +157,9 @@ class Robot:
         n = len(links)
 
         if not (q0 is None):
-            self._q0 = np.array(q0).reshape((n,1))
+            self._q0 = np.matrix(q0).reshape((n,1))
         else:
-            self._q0 = np.zeros((n,1))
+            self._q0 = np.matrix(np.zeros((n,1)))
 
         if not (str(type(list_base_3d_obj)) == "<class 'list'>" or (list_base_3d_obj is None)):
             raise Exception("The parameter 'list_base_3d_obj' should be a list of 'uaibot.Model3D' objects.")
@@ -192,7 +192,7 @@ class Robot:
 
         self._frames = []
         self._list_object_3d_base = list_base_3d_obj
-        self._htm = np.array(htm)
+        self._htm = np.matrix(htm)
         self._name = name
         self._attached_objects = []
         self._links = links

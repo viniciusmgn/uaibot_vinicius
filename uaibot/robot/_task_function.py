@@ -34,19 +34,19 @@ def _task_function(self, htm_des, q=None, htm=None):
     y_eef = htm_eef[0:3, 1]
     z_eef = htm_eef[0:3, 2]
 
-    r = np.zeros((6,))
-    r[0:3] = p_eef - p_des
-    r[3] = max(1 - np.transpose(x_des) @ x_eef, 0)
-    r[4] = max(1 - np.transpose(y_des) @ y_eef, 0)
-    r[5] = max(1 - np.transpose(z_des) @ z_eef, 0)
+    r = np.matrix(np.zeros((6,1)))
+    r[0:3,0] = p_eef - p_des
+    r[3] = max(1 - x_des.T * x_eef, 0)
+    r[4] = max(1 - y_des.T * y_eef, 0)
+    r[5] = max(1 - z_des.T * z_eef, 0)
 
     n = len(self.links)
-    jac_r = np.zeros((6, n))
+    jac_r = np.matrix(np.zeros((6, n)))
     jac_r[0:3, :] = jac_eef[0:3, :]
-    jac_r[3, :] = np.transpose(x_des) @ Utils.S(x_eef) @ jac_eef[3:6, :]
-    jac_r[4, :] = np.transpose(y_des) @ Utils.S(y_eef) @ jac_eef[3:6, :]
-    jac_r[5, :] = np.transpose(z_des) @ Utils.S(z_eef) @ jac_eef[3:6, :]
+    jac_r[3, :] = x_des.T * Utils.S(x_eef) * jac_eef[3:6, :]
+    jac_r[4, :] = y_des.T * Utils.S(y_eef) * jac_eef[3:6, :]
+    jac_r[5, :] = z_des.T * Utils.S(z_eef) * jac_eef[3:6, :]
 
-    r = r.reshape((6,1))
+
 
     return r, jac_r

@@ -42,8 +42,8 @@ def _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b):
 
     n_a = len(robot_a.links)
     n_b = len(robot_b.links)
-    r = np.zeros((12, 1))
-    jac_r = np.zeros((12, n_a + n_b))
+    r = np.matrix(np.zeros((12, 1)))
+    jac_r = np.matrix(np.zeros((12, n_a + n_b)))
 
     # First part of the cooperative task function (relative pose between A and B)
 
@@ -57,18 +57,18 @@ def _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b):
     z_rel = htm_a_b[0:3, 2]
     p_rel = htm_a_b[0:3, 3]
 
-    jac_rel_v = np.transpose(rot_a) @ np.hstack((Utils.S(p_b - p_a) @ jac_a[3:6, :] - jac_a[0:3, :], jac_b[0:3, :]))
-    jac_rel_w = np.transpose(rot_a) @ np.hstack((-jac_a[3:6, :], jac_b[3:6, :]))
+    jac_rel_v = rot_a.T * np.hstack((Utils.S(p_b - p_a) * jac_a[3:6, :] - jac_a[0:3, :], jac_b[0:3, :]))
+    jac_rel_w = rot_a.T * np.hstack((-jac_a[3:6, :], jac_b[3:6, :]))
 
-    r[0:3] = (p_rel - p_rel_des).reshape((3, 1))
-    r[3] = max(1 - np.transpose(x_rel_des) @ x_rel, 0)
-    r[4] = max(1 - np.transpose(y_rel_des) @ y_rel, 0)
-    r[5] = max(1 - np.transpose(z_rel_des) @ z_rel, 0)
+    r[0:3] = p_rel - p_rel_des
+    r[3] = max(1 - x_rel_des.T * x_rel, 0)
+    r[4] = max(1 - y_rel_des.T * y_rel, 0)
+    r[5] = max(1 - z_rel_des.T * z_rel, 0)
 
     jac_r[0:3, :] = jac_rel_v
-    jac_r[3, :] = np.transpose(x_rel_des) @ Utils.S(x_rel) @ jac_rel_w
-    jac_r[4, :] = np.transpose(y_rel_des) @ Utils.S(y_rel) @ jac_rel_w
-    jac_r[5, :] = np.transpose(z_rel_des) @ Utils.S(z_rel) @ jac_rel_w
+    jac_r[3, :] = x_rel_des.T * Utils.S(x_rel) * jac_rel_w
+    jac_r[4, :] = y_rel_des.T * Utils.S(y_rel) * jac_rel_w
+    jac_r[5, :] = z_rel_des.T * Utils.S(z_rel) * jac_rel_w
 
     # Second part of the cooperative task function (pose for A)
     x_a_des = htm_a_des[0:3, 0]
@@ -81,16 +81,16 @@ def _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b):
     z_a = htm_a[0:3, 2]
     p_a = htm_a[0:3, 3]
 
-    r[6:9] = (p_a - p_a_des).reshape((3, 1))
-    r[9] = max(1 - np.transpose(x_a_des) @ x_a, 0)
-    r[10] = max(1 - np.transpose(y_a_des) @ y_a, 0)
-    r[11] = max(1 - np.transpose(z_a_des) @ z_a, 0)
+    r[6:9] = p_a - p_a_des
+    r[9] =  max(1 - x_a_des.T * x_a, 0)
+    r[10] = max(1 - y_a_des.T * y_a, 0)
+    r[11] = max(1 - z_a_des.T * z_a, 0)
 
     jac_r[6:9, :] = np.hstack((jac_a[0:3, :], np.zeros((3, n_b))))
     jac_w_a = np.hstack((jac_a[3:6, :], np.zeros((3, n_b))))
-    jac_r[9, :] = np.transpose(x_a_des) @ Utils.S(x_a) @ jac_w_a
-    jac_r[10, :] = np.transpose(y_a_des) @ Utils.S(y_a) @ jac_w_a
-    jac_r[11, :] = np.transpose(z_a_des) @ Utils.S(z_a) @ jac_w_a
+    jac_r[9, :] =  x_a_des.T * Utils.S(x_a) * jac_w_a
+    jac_r[10, :] = y_a_des.T * Utils.S(y_a) * jac_w_a
+    jac_r[11, :] = z_a_des.T * Utils.S(z_a) * jac_w_a
 
     r = r.reshape((12,1))
 
