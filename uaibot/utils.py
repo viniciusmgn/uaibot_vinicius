@@ -107,10 +107,10 @@ class Utils:
       htm : 4x4 numpy matrix
           The homogeneous transformation matrix.
       """
-        v = np.reshape(vector, (3,))
-        return np.matrix([[1, 0, 0, v[0]],
-                         [0, 1, 0, v[1]],
-                         [0, 0, 1, v[2]],
+        v = np.matrix(vector).reshape((3,1))
+        return np.matrix([[1, 0, 0, v[0,0]],
+                         [0, 1, 0, v[1,0]],
+                         [0, 0, 1, v[2,0]],
                          [0, 0, 0, 1]])
 
     @staticmethod
@@ -1173,9 +1173,9 @@ class Utils:
         # end error handling
         if n > 1:
             for i in range(n):
-                fig.add_scatter(x=xv, y=yv[i,:], mode="lines", name=list_names[i])
+                fig.add_scatter(x=xv, y=yv[i,:].tolist()[0], mode="lines", name=list_names[i])
         else:
-            fig.add_scatter(x=xv, y=yv, mode="lines", name=list_names[0])
+            fig.add_scatter(x=xv, y=yv.tolist()[0], mode="lines", name=list_names[0])
 
         fig.update_xaxes(title_text=xname)
         fig.update_yaxes(title_text=yname)
