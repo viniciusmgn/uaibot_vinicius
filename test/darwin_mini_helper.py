@@ -15,13 +15,19 @@ opacity = 1
 col_model = [[],[],[]]
 # Create 3d objects
 
+texture_white = Texture(
+    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/white.png',
+    wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[1, 1])
+
+material_robot = MeshMaterial(env_map=texture_white, flat_shading=True, roughness=0, metalness=1, opacity=1)
+
+
 base_3d_obj = [
     Model3D(
         'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/Darwin-mini_frm_ext_01.obj',
         0.004,
         Utils.trn([0,0,0.5]),
-        MeshMaterial(metalness=1, clearcoat=0, roughness=0, normal_scale=[1, 1], color="red",
-                     opacity=opacity))]
+        material_robot)]
 
 link_3d_obj = []
 
