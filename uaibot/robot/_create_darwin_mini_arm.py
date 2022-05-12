@@ -40,7 +40,7 @@ def _create_darwin_mini_arm(htm, name, color, opacity):
 
     base_3d_obj = [
         Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/base_link.stl',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/Darwin-mini_frm_ext_01.obj',
             scale,
             np.identity(4),
             MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
