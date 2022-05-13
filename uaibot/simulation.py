@@ -285,7 +285,7 @@ class Simulation:
 
         mesh_ground = MeshMaterial(texture_map=texture_ground, metalness=1, roughness=1)
 
-        ground = Box(name="ground", width=6, depth=6, height=0.01, htm=Utils.trn([0, 0, 0.005]),
+        ground = Box(name="ground", width=6, depth=6, height=0.01, htm=Utils.trn([0, 0, -0.005]),
                      mesh_material=mesh_ground)
 
         light1 = PointLight(name="light1", color="white", intensity=2.5, htm=Utils.trn([-1,-1, 1.5]))

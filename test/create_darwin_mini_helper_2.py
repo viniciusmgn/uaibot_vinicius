@@ -3,7 +3,7 @@ import numpy as np
 from robot._create_darwin_mini_arm import _create_darwin_mini_arm
 
 opacity = 1
-color = "silver"
+color = "#3e3f42"
 name = "darwin_mini"
 
 base_3d_obj, links, htm_a, q0, joint_limits = _create_darwin_mini_arm(np.identity(4), "arm_left", color, 1)
