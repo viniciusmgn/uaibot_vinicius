@@ -35,6 +35,7 @@ from ._create_epson_t6 import _create_epson_t6
 from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
+from ._create_darwin_mini_arm import _create_darwin_mini_arm
 
 class Robot:
     """
