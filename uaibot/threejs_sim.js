@@ -63,6 +63,7 @@ class Objsim{
 	}
 	setEnvMap(envMap)
 	{
+		console.log(this.shape)
 		this.shape.material.envMap = envMap;
 		this.shape.material.needsUpdate = true;
 	}
@@ -203,6 +204,26 @@ class RigidObject extends Objsim
 		}
 
 	}
+
+	setEnvMapTemp(variable, envMap)
+	{
+		if(variable instanceof Mesh)
+		{
+			variable.material.envMap = envMap;
+			variable.material.needsUpdate  = true;
+		}
+		else if (variable instanceof Group)
+		{
+			for(let i=0; i < variable.children.length; i++)
+			{
+				this.setEnvMapTemp(variable.children[i]);
+			}
+		}
+	}
+	setEnvMap(envMap) {
+		this.setEnvMapTemp(this.shape, envMap);
+	}
+
 }
 
 class Vector extends Objsim {
