@@ -47,13 +47,25 @@ headpart1 = Model3D(
                  opacity=opacity, side="DoubleSide"))
 
 headpart2 = Model3D(
-    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/darwin_head.obj',
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/eye.obj',
+    0.0009,
+    Utils.trn([0.177,-0.043,1.162]) * Utils.rotz(3.14/2-0.3),
+    MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="blue",
+                 opacity=opacity, side="DoubleSide"))
+headpart3 = Model3D(
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/eye.obj',
+    0.0009,
+    Utils.trn([0.171, 0.053,1.162]) * Utils.rotz(3.14/2+0.4),
+    MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="blue",
+                 opacity=opacity, side="DoubleSide"))
+headpart4 = Model3D(
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
     0.004,
-    Utils.trn([-0.3,-0.179,0.55]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
-    MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
+    Utils.trn([0.171, 0.053,1.162]) * Utils.rotz(3.14/2+0.4),
+    MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
                  opacity=opacity, side="DoubleSide"))
 
-head = RigidObject([headpart1],name+"_head")
+head = RigidObject([headpart1,headpart2,headpart3],name+"_head")
 
 sim = Simulation.create_sim_factory([robot_arm_left, robot_arm_right, chest, head])
 
