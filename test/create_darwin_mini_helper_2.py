@@ -46,6 +46,13 @@ headpart1 = Model3D(
     MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                  opacity=opacity, side="DoubleSide"))
 
+headpart2 = Model3D(
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/darwin_head.obj',
+    0.004,
+    Utils.trn([-0.3,-0.179,0.55]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
+    MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
+                 opacity=opacity, side="DoubleSide"))
+
 head = RigidObject([headpart1],name+"_head")
 
 sim = Simulation.create_sim_factory([robot_arm_left, robot_arm_right, chest, head])
