@@ -38,20 +38,35 @@ chestpart4 = Model3D(
                  opacity=opacity, side="DoubleSide"))
 
 chestpart5 = Model3D(
-    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPU.obj',
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPU-2.obj',
     0.004,
-    np.identity(4),
+    Utils.trn([0.05,0.13,0]) * Utils.rotz(3.14/2) * Utils.trn([-0.42,-0.179,0.575]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
     MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
                  opacity=opacity, side="DoubleSide"))
 
 chestpart6 = Model3D(
     'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
     0.004,
-    Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
+    Utils.trn([0.69,0.1,0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14/2) * Utils.trn([-0.3,-0.179,0.15]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
     MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
                  opacity=opacity, side="DoubleSide"))
 
-chest = RigidObject([chestpart1, chestpart2,chestpart3,chestpart4,chestpart5,chestpart6],name+"_chest")
+chestpart7 = Model3D(
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPU-2.obj',
+    0.004,
+    Utils.trn([0.05,-0.06,0]) * Utils.rotz(3.14/2) * Utils.trn([-0.42,-0.179,0.575]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
+    MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
+                 opacity=opacity, side="DoubleSide"))
+
+chestpart8 = Model3D(
+    'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+    0.004,
+    Utils.trn([0.69,-0.09,0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14/2) * Utils.trn([-0.3,-0.179,0.15]) * Utils.rotz(3.14/2) * Utils.rotx(3.14/2),
+    MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
+                 opacity=opacity, side="DoubleSide"))
+
+chest = RigidObject([chestpart1, chestpart2, chestpart3, chestpart4, chestpart5, chestpart6, chestpart7, chestpart8],
+                    name + "_chest")
 
 headpart1 = Model3D(
     'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/darwin_head.obj',
@@ -82,7 +97,7 @@ headpart4 = Model3D(
 head = RigidObject([headpart1,headpart2,headpart3,headpart4],name+"_head")
 
 sim = Simulation.create_sim_factory([robot_arm_left, robot_arm_right, chest, head])
-
+#sim = Simulation([robot_arm_left, robot_arm_right, chest, head],camera_type="orthographic")
 
 
 

@@ -83,14 +83,6 @@ def _create_darwin_mini_arm(htm, name, color, opacity):
         ]
     )
 
-    UU = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPO.obj',
-        0.004,
-        Utils.inv_htm(Q01 * Q02 * Q03) * Utils.roty(-np.pi / 2) * Utils.rotx(-np.pi / 2) * Utils.trn(
-            [-0.325, -0.385, -0.0115]),
-        MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
-                     opacity=opacity, side="DoubleSide"))
-
     link_3d_obj.append(
         [Model3D(
             'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320.obj',
