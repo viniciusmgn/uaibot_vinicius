@@ -162,6 +162,10 @@ class Group:
     def gen_code(self):
         """Generate code for injection."""
 
+        self._max_time = 0
+        for i in range(len(self.list_of_objects)):
+            self._max_time = max(self._max_time, self.list_of_objects[i]._max_time)
+
         string = "\n"
         string += "//BEGIN DECLARATION OF THE GROUP '" + self.name + "'\n\n"
         for obj in self.list_of_objects:

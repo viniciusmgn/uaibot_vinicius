@@ -63,7 +63,6 @@ class Objsim{
 	}
 	setEnvMap(envMap)
 	{
-		console.log(this.shape)
 		this.shape.material.envMap = envMap;
 		this.shape.material.needsUpdate = true;
 	}
@@ -292,7 +291,7 @@ class HTMLDiv extends Objsim{
 
 class Robot extends Objsim{
 
-	constructor(_objBase, _link, _frames, _htm_base_0, _eef_frame_visible){
+	constructor(_objBase, _link, _frames, _htm_base_0, _htm_n_eef, _eef_frame_visible){
 		super(_frames);
 
 		this.loadedObjs = 0
@@ -339,10 +338,25 @@ class Robot extends Objsim{
 				linkGroup.translateX(this.links[i].a);
 			}
 
+
 			linkGroup.updateMatrix();
 
 			linkGroupList.push(linkGroup);
 		}
+
+		var linkGroup = new Group();
+		linkGroup.name = "eefFrame";
+		linkGroupList.push(linkGroup);
+
+		linkGroup = new Group();
+		linkGroup.name = "eef";
+		var axesHelper = new AxesHelper(0.2);
+		axesHelper.matrixAutoUpdate = false;
+		axesHelper.visible = _eef_frame_visible;
+		linkGroup.add(axesHelper);
+		linkGroup.applyMatrix4(_htm_n_eef)
+		linkGroup.updateMatrix();
+		linkGroupList.push(linkGroup);
 
 
 		base.add(baseFrame)
@@ -361,7 +375,7 @@ class Robot extends Objsim{
 		for (let i = 0; i < this.links.length-1; i++) {
 			this.loadObj(this.links[i].model3d,"link" + (i+1).toString(), "link" + (i).toString(), this.links[i].showFrame)
 		}
-		this.loadObj(this.links[this.links.length-1].model3d,"link" + (this.links.length).toString(), "link" + (this.links.length).toString(), _eef_frame_visible)
+		this.loadObj(this.links[this.links.length-1].model3d,"link" + (this.links.length).toString(), "link" + (this.links.length).toString(), false)
 
 		this.delta_config = []
 

@@ -19,11 +19,9 @@ robot = Robot.create_darwin_mini()
 
 frame1 = Frame(name="f1", htm=robot.list_of_objects[2].fkm(), size=0.2)
 frame2 = Frame(name="f2", htm=robot.list_of_objects[3].fkm(), size=0.2)
-sim = Simulation.create_sim_factory([robot, frame1, frame2])
+sim = Simulation.create_sim_factory([robot])
 
-print(robot.list_of_objects[2].fkm())
 
-print()
 
 
 sim.save("D:\\","entire")
