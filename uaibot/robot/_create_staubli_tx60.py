@@ -181,4 +181,4 @@ def _create_staubli_tx60(htm, name, color, opacity):
     #Create joint limits
     joint_limits = (np.pi/180)*np.matrix([[-180,180],[-127.5+90, 127.5+90],[-142.5+90, 142.5+90],[-270,270],[-121,132.5],[-270,270]])
 
-    return base_3d_obj, links, htm_base_0, q0, joint_limits
+    return base_3d_obj, links, htm_base_0, np.identity(4), q0, joint_limits

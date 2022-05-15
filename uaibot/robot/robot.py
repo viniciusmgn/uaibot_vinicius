@@ -7,6 +7,7 @@ sys.path.append(parentdir)
 import numpy as np
 from utils import *
 from graphics.meshmaterial import *
+from simobjects.group import *
 
 from ._set_ani_frame import _set_ani_frame
 from ._add_ani_frame import _add_ani_frame
@@ -35,7 +36,8 @@ from ._create_epson_t6 import _create_epson_t6
 from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
-from ._create_darwin_mini_arm import _create_darwin_mini_arm
+from ._create_darwin_mini import _create_darwin_mini
+
 
 class Robot:
     """
@@ -105,6 +107,14 @@ class Robot:
         return np.matrix(self._htm_base_0)
 
     @property
+    def htm_n_eef(self):
+        """
+        The constant homogeneous transformation between the HTM of the last
+        Denavit-Hartenberg frame and the end-effector
+        """
+        return np.matrix(self._htm_n_eef)
+
+    @property
     def links(self):
         """Data structures containing the links of the robot."""
         return self._links
@@ -138,7 +148,8 @@ class Robot:
     # Constructor
     #######################################
 
-    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4), q0=None, eef_frame_visible=True, joint_limits = None):
+    def __init__(self, name, links, list_base_3d_obj=None, htm=np.identity(4), htm_base_0=np.identity(4),
+                 htm_n_eef = np.identity(4), q0=None, eef_frame_visible=True, joint_limits = None):
         # Error handling
 
         if not (Utils.is_a_name(name)):
@@ -147,6 +158,12 @@ class Robot:
 
         if not Utils.is_a_matrix(htm, 4, 4):
             raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
+
+        if not Utils.is_a_matrix(htm_base_0, 4, 4):
+            raise Exception("The parameter 'htm_base_0' should be a 4x4 homogeneous transformation matrix.")
+
+        if not Utils.is_a_matrix(htm_n_eef, 4, 4):
+            raise Exception("The parameter 'htm_n_eef' should be a 4x4 homogeneous transformation matrix.")
 
         if not (str(type(links)) == "<class 'list'>"):
             raise Exception("The parameter 'links' should be a list of 'uaibot.Link' objects.")
@@ -198,6 +215,7 @@ class Robot:
         self._attached_objects = []
         self._links = links
         self._htm_base_0 = htm_base_0
+        self._htm_n_eef = htm_n_eef
         self._eef_frame_visible = eef_frame_visible
         self._max_time = 0
 
@@ -677,8 +695,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_kuka_kr5(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_kr5(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_epson_t6(htm=np.identity(4), name='epsont6', color="white", opacity=1, eef_frame_visible=True):
@@ -710,8 +728,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_epson_t6(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_epson_t6(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_staubli_tx60(htm=np.identity(4), name='staublitx60', color="#ff9b00", opacity=1, eef_frame_visible=True):
@@ -743,8 +761,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_staubli_tx60(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_staubli_tx60(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_kuka_lbr_iiwa(htm=np.identity(4), name='kukalbriiwa', color="silver", opacity=1, eef_frame_visible=True):
@@ -776,8 +794,8 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_kuka_lbr_iiwa(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_lbr_iiwa(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
     def create_abb_crb(htm=np.identity(4), name='abbcrb', color="white", opacity=1, eef_frame_visible=True):
@@ -809,8 +827,65 @@ class Robot:
         The robot.
 
     """
-        base_3d_obj, links, htm_base_0, q0, joint_limits = _create_abb_crb(htm, name, color, opacity)
-        return Robot(name, links, base_3d_obj, htm, htm_base_0, q0, eef_frame_visible, joint_limits)
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_abb_crb(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
+
+    @staticmethod
+    def create_darwin_mini(htm=np.identity(4), name="darwin_mini", color="#3e3f42", opacity=1, eef_frame_visible=True):
+        """
+    Create an (oversized) Darwin Mini, a humanoid robot.
+    Thanks to Alexandre Le Falher for the 3D model (https://grabcad.com/library/darwin-mini-1).
+
+    Parameters
+    ----------
+    htm : 4x4 numpy array or 4x4 nested list
+        The initial base configuration for the robot.
+        (default: np.identity(4))
+
+    name : string
+        The robot name.
+        (default: 'darwin_mini').
+
+    htm : color
+        A HTML-compatible string representing the object color.
+        (default: '#3e3f42').
+
+    opacity : positive float between 0 and 1
+        The opacity of the robot. 1 = fully opaque and 0 = transparent.
+        (default: 1)
+
+    Returns
+    -------
+    robot : Group object
+        The robot. It is composed of a group of six objects: the two arms and legs (members of 'Robot' class)
+        and the chest and head (both 'RigidObject' class)
+
+
+    """
+
+        param_arm_left, param_arm_right, param_leg_left, param_leg_right, head, chest = _create_darwin_mini(htm, name,
+                                                                                                            color,
+                                                                                                            opacity)
+        desl_z = htm * Utils.trn([0, 0, -0.18])
+        robot_arm_left = Robot(name + "__arm_left", param_arm_left[1], param_arm_left[0],
+                               desl_z * Utils.trn([0, 0.14, 1]) * Utils.rotx(-3.14 / 2), param_arm_left[2],
+                               param_arm_left[3], [np.pi/2,0.3,0], eef_frame_visible,
+                               param_arm_left[5])
+
+        robot_arm_right = Robot(name + "__arm_right", param_arm_right[1], param_arm_right[0],
+                                desl_z * Utils.rotz(3.14) * Utils.trn([0, 0.14, 1]) * Utils.rotx(-3.14 / 2),
+                                param_arm_right[2],
+                                param_arm_right[3], [np.pi/2,0.3,0], eef_frame_visible, param_arm_right[5])
+
+        robot_leg_left = Robot(name + "__leg_left", param_leg_left[1], param_leg_left[0],
+                               desl_z * Utils.trn([0, -0.1, 0.7]) * Utils.roty(np.pi / 2) * Utils.rotz(-np.pi / 2),
+                               param_leg_left[2], param_leg_left[3], [np.pi/2, 0, 0, np.pi/2], eef_frame_visible, param_leg_left[5])
+
+        robot_leg_right = Robot(name + "__leg_right", param_leg_right[1], param_leg_right[0],
+                                desl_z * Utils.trn([0, 0.1, 0.7]) * Utils.roty(np.pi / 2) * Utils.rotz(-np.pi / 2),
+                                param_leg_right[2], param_leg_right[3], [np.pi/2, 0, 0, np.pi/2], eef_frame_visible, param_leg_right[5])
+
+        return Group([robot_arm_left, robot_arm_right, robot_leg_left, robot_leg_right, head, chest])
 
     #######################################
     # Advanced methods

@@ -108,7 +108,7 @@ link_3d_obj.append(
     [Model3D(
             'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
             0.004,
-            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.3,0.295,-0.062]) * Utils.rotz(np.pi/2) * Utils.roty(-np.pi/2) * Utils.trn([0.04, 1, 0]) * Utils.rotx(np.pi / 2) * Utils.trn(
+            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0,0.785,0]) * Utils.rotz(np.pi) * Utils.trn([0.3,0.295,-0.062]) * Utils.rotz(np.pi/2) * Utils.roty(-np.pi/2) * Utils.trn([0.04, 1, 0]) * Utils.rotx(np.pi / 2) * Utils.trn(
                 [0.69, -0.09, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
                 [-0.3, -0.179, 0.15]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
             MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
@@ -122,13 +122,13 @@ link_3d_obj.append(
         Model3D(
             'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/foot.obj',
             0.004,
-            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.34,0.19,-0.31]) * Utils.rotz(np.pi),
+            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([-0.06+0.34,0.19,-0.31]) * Utils.rotz(np.pi),
             MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                          opacity=opacity, side="DoubleSide")),
         Model3D(
             'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/sole.obj',
             0.004,
-            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.34,0.19,-0.31]) * Utils.rotz(np.pi),
+            Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([-0.06+0.34,0.19,-0.31]) * Utils.rotz(np.pi),
             MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                          opacity=opacity, side="DoubleSide"))
     ]

@@ -159,4 +159,4 @@ def _create_kuka_lbr_iiwa(htm, name, color, opacity):
     #Create joint limits
     joint_limits = (np.pi/180)*np.matrix([[-170,170],[-120,120],[-170,170],[-120,120],[-170,170],[-120,120],[-175,175]])
 
-    return base_3d_obj, links, np.identity(4), q0, joint_limits
+    return base_3d_obj, links, np.identity(4), np.identity(4), q0, joint_limits

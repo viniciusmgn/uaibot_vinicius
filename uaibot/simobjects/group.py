@@ -167,4 +167,7 @@ class Group:
         for obj in self.list_of_objects:
             string += obj.gen_code() + "\n"
 
+        string = string.replace("//USER INPUT GOES HERE", "")
+        string += "\n//USER INPUT GOES HERE"
+
         return string

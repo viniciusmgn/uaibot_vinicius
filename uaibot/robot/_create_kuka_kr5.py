@@ -162,4 +162,4 @@ def _create_kuka_kr5(htm, name, color, opacity):
     #Create joint limits
     joint_limits = (np.pi/180)*np.matrix([[-170,170],[-190, 45],[-119-90, 165-90],[-190,190],[-120,120],[-358,358]])
 
-    return base_3d_obj, links, np.identity(4), q0, joint_limits
+    return base_3d_obj, links, np.identity(4), np.identity(4), q0, joint_limits

@@ -51,6 +51,6 @@ def _fkm(self, q=None, axis='eef', htm=None):
             htm_dh[i][0:3, 3] = htm_dh[i][0:3, 3] + htm_dh[i][0:3, 0:3] * self._links[i].com_coordinates
 
     if axis == 'eef':
-        htm_dh = htm_dh[-1][:, :]
+        htm_dh = htm_dh[-1][:, :] * self.htm_n_eef
 
     return htm_dh

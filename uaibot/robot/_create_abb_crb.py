@@ -114,4 +114,4 @@ def _create_abb_crb(htm, name, color, opacity):
     #Create joint limits
     joint_limits = (np.pi/180)*np.matrix([[-180,180],[-180,180],[-225-200+10,85-200-20],[-180,180],[-180,180],[-180,180]])
 
-    return base_3d_obj, links, np.identity(4), q0, joint_limits
+    return base_3d_obj, links, np.identity(4), np.identity(4), q0, joint_limits
