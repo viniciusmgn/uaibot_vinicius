@@ -1,16 +1,10 @@
-# uaibot_vinicius
-UAIBot
 
-<h1>Heading</h1>
 
-<h2>Sub-heading</h2>
+<h1>UAIBot</h1>
 
-<h1>Alternative heading</h1>
+UAIBot is a <strong>web-based Python robotic simulator</strong> developed by <strong>Vinicius Mariano Gonçalves</strong>  
+(Electrical Engineering Department, Federal University of Minas Gerais, Brazil) and his students, aiming to teach robotics, specially robotic manipulators, 
+concepts.
 
-<p>Paragraphs are separated
-by a blank line.</p>
+Python is used to create the simulation scenarios,
 
-<p>Two spaces at the end of a line<br />
-produce a line break.</p>
-
-<iframe scrolling="no" src="/aulas_manipuladores/presentation/images/aula5/anim9.html" style="width:500px;height:550px">
