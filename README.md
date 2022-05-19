@@ -86,12 +86,11 @@ If you know portuguese, you can also see my [Robotic Manipulator course](https:/
 
 <h2>Why "UAIBot"?</h2>
 
-"Uai" is an interjection commonly used by mineiros, that is, people who where born in the state of Minas Gerais, Brazil. It is pronounced like the english "Why" and has roughly the same meaning, used when mineiros are confused or in doubt. Indeed, some linguistic researchers think that the origin of this interjection is exactly the english word "why".
+"Uai" is an interjection commonly used by mineiros, that is, people who where born in the state of Minas Gerais, Brazil. It is one of the regional symbols of Minas Gerais. It is pronounced like the english "why" and has roughly the same meaning, used when mineiros are confused or in doubt. Indeed, some linguistic researchers think that the origin of this interjection is exactly the english word "why".
 
 <h2>What is the symbol of "UAIBot"???</h2>
 
-It is supposed to be a robotic manipulator in front of a mountain (one of the symbols of the state of Minas Gerais, Brazil).
-Sorry, I am not a designer. I am glad if someone could help me on that.
+It is supposed to be a robotic manipulator in front of a mountain. Mountains, along with aforementioned "Uai", are one of the symbols of the state of Minas Gerais, Brazil. 
 
 <h2>Collaborators</h2>
 
