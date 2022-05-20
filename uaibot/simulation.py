@@ -71,7 +71,7 @@ class Simulation:
     _CAMERATYPE = ['perspective', 'orthographic']
     # Import the javascript code as a string
 
-    _URL = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/uaibot/threejs_sim.js"
+    _URL = "https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/uaibot/threejs_sim.js"
     #_URL = "D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js"
 
     _STRJAVASCRIPT = "<html>\n"
