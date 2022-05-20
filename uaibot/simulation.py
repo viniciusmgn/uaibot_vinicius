@@ -71,7 +71,7 @@ class Simulation:
     _CAMERATYPE = ['perspective', 'orthographic']
     # Import the javascript code as a string
 
-    _URL = "https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/uaibot/threejs_sim.js"
+    _URL = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/uaibot/threejs_sim.js"
     #_URL = "D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js"
 
     _STRJAVASCRIPT = "<html>\n"
@@ -85,7 +85,7 @@ class Simulation:
     _STRJAVASCRIPT += "<div id='canvas_container_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative'>\n"
     _STRJAVASCRIPT += "<div id='loading_screen_##SIMID##' style='width:##WIDTH##px;height:##HEIGHT##px;position:relative; " \
                       "background-color: ##LOADSCREENCOLOR##;text-align:center;align-items:center;display:flex;justify-content:center'> \n "
-    _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/SVG" \
+    _STRJAVASCRIPT += "<img src='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/SVG" \
                       "/logo_uai_bot.svg' style='width:200px;height:114px'/>\n "
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "<script id='MathJax-script' async src='https://cdn.jsdelivr.net/npm/mathjax@3.0.1/es5/tex-mml-chtml.js'></script>\n"
@@ -280,7 +280,7 @@ class Simulation:
     """
 
         texture_ground = Texture(
-            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/factory_ground.png',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/Textures/factory_ground.png',
             wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[4, 4])
 
         mesh_ground = MeshMaterial(texture_map=texture_ground, metalness=1, roughness=1)
@@ -293,7 +293,7 @@ class Simulation:
         light3 = PointLight(name="light3", color="white", intensity=2.5, htm=Utils.trn([ 1,-1, 1.5]))
         light4 = PointLight(name="light4", color="white", intensity=2.5, htm=Utils.trn([ 1, 1, 1.5]))
 
-        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/LDR/factory_"
+        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/LDR/factory_"
         ldr_list = [ldr_url + "px.png", ldr_url + "nx.png", ldr_url + "py.png", ldr_url + "ny.png", ldr_url + "nz.png",
                     ldr_url + "nz.png"]
 

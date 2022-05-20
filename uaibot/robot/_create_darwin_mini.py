@@ -43,19 +43,19 @@ def _create_darwin_mini(htm, name, color, opacity):
 
 
     chestpart1 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/darwin_chest.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/darwin_chest.obj',
         0.004,
         desl_z * Utils.trn([-0.3, -0.179, 0.55]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
         MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                      opacity=opacity, side="DoubleSide"))
     chestpart2 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/frm_body_01.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/frm_body_01.obj',
         0.004,
         desl_z * Utils.trn([-0.3, -0.179, 0.55]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
         MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                      opacity=opacity, side="DoubleSide"))
     chestpart3 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320.obj',
         0.004,
         desl_z * Utils.trn([0.265, 0.405, 0.5]) * Utils.rotz(-3.14 / 2) * Utils.rotx(3.14 / 3 + 0.25) * Utils.rotz(
             3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -63,7 +63,7 @@ def _create_darwin_mini(htm, name, color, opacity):
                      opacity=opacity, side="DoubleSide"))
 
     chestpart4 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320.obj',
         0.004,
         desl_z * Utils.trn([0.265, -0.405, 1.485]) * Utils.rotx(3.14) * Utils.rotz(-3.14 / 2) * Utils.rotx(
             3.14 / 3 + 0.25) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -71,7 +71,7 @@ def _create_darwin_mini(htm, name, color, opacity):
                      opacity=opacity, side="DoubleSide"))
 
     chestpart5 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPU-2.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPU-2.obj',
         0.004,
         desl_z * Utils.trn([0.05, 0.13, 0]) * Utils.rotz(3.14 / 2) * Utils.trn([-0.42, -0.179, 0.575]) * Utils.rotz(
             3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -79,7 +79,7 @@ def _create_darwin_mini(htm, name, color, opacity):
                      opacity=opacity, side="DoubleSide"))
 
     chestpart6 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
         0.004,
         desl_z * Utils.trn([0.69, 0.1, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
             [-0.3, -0.179, 0.15]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -87,7 +87,7 @@ def _create_darwin_mini(htm, name, color, opacity):
                      opacity=opacity, side="DoubleSide"))
 
     chestpart7 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPU-2.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPU-2.obj',
         0.004,
         desl_z * Utils.trn([0.05, -0.06, 0]) * Utils.rotz(3.14 / 2) * Utils.trn([-0.42, -0.179, 0.575]) * Utils.rotz(
             3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -95,7 +95,7 @@ def _create_darwin_mini(htm, name, color, opacity):
                      opacity=opacity, side="DoubleSide"))
 
     chestpart8 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
         0.004,
         desl_z * Utils.trn([0.69, -0.09, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
             [-0.3, -0.179, 0.15]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
@@ -107,26 +107,26 @@ def _create_darwin_mini(htm, name, color, opacity):
         name + "_chest")
 
     headpart1 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/darwin_head.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/darwin_head.obj',
         0.004,
         desl_z * Utils.trn([-0.3, -0.179, 0.55]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
         MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                      opacity=opacity, side="DoubleSide"))
 
     headpart2 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/eye.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/eye.obj',
         0.0009,
         desl_z * Utils.trn([0.177, -0.043, 1.162]) * Utils.rotz(3.14 / 2 - 0.3),
         MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="blue",
                      opacity=opacity, side="DoubleSide"))
     headpart3 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/eye.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/eye.obj',
         0.0009,
         desl_z * Utils.trn([0.171, 0.053, 1.162]) * Utils.rotz(3.14 / 2 + 0.4),
         MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="blue",
                      opacity=opacity, side="DoubleSide"))
     headpart4 = Model3D(
-        'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+        'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
         0.004,
         desl_z * Utils.trn([-0.3, -0.179, 0.55]) * Utils.rotz(3.14 / 2) * Utils.rotx(3.14 / 2),
         MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",

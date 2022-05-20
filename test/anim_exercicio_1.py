@@ -5,7 +5,7 @@ import numpy as np
 robot = ub.Robot.create_abb_crb(ub.Utils.trn([0,0,0.2]))
 
 texture_table = ub.Texture(
-    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/rough_metal.jpg',
+    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/Textures/rough_metal.jpg',
     wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[1, 1])
 
 material_table = ub.MeshMaterial(texture_map=texture_table, roughness=1, metalness=1, opacity=1)

@@ -51,13 +51,13 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPD_1.obj',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPD_1.obj',
             0.004,
             Utils.inv_htm(Q01) * Utils.trn([-0.487, -0.315, -0.06]) * Utils.rotx(-np.pi / 2) * Utils.rotz(-0.3),
             MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                          opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
                 0.004,
                 Utils.inv_htm(Q01) * Utils.trn([0.04, 0.73, 0.155]) * Utils.rotx(np.pi / 2) * Utils.trn(
                     [0.69, -0.09, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
@@ -69,20 +69,20 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/frm_ext_02.obj',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/frm_ext_02.obj',
             0.004,
             Utils.inv_htm(Q01 * Q02) * Utils.trn([0.317, -0.01 - 0.035, -0.435]) * Utils.rotx(0.275) * Utils.roty(
                 -np.pi / 2),
             MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                          opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPO.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPO.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02) * Utils.trn([0.317, -0.35, -0.345]) * Utils.roty(-np.pi / 2),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                              opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02) * Utils.trn([0.04, -0.01 + 0.925, 0.155]) * Utils.rotx(np.pi / 2) * Utils.trn(
                     [0.69, -0.09, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
@@ -94,19 +94,19 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/mini_cr_calf.obj',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/mini_cr_calf.obj',
             0.004,
             Utils.inv_htm(Q01 * Q02 * Q03) * Utils.trn([-0.271, 0.445, -0.325]),
             MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                          opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPO.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPO.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02 * Q03) * Utils.trn([0.317, -0.35 + 0.185, -0.345]) * Utils.roty(-np.pi / 2),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                              opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02) * Utils.trn([0.04, -0.01 + 0.925, 0.155]) * Utils.rotx(np.pi / 2) * Utils.trn(
                     [0.69, -0.09, 0.655]) * Utils.rotx(0.08) * Utils.roty(-3.14 / 2) * Utils.trn(
@@ -114,7 +114,7 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
                 MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
                              opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPO.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPO.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02) * Utils.trn([0.317, -0.35 + 0.171, -0.345]) * Utils.roty(-np.pi / 2),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -124,7 +124,7 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
 
     link_3d_obj.append(
         [Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/XL-320-2.obj',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/XL-320-2.obj',
             0.004,
             Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.3, 0.295, -0.062]) * Utils.rotz(np.pi / 2) * Utils.roty(
                 -np.pi / 2) * Utils.trn([0.04, 1, 0]) * Utils.rotx(np.pi / 2) * Utils.trn(
@@ -133,20 +133,20 @@ def _create_darwin_mini_leg_left(htm, name, color, opacity):
             MeshMaterial(metalness=0.8, clearcoat=0.5, roughness=0.5, normal_scale=[0.5, 0.5], color="#302b2b",
                          opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/SPD_1.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/SPD_1.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([-0.487, 0.05, -0.06]) * Utils.rotx(
                     -np.pi / 2) * Utils.rotz(-0.3),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                              opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/foot.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/foot.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.34, 0.19, -0.31]) * Utils.rotz(np.pi),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
                              opacity=opacity, side="DoubleSide")),
             Model3D(
-                'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/DarwinMini/sole.obj',
+                'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DarwinMini/sole.obj',
                 0.004,
                 Utils.inv_htm(Q01 * Q02 * Q03 * Q04) * Utils.trn([0.34, 0.19, -0.31]) * Utils.rotz(np.pi),
                 MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,

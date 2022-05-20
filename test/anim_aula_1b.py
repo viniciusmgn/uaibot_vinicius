@@ -9,7 +9,7 @@ import numpy as np
 sim = Simulation([], load_screen_color="#191919", background_color="#191919", width=500, height=500)
 
 texture_box = Texture(
-    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/Textures/gold_metal.png',
+    url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/Textures/gold_metal.png',
     wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[1, 1])
 
 material_box = MeshMaterial(texture_map=texture_box, roughness=1, metalness=1, opacity=0.8)

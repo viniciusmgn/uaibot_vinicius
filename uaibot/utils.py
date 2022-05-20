@@ -277,8 +277,9 @@ class Utils:
       pinvA: mxn numpy array
           The damped pseudoinverse of 'mat'.
       """
-        n = np.shape(mat)[1]
-        return np.linalg.inv(mat.T * mat + eps * np.identity(n)) * mat.T
+        mat_int = np.matrix(mat)
+        n = np.shape(mat_int)[1]
+        return np.linalg.inv(mat_int.T * mat_int + eps * np.identity(n)) * mat_int.T
 
     @staticmethod
     def jac(f, x, delta=0.0001):
