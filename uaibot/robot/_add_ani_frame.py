@@ -1,8 +1,6 @@
 from utils import *
 import numpy as np
 
-
-# Add config to animation queue
 def _add_ani_frame(self, time, q=None, htm=None, enforce_joint_limits=False):
 
     n = len(self.links)

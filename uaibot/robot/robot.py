@@ -16,6 +16,7 @@ from ._ikm import _ikm
 from ._fkm import _fkm
 from ._jac_geo import _jac_geo
 from ._jac_jac_geo import _jac_jac_geo
+from ._jac_ana import _jac_ana
 
 from ._dyn_model import _dyn_model
 
@@ -398,6 +399,36 @@ class Robot:
         n htms as a n x 4 x 4 numpy matrix.
     """
         return _jac_geo(self, q, axis, htm)
+
+    def jac_ana(self, q=None, htm=None):
+        """
+    Compute the analytic Jacobian for the end-effector. The Euler angle
+    convention is zyx. Also returns the end-effector htm and Euler angles
+    as a by-product.
+
+    Parameters
+    ----------
+    q : nd numpy vector or array
+        The manipulator's joint configuration
+        (default: the default joint configuration for the manipulator).
+    htm : 4x4 numpy array or 4x4 nested list
+        The robot base's configuration.
+        (default: the same as the current htm).
+
+    Returns
+    -------
+    jac_ana : 6 x n numpy matrix
+        The analytic Jacobian.
+
+    htm_eef : 4 x 4 numpy matrix
+        The end-effector htm.
+
+    phi : 3x1 numpy matrix
+        The euler angles in the z (alpha), y (beta) and x (gamma) convention,
+        as a column vector.
+    """
+        return _jac_ana(self, q, htm)
+
 
     def jac_jac_geo(self, q=None, axis='eef', htm=None):
         """

@@ -74,7 +74,6 @@ def _create_staubli_tx60(htm, name, color, opacity):
          ]
     )
 
-    # Utils.trn([-0.29,0,0]) @ Utils.rotz(-3.14/2) @ Utils.rotx(-3.14/2+c*7.3)
     link_3d_obj.append(
         [Model3D(
             'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/StaubliTX60/link_2.stl',
