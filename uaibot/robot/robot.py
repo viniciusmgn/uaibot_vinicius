@@ -37,6 +37,7 @@ from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
 from ._create_darwin_mini import _create_darwin_mini
+from robot._create_davinci import _create_davinci
 
 
 class Robot:
@@ -920,10 +921,10 @@ class Robot:
 
         """
 
-        chest = _create_darwin_mini(htm, name, color, opacity)
-        print(Utils.get_uaibot_type(chest))
+        rob1 = _create_davinci(htm, name, color, opacity, eef_frame_visible)
+        print(Utils.get_uaibot_type(rob1))
 
-        return Group([chest,])
+        return rob1
 
     #######################################
     # Advanced methods
