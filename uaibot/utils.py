@@ -532,7 +532,7 @@ class Utils:
             for i in range(np.shape(arg_points)[0]):
                 fun = aux_interpolate_single(arg_points[i])
                 fun_out = fun(t)
-                fun_out = np.array(fun_out).reshape((1, len(fun_out)))
+                fun_out = np.array(fun_out).reshape((1, len(fun_out) if Utils.is_a_vector(fun_out) else 1))
                 y = np.block([[y], [fun_out]])
 
             return np.matrix(y)
