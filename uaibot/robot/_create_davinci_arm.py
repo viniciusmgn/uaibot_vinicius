@@ -22,11 +22,18 @@ def _create_davinci_arm(color, opacity):
         raise Exception(
             "The parameter 'opacity' should be a float between 0 and 1.")
     a1 = -0.3
-    a2 = -0.35
-    a3 = 0
+    a2 = -0.415#-0.35
+    a3 = -0.407
     a5 = 0#40.09/1000
     a6 = 0
 
+    r1 = 1.875 #0
+    r2 = 3.25 
+    r3 = -90.75
+
+    alpha1 = np.deg2rad(r1)#np.deg2rad(0)
+    alpha2 = np.deg2rad(r2 - r1)#np.deg2rad(5)
+    alpha3 = np.deg2rad(r3)
     alpha4 = np.pi/2
 
     d2 = 0
@@ -35,15 +42,15 @@ def _create_davinci_arm(color, opacity):
 
     link_info = np.array([
         # "theta" rotation in z
-        [0,  np.deg2rad(5),  0, np.pi/2, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
+        [alpha1,  alpha2,  alpha3, np.pi/2, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
         # "d" translation in z
-        [0,  d2, 0,  d4,       d5,      0,       0],
+        [0,           d2,       0,  d4,       d5,      0,       0],
         # "alfa" rotation in x
-        [0,  0,  0,  alpha4,  -np.pi/2, np.pi/2, 0],
+        [0,            0,       0,  alpha4,  -np.pi/2, np.pi/2, 0],
         # "a" translation in x
-        [a1, a2, a3, 0,        a5,      a6,      0],
+        [a1,          a2,      a3, 0,        a5,      a6,      0],
         # joint type
-        [0,  0,  0,  0,        0,       1,       1]
+        [0,            0,       0,  0,        0,       1,       1]
     ])
 
     # link_info = np.array([
