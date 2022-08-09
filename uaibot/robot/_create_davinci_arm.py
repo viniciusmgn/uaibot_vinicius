@@ -23,17 +23,19 @@ def _create_davinci_arm(color, opacity):
             "The parameter 'opacity' should be a float between 0 and 1.")
     a1 = -0.3
     a2 = -0.415#-0.35
-    a3 = -0.407
+    a3 = -0.415 #-0.407
     a5 = 0#40.09/1000
     a6 = 0
 
     r1 = 1.875 #0
     r2 = 3.25 
-    r3 = -90.75
+    r3 = 75.25#-90.75  
 
-    alpha1 = np.deg2rad(r1)#np.deg2rad(0)
-    alpha2 = np.deg2rad(r2 - r1)#np.deg2rad(5)
-    alpha3 = np.deg2rad(r3)
+    theta1 = np.deg2rad(r1)#np.deg2rad(0)
+    theta2 = np.deg2rad(r2 - r1)#np.deg2rad(5)
+    theta3 = np.deg2rad(r3)
+    theta4 = -np.pi/2
+
     alpha4 = np.pi/2
 
     d2 = 0
@@ -42,7 +44,7 @@ def _create_davinci_arm(color, opacity):
 
     link_info = np.array([
         # "theta" rotation in z
-        [alpha1,  alpha2,  alpha3, np.pi/2, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
+        [0,            0,       0,   0, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
         # "d" translation in z
         [0,           d2,       0,  d4,       d5,      0,       0],
         # "alfa" rotation in x
@@ -75,19 +77,19 @@ def _create_davinci_arm(color, opacity):
                         opacity=opacity, side="DoubleSide")
     q_ = np.array([1, 0, 0, 0, 0, 0, 0]) * -np.pi/2 # original model is rotated (Robot fron = plane X x Y)
  # * Utils.trn([-0.1, -0.45, -1])
-    Q01 = Utils.trn([0.1, 1.1, -0.45]) * Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0]) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
-        [link_info[3, 0], 0, 0])
-    Q02 = Q01 * (Utils.rotx(q_[1]) * Utils.rotz(link_info[0, 1]) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
+    Q01 = Utils.trn([0.1, 1.1, -0.45]) * Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
+    [link_info[3, 0], 0, 0])
+    Q02 = Q01 * (Utils.rotx(q_[1]) * Utils.rotz(link_info[0, 1] + theta2) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
         [link_info[3, 1], 0, 0]))
-    Q23 = Q02 * (Utils.rotx(q_[2]) * Utils.rotz(link_info[0, 2]) * Utils.trn([0, 0, link_info[1, 2]]) * Utils.rotx(link_info[2, 2]) * Utils.trn(
+    Q03 = Q02 * (Utils.rotx(q_[2]) * Utils.rotz(link_info[0, 2] + theta3) * Utils.trn([0, 0, link_info[1, 2]]) * Utils.rotx(link_info[2, 2]) * Utils.trn(
         [link_info[3, 2], 0, 0]))
-    Q34 = Q23 * (Utils.rotx(q_[3]) * Utils.rotz(link_info[0, 3]) * Utils.trn([0, 0, link_info[1, 3]]) * Utils.rotx(link_info[2, 3]) * Utils.trn(
+    Q04 = Q03 * (Utils.rotx(q_[3]) * Utils.rotz(link_info[0, 3] + theta4) * Utils.trn([0, 0, link_info[1, 3]]) * Utils.rotx(link_info[2, 3]) * Utils.trn(
         [link_info[3, 3], 0, 0]))
-    Q45 = Q34 * (Utils.rotx(q_[4]) * Utils.rotz(link_info[0, 4]) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
+    Q05 = Q04 * (Utils.rotx(q_[4]) * Utils.rotz(link_info[0, 4]) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
         [link_info[3, 4], 0, 0]))
-    Q56 = Q45 * (Utils.rotx(q_[5]) * Utils.rotz(link_info[0, 5]) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
+    Q06 = Q05 * (Utils.rotx(q_[5]) * Utils.rotz(link_info[0, 5]) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
         [link_info[3, 5], 0, 0]))
-    Q67 = Q56 * (Utils.rotx(q_[6]) * Utils.rotz(link_info[0, 6]) * Utils.trn([0, 0, link_info[1, 6]]) * Utils.rotx(link_info[2, 6]) * Utils.trn(
+    Q07 = Q06 * (Utils.rotx(q_[6]) * Utils.rotz(link_info[0, 6]) * Utils.trn([0, 0, link_info[1, 6]]) * Utils.rotx(link_info[2, 6]) * Utils.trn(
         [link_info[3, 6], 0, 0]))
 
     link1_mth = Utils.inv_htm(Q01)
@@ -111,9 +113,9 @@ def _create_davinci_arm(color, opacity):
          ]
     )
 
-    link3_mth = Utils.inv_htm(Q23) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
+    link3_mth = Utils.inv_htm(Q03) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
         #[0, 0.2, 0]) * Utils.rotz(3.14) * Utils.trn([0.318, -0.2, -0.3]) * Utils.roty(-3.14 / 2)
-    #link3_mth = Q23
+    #link3_mth = Q03
     link_3d_obj.append(
         [Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/11.obj',
@@ -121,9 +123,9 @@ def _create_davinci_arm(color, opacity):
          ]
     )
 
-    link4_mth = Utils.inv_htm(Q34) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
+    link4_mth = Utils.inv_htm(Q04) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
         #[0, 0.2, 0]) * Utils.rotz(3.14) * Utils.trn([0.318, -0.2, -0.3]) * Utils.roty(-3.14 / 2)
-    #link4_mth = Q34
+    #link4_mth = Q04
     link_3d_obj.append(
         [Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/10.obj',
@@ -131,9 +133,9 @@ def _create_davinci_arm(color, opacity):
          ]
     )
 
-    link5_mth = Utils.inv_htm(Q45) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
+    link5_mth = Utils.inv_htm(Q05) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
         #[0, 0.2, 0]) * Utils.rotz(3.14) * Utils.trn([0.318, -0.2, -0.3]) * Utils.roty(-3.14 / 2)
-    #link5_mth = Q45
+    #link5_mth = Q05
     link_3d_obj.append(
         [Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/19.obj',
@@ -147,9 +149,9 @@ def _create_davinci_arm(color, opacity):
          ]
     )
 
-    link6_mth = Utils.inv_htm(Q56) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
+    link6_mth = Utils.inv_htm(Q06) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
         #[0, 0.2, 0]) * Utils.rotz(3.14) * Utils.trn([0.318, -0.2, -0.3]) * Utils.roty(-3.14 / 2)
-    #link6_mth = Q56
+    #link6_mth = Q06
     link_3d_obj.append(
         [Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/43.obj',
@@ -166,7 +168,7 @@ def _create_davinci_arm(color, opacity):
          ]
     )
 
-    link7_mth = Utils.inv_htm(Q67) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
+    link7_mth = Utils.inv_htm(Q07) #* Utils.trn([0.004, 0.19, -0.02]) * Utils.rotx(-3.14 / 12) * Utils.trn(
         #[0, 0.2, 0]) * Utils.rotz(3.14) * Utils.trn([0.318, -0.2, -0.3]) * Utils.roty(-3.14 / 2)
     link_3d_obj.append(
         [Model3D(
@@ -177,9 +179,8 @@ def _create_davinci_arm(color, opacity):
 
     links = []
     for i in range(n):
-        links.append(Link(i, link_info[0, i], link_info[1, i], link_info[2, i], link_info[3, i], link_info[4, i],
-                          link_3d_obj[i]))
-
+        links.append(Link(i, theta=link_info[0, i], d=link_info[1, i], alpha=link_info[2, i], a=link_info[3, i], joint_type=link_info[4, i],
+                          list_model_3d=link_3d_obj[i]))
         #for j in range(len(col_model[i])):
         #    links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
 

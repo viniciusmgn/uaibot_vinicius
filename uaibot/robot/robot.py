@@ -921,10 +921,8 @@ class Robot:
 
         """
 
-        rob1 = _create_davinci(htm, name, color, opacity, eef_frame_visible)
-        print(Utils.get_uaibot_type(rob1))
+        return _create_davinci(htm, name, color, opacity, eef_frame_visible)
 
-        return rob1
 
     #######################################
     # Advanced methods
