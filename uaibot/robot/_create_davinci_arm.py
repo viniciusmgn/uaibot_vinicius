@@ -29,30 +29,32 @@ def _create_davinci_arm(color, opacity):
 
     r1 = 1.875 #0
     r2 = 3.25 
-    r3 = 75.25#-90.75  
+    r3 = 75.25#-90.75
+    r4 = 28.75  
 
     theta1 = np.deg2rad(r1)#np.deg2rad(0)
     theta2 = np.deg2rad(r2 - r1)#np.deg2rad(5)
     theta3 = np.deg2rad(r3)
-    theta4 = -np.pi/2
+    theta4 = np.deg2rad(r4)#-np.pi/2
+    theta5 = 0
 
-    alpha4 = np.pi/2
+    alpha4 = -np.pi/2#np.pi/2
 
     d2 = 0
-    d4 = 0#(96)/1000
+    d4 = -96e-3 * 3
     d5 = 0#-(144.54 - 431.8)
 
     link_info = np.array([
         # "theta" rotation in z
-        [0,            0,       0,   0, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
+        [0,            0,       0,       0, -np.pi/2, 0,       0], # -> changed [0, 3] from -pi/2 to pi/2
         # "d" translation in z
-        [0,           d2,       0,  d4,       d5,      0,       0],
+        [0,           d2,       0,      d4,       d5,      0,       0],
         # "alfa" rotation in x
         [0,            0,       0,  alpha4,  -np.pi/2, np.pi/2, 0],
         # "a" translation in x
-        [a1,          a2,      a3, 0,        a5,      a6,      0],
+        [a1,          a2,      a3,       0,        a5,      a6,      0],
         # joint type
-        [0,            0,       0,  0,        0,       1,       1]
+        [0,            0,       0,       0,        0,       1,       1]
     ])
 
     # link_info = np.array([
@@ -85,7 +87,7 @@ def _create_davinci_arm(color, opacity):
         [link_info[3, 2], 0, 0]))
     Q04 = Q03 * (Utils.rotx(q_[3]) * Utils.rotz(link_info[0, 3] + theta4) * Utils.trn([0, 0, link_info[1, 3]]) * Utils.rotx(link_info[2, 3]) * Utils.trn(
         [link_info[3, 3], 0, 0]))
-    Q05 = Q04 * (Utils.rotx(q_[4]) * Utils.rotz(link_info[0, 4]) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
+    Q05 = Q04 * (Utils.rotx(q_[4]) * Utils.rotz(link_info[0, 4] + theta5) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
         [link_info[3, 4], 0, 0]))
     Q06 = Q05 * (Utils.rotx(q_[5]) * Utils.rotz(link_info[0, 5]) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
         [link_info[3, 5], 0, 0]))
@@ -185,7 +187,7 @@ def _create_davinci_arm(color, opacity):
         #    links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
 
     # Define initial configuration
-    q0 = [0, 0, 0, 0, 0, 0, 0]
+    q0 = [0, 0, 0, np.pi/2, 0, 0, 0]
     htm_n_eef = np.identity(4)
     htm_base_0 = np.identity(4)
 
