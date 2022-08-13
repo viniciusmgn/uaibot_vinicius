@@ -25,27 +25,30 @@ def _create_davinci_arm(color, opacity):
     a2 = -0.415  # -0.35
     a3 = -0.415  # -0.407
     a5 = -3.1e-3  # 40.09/1000
-    a6 = 0
+    a6 = 0.188
 
     r1 = 1.875  # 0
     r2 = 3.25
     r3 = 75.25  # -90.75
     r4 = 28.75 + 90
     r5 = -45
+    r6 = -15
 
     theta1 = np.deg2rad(r1)  # np.deg2rad(0)
     theta2 = np.deg2rad(r2 - r1)  # np.deg2rad(5)
     theta3 = np.deg2rad(r3)
     theta4 = np.deg2rad(r4)  # -np.pi/2
     theta5 = np.deg2rad(r5)
+    theta6 = np.deg2rad(r6)
 
     d2 = -96e-3  # 0
     d4 = -96e-3 * 1.9  # -96e-3 * 2.9
     d5 = (431.8 * 1.417)/1000  # -(144.54 - 431.8)
+    d6 = -3.75e-2
 
     alpha4 = -np.pi*(1/2 + 1/9)  # np.pi/2
     alpha5 = -np.pi/2
-    alpha6 = 0
+    alpha6 = np.pi/2
     alpha7 = 0
     alpha8 = np.pi/2
     alpha9 = 0
@@ -55,13 +58,13 @@ def _create_davinci_arm(color, opacity):
         # -> changed [0, 3] from -pi/2 to pi/2
         [0,   0,  0,      0,      0,      0,      0,      0,      0],
         # "d" translation in z
-        [0,  d2,  0,     d4,     d5,      0,      0,      0,      0],
+        [0,  d2,  0,     d4,     d5,     d6,      0,      0,      0],
         # "alfa" rotation in x
         [0,   0,  0, alpha4, alpha5, alpha6, alpha7, alpha8, alpha9],
         # "a" translation in x
         [a1, a2, a3,      0,     a5,     a6,      0,      0,      0],
         # joint type
-        [0,   0,  0,      0,      0,      0,      0,      0,      1]
+        [0,   0,  0,      0,      0,      0,      1,      0,      0]
     ])
 
     scale = 1
@@ -84,7 +87,7 @@ def _create_davinci_arm(color, opacity):
         [link_info[3, 3], 0, 0]))
     Q05 = Q04 * (Utils.rotz(link_info[0, 4] + theta5) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
         [link_info[3, 4], 0, 0]))
-    Q06 = Q05 * (Utils.rotz(link_info[0, 5]) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
+    Q06 = Q05 * (Utils.rotz(link_info[0, 5] + theta6) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
         [link_info[3, 5], 0, 0]))
     Q07 = Q06 * (Utils.rotz(link_info[0, 6]) * Utils.trn([0, 0, link_info[1, 6]]) * Utils.rotx(link_info[2, 6]) * Utils.trn(
         [link_info[3, 6], 0, 0]))
@@ -156,11 +159,11 @@ def _create_davinci_arm(color, opacity):
                 scale=scale, htm=link6_mth, mesh_material=mesh),
             Model3D(
                 url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/21.obj',  # bumerangue
-                scale=scale, htm=link7_mth, mesh_material=mesh),
+                scale=scale, htm=link6_mth, mesh_material=mesh),
             Model3D(
                 # envoltoria agulha
                 url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/43.obj',
-                scale=scale, htm=link8_mth, mesh_material=mesh),
+                scale=scale, htm=link6_mth, mesh_material=mesh),
         ]
     )
 
@@ -170,7 +173,7 @@ def _create_davinci_arm(color, opacity):
         [
             Model3D(
                 url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/45.obj',  # guia
-                scale=scale, htm=link8_mth, mesh_material=mesh),
+                scale=scale, htm=link7_mth, mesh_material=mesh),
         ]
     )
 
