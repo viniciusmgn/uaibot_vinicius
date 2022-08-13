@@ -25,7 +25,7 @@ def _create_davinci_arm(color, opacity):
     a2 = -0.415  # -0.35
     a3 = -0.415  # -0.407
     a5 = -3.1e-3  # 40.09/1000
-    a6 = 0.188
+    a6 = 0.235#0.188
 
     r1 = 1.875  # 0
     r2 = 3.25
@@ -209,7 +209,7 @@ def _create_davinci_arm(color, opacity):
     #     1  2  3  4  5  6  7  8  9
     q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     htm_n_eef = np.identity(4)
-    htm_base_0 = np.identity(4)
+    htm_base_0 = Utils.trn([0.1, 0.45, 1.1]) #np.identity(4)
 
     # Create joint limits
     #joint_limits = (np.pi / 180) * np.matrix([[-180, 180], [-180, 180], [-180, 180]])
