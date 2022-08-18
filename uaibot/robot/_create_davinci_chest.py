@@ -106,12 +106,6 @@ def _create_davinci_chest(name, color, opacity):
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/3.obj', #vertical tower
             scale=scale, htm=link2_mth, mesh_material=mesh),
          Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/4.obj',
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-            Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/5.obj',
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-         Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/17.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
          Model3D(

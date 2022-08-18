@@ -1,3 +1,4 @@
+from locale import ABDAY_4
 from utils import Utils
 
 from graphics.meshmaterial import MeshMaterial
@@ -31,51 +32,55 @@ def _create_davinci_arm1(color, opacity):
     r8 = 61.5
     r9 = -15*0
 
-    theta1 = np.deg2rad(r1)  # np.deg2rad(0)
-    theta2 = np.deg2rad(r2 - r1)  # np.deg2rad(5)
-    theta3 = np.deg2rad(r3)
-    theta4 = np.deg2rad(r4)  # -np.pi/2
-    theta5 = np.deg2rad(r5)
-    theta6 = np.deg2rad(r6)
-    theta7 = np.deg2rad(r7)
-    theta8 = np.deg2rad(r8)
-    theta9 = np.deg2rad(r9)
+    theta1 = np.deg2rad(0)
+    theta2 = np.deg2rad(r1)  # np.deg2rad(0)
+    theta3 = np.deg2rad(r2 - r1)  # np.deg2rad(5)
+    theta4 = np.deg2rad(r3)
+    theta5 = np.deg2rad(r4)  # -np.pi/2
+    theta6 = np.deg2rad(r5)
+    theta7 = np.deg2rad(r6)
+    theta8 = np.deg2rad(r7)
+    theta9 = np.deg2rad(r8)
+    theta10 = np.deg2rad(r9)
 
-    d2 = -96e-3  # 0
-    d4 = -96e-3 * 1.9  # -96e-3 * 2.9
-    d5 = (431.8 * 1.417)/1000  # -(144.54 - 431.8)
-    d6 = 0
-    d8 = -3.75e-2
-    d9 = 3e-2  # old d6
+    d1 = 0
+    d3 = -96e-3  # 0
+    d5 = -96e-3 * 1.9  # -96e-3 * 2.9
+    d6 = (431.8 * 1.417)/1000  # -(144.54 - 431.8)
+    d7 = 0
+    d9 = -3.75e-2
+    d10 = 3e-2  # old d6
 
-    alpha4 = -np.pi*(1/2 + 1/9)  # np.pi/2
-    alpha5 = -np.pi/2
-    alpha6 = 0
+    alpha1 = 0
+    alpha5 = -np.pi*(1/2 + 1/9)  # np.pi/2
+    alpha6 = -np.pi/2
     alpha7 = 0
-    alpha8 = np.pi/2
-    alpha9 = np.pi/2*0
+    alpha8 = 0
+    alpha9 = np.pi/2
+    alpha10 = np.pi/2*0
 
-    a1 = -0.3
-    a2 = -0.415  # -0.35
-    a3 = -0.415  # -0.407
-    a5 = -3.1e-3  # 40.09/1000
-    a6 = 0.27#0.188
-    a7 = 0.474
-    a8 = 0.098
-    a9 = 0.235*0
+    a1 = 0
+    a2 = -0.3
+    a3 = -0.415  # -0.35
+    a4 = -0.415  # -0.407
+    a6 = -3.1e-3  # 40.09/1000
+    a7 = 0.27#0.188
+    a8 = 0.474
+    a9 = 0.098
+    a10 = 0.235*0
 
     link_info = np.array([
         # "theta" rotation in z
         # -> changed [0, 3] from -pi/2 to pi/2
-        [0,   0,  0,      0,      0,      0,      0,      0,      0],
-        # "d" translation in z
-        [0,  d2,  0,     d4,     d5,     d6,      0,      d8,      d9],
-        # "alfa" rotation in x
-        [0,   0,  0, alpha4, alpha5, alpha6, alpha7, alpha8, alpha9],
-        # "a" translation in x
-        [a1, a2, a3,      0,     a5,     a6,      a7,      a8,      a9],
-        # joint type
-        [0,   0,  0,      0,      0,      0,      0,      0,      1]
+        [0, 0,   0,  0,      0,      0,      0,      0,      0,      0],
+        #0,  "d" translation in z
+        [d1, 0,  d3,  0,     d5,     d6,     d7,      0,      d9,      d10],
+        #0,  "alfa" rotation in x
+        [alpha1, 0,   0,  0, alpha5, alpha6, alpha7, alpha8, alpha9, alpha10],
+        #0,  "a" translation in x
+        [a1, a2, a3, a4,      0,     a6,     a7,      a8,      a9,      a10],
+        #0,  joint type
+        [1, 0,   0,  0,      0,      0,      0,      0,      0,      1]
     ])
 
     scale = 1
@@ -90,131 +95,134 @@ def _create_davinci_arm1(color, opacity):
  # * Utils.trn([-0.1, -0.45, -1])
     Q01 = Utils.trn([0.1, 1.1, -0.45]) * Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
         [link_info[3, 0], 0, 0])
-    Q02 = Q01 * (Utils.rotz(link_info[0, 1] + theta2) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
+    Q02 = Q01 * (Utils.rotz(link_info[0, 0] + theta2) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
         [link_info[3, 1], 0, 0]))
-    Q03 = Q02 * (Utils.rotz(link_info[0, 2] + theta3) * Utils.trn([0, 0, link_info[1, 2]]) * Utils.rotx(link_info[2, 2]) * Utils.trn(
+    Q03 = Q02 * (Utils.rotz(link_info[0, 1] + theta3) * Utils.trn([0, 0, link_info[1, 2]]) * Utils.rotx(link_info[2, 2]) * Utils.trn(
         [link_info[3, 2], 0, 0]))
-    Q04 = Q03 * (Utils.rotz(link_info[0, 3] + theta4) * Utils.trn([0, 0, link_info[1, 3]]) * Utils.rotx(link_info[2, 3]) * Utils.trn(
+    Q04 = Q03 * (Utils.rotz(link_info[0, 2] + theta4) * Utils.trn([0, 0, link_info[1, 3]]) * Utils.rotx(link_info[2, 3]) * Utils.trn(
         [link_info[3, 3], 0, 0]))
-    Q05 = Q04 * (Utils.rotz(link_info[0, 4] + theta5) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
+    Q05 = Q04 * (Utils.rotz(link_info[0, 3] + theta5) * Utils.trn([0, 0, link_info[1, 4]]) * Utils.rotx(link_info[2, 4]) * Utils.trn(
         [link_info[3, 4], 0, 0]))
-    Q06 = Q05 * (Utils.rotz(link_info[0, 5] + theta6) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
+    Q06 = Q05 * (Utils.rotz(link_info[0, 4] + theta6) * Utils.trn([0, 0, link_info[1, 5]]) * Utils.rotx(link_info[2, 5]) * Utils.trn(
         [link_info[3, 5], 0, 0]))
-    Q07 = Q06 * (Utils.rotz(link_info[0, 6] + theta7) * Utils.trn([0, 0, link_info[1, 6]]) * Utils.rotx(link_info[2, 6]) * Utils.trn(
+    Q07 = Q06 * (Utils.rotz(link_info[0, 5] + theta7) * Utils.trn([0, 0, link_info[1, 6]]) * Utils.rotx(link_info[2, 6]) * Utils.trn(
         [link_info[3, 6], 0, 0]))
-    Q08 = Q07 * (Utils.rotz(link_info[0, 7] + theta8) * Utils.trn([0, 0, link_info[1, 7]]) * Utils.rotx(link_info[2, 7]) * Utils.trn(
+    Q08 = Q07 * (Utils.rotz(link_info[0, 6] + theta8) * Utils.trn([0, 0, link_info[1, 7]]) * Utils.rotx(link_info[2, 7]) * Utils.trn(
         [link_info[3, 7], 0, 0]))
-    Q09 = Q08 * (Utils.rotz(link_info[0, 8] + theta9) * Utils.trn([0, 0, link_info[1, 8]]) * Utils.rotx(link_info[2, 8]) * Utils.trn(
+    Q09 = Q08 * (Utils.rotz(link_info[0, 7] + theta9) * Utils.trn([0, 0, link_info[1, 8]]) * Utils.rotx(link_info[2, 8]) * Utils.trn(
         [link_info[3, 8], 0, 0]))
-
-    # link_3d_obj.append(
-    #     [Model3D(
-    #         url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/4.obj', # torre movel
-    #         scale=scale, htm=link2_mth, mesh_material=mesh),
-    #         Model3D(
-    #         url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/5.obj', # cilindro conector
-    #         scale=scale, htm=link2_mth, mesh_material=mesh),
-    #      ]
-    # )
+    Q010 = Q09 * (Utils.rotz(link_info[0, 8] + theta10) * Utils.trn([0, 0, link_info[1, 9]]) * Utils.rotx(link_info[2, 9]) * Utils.trn(
+        [link_info[3, 9], 0, 0]))
 
     link1_mth = Utils.inv_htm(Q01)
-    # Part 1
     link_3d_obj.append(
         [Model3D(
-            # ligacao de cilindros curta
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/8.obj',
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/4.obj', # torre movel
+            scale=scale, htm=link1_mth, mesh_material=mesh),
+            Model3D(
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/5.obj', # cilindro conector
             scale=scale, htm=link1_mth, mesh_material=mesh),
          ]
     )
 
     link2_mth = Utils.inv_htm(Q02)
-    # Part 2
+    # Part 1
     link_3d_obj.append(
         [Model3D(
-            # cilindro conector
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/59.obj',
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-         Model3D(
-            # ligacao de cilindros longa
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/9.obj',
+            # ligacao de cilindros curta
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/8.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
          ]
     )
 
     link3_mth = Utils.inv_htm(Q03)
-    # Part 3
+    # Part 2
     link_3d_obj.append(
         [Model3D(
+            # cilindro conector
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/59.obj',
+            scale=scale, htm=link3_mth, mesh_material=mesh),
+         Model3D(
             # ligacao de cilindros longa
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/11.obj',
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/9.obj',
             scale=scale, htm=link3_mth, mesh_material=mesh),
          ]
     )
 
     link4_mth = Utils.inv_htm(Q04)
-    # Part 4
+    # Part 3
     link_3d_obj.append(
         [Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/10.obj',  # cotovelo
+            # ligacao de cilindros longa
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/11.obj',
             scale=scale, htm=link4_mth, mesh_material=mesh),
          ]
     )
 
     link5_mth = Utils.inv_htm(Q05)
-    # Part 5
+    # Part 4
     link_3d_obj.append(
         [Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/38.obj',  # pá dobrada
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/10.obj',  # cotovelo
             scale=scale, htm=link5_mth, mesh_material=mesh),
          ]
     )
 
     link6_mth = Utils.inv_htm(Q06)
-    # Part 6, 7, 8
+    # Part 5
     link_3d_obj.append(
         [Model3D(
-            # conecta pá com bumerangue
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/19.obj',
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/38.obj',  # pá dobrada
             scale=scale, htm=link6_mth, mesh_material=mesh),
          ]
     )
 
     link7_mth = Utils.inv_htm(Q07)
+    # Part 6, 7, 8
+    link_3d_obj.append(
+        [Model3D(
+            # conecta pá com bumerangue
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/19.obj',
+            scale=scale, htm=link7_mth, mesh_material=mesh),
+         ]
+    )
+
+    link8_mth = Utils.inv_htm(Q08)
     # Part 9
     link_3d_obj.append(
         [
             Model3D(
                 url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/21.obj',  # bumerangue
-                scale=scale, htm=link7_mth, mesh_material=mesh),
+                scale=scale, htm=link8_mth, mesh_material=mesh),
 
         ]
     )
 
-    link8_mth = Utils.inv_htm(Q08)
+    link9_mth = Utils.inv_htm(Q09)
     # Part 10, 11
     link_3d_obj.append(
         [Model3D(
             # envoltoria agulha
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/43.obj',
-            scale=scale, htm=link8_mth, mesh_material=mesh),
+            scale=scale, htm=link9_mth, mesh_material=mesh),
          ]
     )
 
-    link9_mth = Utils.inv_htm(Q09)
+    link10_mth = Utils.inv_htm(Q010)
     link_3d_obj.append(
         [Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/45.obj',  # guia
-            scale=scale, htm=link9_mth, mesh_material=mesh),
+            scale=scale, htm=link10_mth, mesh_material=mesh),
          Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/54.obj',  # agulha
-            scale=scale, htm=link9_mth, mesh_material=mesh),
+            scale=scale, htm=link10_mth, mesh_material=mesh),
          Model3D(
             # abridor de garrafa
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/51.obj',
-            scale=scale, htm=link9_mth, mesh_material=mesh),
+            scale=scale, htm=link10_mth, mesh_material=mesh),
          Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/52.obj',  # botao
-            scale=scale, htm=link9_mth, mesh_material=mesh),
+            scale=scale, htm=link10_mth, mesh_material=mesh),
          ]
     )
 
@@ -226,8 +234,8 @@ def _create_davinci_arm1(color, opacity):
         #    links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
 
     # Define initial configuration
-    #     1  2  3  4  5  6  7  8  9
-    q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+    #     1  2  3  4  5  6  7  8  9 10
+    q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     htm_n_eef = Utils.trn([0, 0, 0.3025])#np.identity(4)
     htm_base_0 = Utils.trn([0.1, 0.45, 1.1])  # np.identity(4)
 
