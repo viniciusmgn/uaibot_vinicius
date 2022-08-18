@@ -10,7 +10,7 @@ from simobjects.cylinder import Cylinder
 from simobjects.rigidobject import RigidObject
 from simobjects.group import Group
 from robot.links import Link
-from robot._create_davinci_arm import _create_davinci_arm
+from robot._create_davinci_arm1 import _create_davinci_arm1
 from robot._create_davinci_chest import _create_davinci_chest
 import numpy as np
 
@@ -44,7 +44,7 @@ def _create_davinci(htm, name, color='#3e3f42', opacity=1, eef_frame_visible=Tru
     #desl_z = htm * Utils.trn([0, 0, -0.18])
     desl_z = htm * Utils.trn([0, 0, 0])
 
-    arm1_links, arm1_base_3d_obj, arm1_htmbase, arm1_htmeef, arm1_q0 = _create_davinci_arm(
+    arm1_links, arm1_base_3d_obj, arm1_htmbase, arm1_htmeef, arm1_q0 = _create_davinci_arm1(
         color=color, opacity=opacity)
     chest = _create_davinci_chest(name=name, color=color, opacity=opacity)
     desl_z = htm * Utils.trn([0, 0, -0.18])
