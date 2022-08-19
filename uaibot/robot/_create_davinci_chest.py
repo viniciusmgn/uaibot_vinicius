@@ -120,9 +120,6 @@ def _create_davinci_chest(name, color, opacity):
             Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/57.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
-            Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/58.obj',
-            scale=scale, htm=link2_mth, mesh_material=mesh),
          ]
     )
 

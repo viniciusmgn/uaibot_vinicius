@@ -11,6 +11,7 @@ from simobjects.rigidobject import RigidObject
 from simobjects.group import Group
 from robot.links import Link
 from robot._create_davinci_arm1 import _create_davinci_arm1
+from robot._create_davinci_arm2 import _create_davinci_arm2
 from robot._create_davinci_chest import _create_davinci_chest
 import numpy as np
 
@@ -46,29 +47,22 @@ def _create_davinci(htm, name, color='#3e3f42', opacity=1, eef_frame_visible=Tru
 
     arm1_links, arm1_base_3d_obj, arm1_htmbase, arm1_htmeef, arm1_q0 = _create_davinci_arm1(
         color=color, opacity=opacity)
+    arm2_links, arm2_base_3d_obj, arm2_htmbase, arm2_htmeef, arm2_q0 = _create_davinci_arm2(
+        color=color, opacity=opacity)
     chest = _create_davinci_chest(name=name, color=color, opacity=opacity)
     desl_z = htm * Utils.trn([0, 0, -0.18])
-    robot_arm_left = rb.Robot(name + "__arm_left", links=arm1_links,
-                           list_base_3d_obj=arm1_base_3d_obj,
-                           htm=np.identity(4),
-                           #htm=desl_z *
-                           #Utils.trn([0, 0.14, 1]) * Utils.rotx(-3.14 / 2),
-                           htm_base_0=arm1_htmbase,
-                           htm_n_eef=arm1_htmeef,
-                           q0=arm1_q0, eef_frame_visible=eef_frame_visible,
-                           joint_limits=joint_limits)
-    #param_arm_left = _create_darwin_mini_arm(np.identity(4), "arm_left", color, 1)
-    #param_arm_right = _create_darwin_mini_arm(np.identity(4), "arm_right", color, 1)
-    #param_leg_left = _create_darwin_mini_leg_left(np.identity(4), "leg_left", color, 1)
-    #param_leg_right = _create_darwin_mini_leg_right(np.identity(4), "leg_right", color, 1)
-    #parts = []
-
-    # for i in range(1, 57):
-    #     path = 'https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci2/' + str(i) + '.obj'
-    #     parts.append(Model3D(path, htm=desl_z * mths['p' + str(i)],
-    #     mesh_material=MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
-    #                  opacity=opacity, side="DoubleSide")
-    #     ))
-
-    #chest = RigidObject(parts, name + "_chest")
-    return Group([robot_arm_left, chest])
+    robot_arm1 = rb.Robot(name + "__arm1", links=arm1_links,
+                          list_base_3d_obj=arm1_base_3d_obj,
+                          htm=np.identity(4),
+                          htm_base_0=arm1_htmbase,
+                          htm_n_eef=arm1_htmeef,
+                          q0=arm1_q0, eef_frame_visible=eef_frame_visible,
+                          joint_limits=joint_limits)
+    robot_arm2 = rb.Robot(name + "__arm2", links=arm2_links,
+                          list_base_3d_obj=arm2_base_3d_obj,
+                          htm=np.identity(4),
+                          htm_base_0=arm2_htmbase,
+                          htm_n_eef=arm2_htmeef,
+                          q0=arm2_q0, eef_frame_visible=eef_frame_visible,
+                          joint_limits=joint_limits)
+    return Group([robot_arm1, robot_arm2, chest])
