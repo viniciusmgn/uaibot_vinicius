@@ -21,20 +21,18 @@ def _create_davinci_arm2(color, opacity):
     if (not Utils.is_a_number(opacity)) or opacity < 0 or opacity > 1:
         raise Exception(
             "The parameter 'opacity' should be a float between 0 and 1.")
-    r1 = -3  # 0
-    r2 = 98.5
-    r3 = 28.75 + 90  # -90.75
-    r4 = 0 #28.75 + 90
-    r5 = 0#-45
+
+    r4 = 0  # 28.75 + 90
+    r5 = 0  # -45
     r6 = 94
     r7 = -170.5
     r8 = 61.5
     r9 = -15*0
 
     theta1 = np.deg2rad(0)
-    theta2 = np.deg2rad(r1) 
-    theta3 = np.deg2rad(r2) 
-    theta4 = np.deg2rad(r3)
+    theta2 = np.deg2rad(-3)
+    theta3 = np.deg2rad(98.5)
+    theta4 = np.deg2rad(108)
     theta5 = np.deg2rad(r4)  # -np.pi/2
     theta6 = np.deg2rad(r5)
     theta7 = np.deg2rad(r6)
@@ -43,8 +41,8 @@ def _create_davinci_arm2(color, opacity):
 
     d1 = 0
     d2 = 96e-3 * 1.2
-    d3 = 0 
-    d4 = -96e-3 * 1.9
+    d3 = 0
+    d4 = -96e-3 * 0.9
     d5 = -96e-3 * 1.9  # -96e-3 * 2.9
     d6 = (431.8 * 1.417)/1000  # -(144.54 - 431.8)
     d7 = 0
@@ -52,7 +50,7 @@ def _create_davinci_arm2(color, opacity):
     d10 = 3e-2  # old d6
 
     alpha1 = 0
-    alpha4 = -np.pi*(1/2 + 1/9)  # np.pi/2
+    alpha4 = np.deg2rad(90 + 36.5) # np.pi/2
     alpha5 = -np.pi*(1/2 + 1/9)  # np.pi/2
     alpha6 = -np.pi/2
     alpha7 = 0
@@ -61,8 +59,8 @@ def _create_davinci_arm2(color, opacity):
     alpha10 = np.pi/2*0
 
     a1 = 0
-    a2 = -0.415 
-    a3 = -0.415  # -0.35
+    a2 = 0.415  # -0.415
+    a3 = 0.415  # -0.415  # -0.35
     a4 = 0  # -0.407
     a6 = -3.1e-3  # 40.09/1000
     a7 = 0.27  # 0.188
@@ -75,15 +73,15 @@ def _create_davinci_arm2(color, opacity):
     link_info = np.array([
         # "theta" rotation in z
         # -> changed [0, 3] from -pi/2 to pi/2
-        [0, 0,   0,  0,      0,      0,      0,      0,      0,],
+        [0, 0,   0,  0,      0,      0,      0,      0,      0, ],
         # 0,  "d" translation in z
-        [d1, d2,  d3,  d4,     d5,     d6,     d7,      0,      d9,],
+        [d1, d2,  d3,  d4,     d5,     d6,     d7,      0,      d9, ],
         # 0,  "alfa" rotation in x
-        [0, 0,   0,  alpha4, alpha5, alpha6, alpha7, alpha8, alpha9,],
+        [0, 0,   0,  alpha4, alpha5, alpha6, alpha7, alpha8, alpha9, ],
         # 0,  "a" translation in x
-        [a1, a2, a3, a4,      0,     a6,     a7,      a8,      a9,],
+        [a1, a2, a3, a4,      0,     a6,     a7,      a8,      a9, ],
         # 0,  joint type
-        [1, 0,   0,  0,      0,      0,      0,      0,      1,]
+        [1, 0,   0,  0,      0,      0,      0,      0,      1, ]
     ])
 
     scale = 1
@@ -93,14 +91,14 @@ def _create_davinci_arm2(color, opacity):
     mesh = MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5,
                         normal_scale=[0.5, 0.5], color=color,
                         opacity=opacity, side="DoubleSide")
-    b1 = -0.086 # baixar 5mm
-    b2 = 0.2634 # baixar 5mm
+    b1 = -0.086  # baixar 5mm
+    b2 = 0.2634  # baixar 5mm
     b3 = 1.3
-    # original model is rotated (Robot fron = plane X x Y)
-    q_ = np.array([1, 0, 0, 0, 0, 0, 0]) * -np.pi/2
- # * Utils.trn([-0.1, -0.45, -1])
-    Q01 = Utils.trn([b1, b3, -b2]) * Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
-        [link_info[3, 0], 0, 0])
+
+    Q00 = Utils.trn([b1, b3, -b2]) * Utils.rotx(-np.pi/2) * \
+        Utils.rotz(np.pi)  # change reference frame
+    Q01 = Q00 * (Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
+        [link_info[3, 0], 0, 0]))
     Q02 = Q01 * (Utils.rotz(link_info[0, 0] + theta2) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
         [link_info[3, 1], 0, 0]))
     Q03 = Q02 * (Utils.rotz(link_info[0, 1] + theta3) * Utils.trn([0, 0, link_info[1, 2]]) * Utils.rotx(link_info[2, 2]) * Utils.trn(
@@ -227,7 +225,7 @@ def _create_davinci_arm2(color, opacity):
     #     1  2  3  4  5  6  7  8  9
     q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     htm_n_eef = Utils.trn([0, 0, 0.3025])  # np.identity(4)
-    htm_base_0 = np.identity(4)#Utils.trn([b1, b2, b3]) # np.identity(4)
+    htm_base_0 = np.identity(4) #Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
     # joint_limits = (np.pi / 180) * np.matrix([[-180, 180], [-180, 180], [-180, 180]])
