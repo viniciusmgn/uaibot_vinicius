@@ -69,7 +69,7 @@ def _create_davinci_chest(name, color, opacity):
     # original model is rotated (Robot fron = plane X x Y)
     q_ = np.array([1, 0, 0, 0, 0, 0, 0]) * -np.pi/2
 
-    Q01 = Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0]) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
+    Q01 = Utils.rotx(q_[0]) * Utils.rotz(np.pi) * Utils.rotz(link_info[0, 0]) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
         [link_info[3, 0], 0, 0])
     Q12 = Q01 * (Utils.rotx(q_[1]) * Utils.rotz(link_info[0, 1]) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
         [link_info[3, 1], 0, 0]))
