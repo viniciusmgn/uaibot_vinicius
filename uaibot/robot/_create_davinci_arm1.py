@@ -24,9 +24,9 @@ def _create_davinci_arm1(color, opacity):
     r1 = 1.875  # 0
     r2 = 3.25
     r3 = 75.25  # -90.75
-    r4 = 28.75 + 90
+    r4 = 28.75 + 90 #+ 180
     r5 = -45
-    r6 = 94
+    r6 = 94 + 180
     r7 = -170.5
     r8 = 61.5
     r9 = -15*0
@@ -51,21 +51,21 @@ def _create_davinci_arm1(color, opacity):
     d10 = 3e-2  # old d6
 
     alpha1 = 0
-    alpha5 = -np.pi*(1/2 + 1/9)  # np.pi/2
-    alpha6 = -np.pi/2
+    alpha5 = np.pi*(1/2 + 1/9)# np.pi/2
+    alpha6 = np.pi/2
     alpha7 = 0
     alpha8 = 0
     alpha9 = np.pi/2
     alpha10 = np.pi/2*0
 
     a1 = 0
-    a2 = -0.3
-    a3 = -0.415  # -0.35
-    a4 = -0.415  # -0.407
-    a6 = -3.1e-3  # 40.09/1000
-    a7 = 0.27#0.188
-    a8 = 0.474
-    a9 = 0.098
+    a2 = 0.3#-0.3
+    a3 = 0.415#-0.415  # -0.35
+    a4 = 0.415#-0.415  # -0.407
+    a6 = 3.1e-3#-3.1e-3  # 40.09/1000
+    a7 = 0.27#0.27#0.188
+    a8 = 0.474#0.474
+    a9 = 0.098#0.098
     a10 = 0.235*0
 
     # Passive joints 1, 2, 3, 4, 5, 8, 9
@@ -93,8 +93,11 @@ def _create_davinci_arm1(color, opacity):
                         opacity=opacity, side="DoubleSide")
     # original model is rotated (Robot fron = plane X x Y)
     q_ = np.array([1, 0, 0, 0, 0, 0, 0]) * -np.pi/2
+    b1 = 0.1
+    b2 = 0.45
+    b3 = 1.1
  # * Utils.trn([-0.1, -0.45, -1])
-    Q01 = Utils.trn([0.1, 1.1, -0.45]) * Utils.rotx(q_[0]) * Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
+    Q01 = Utils.trn([b1, b3, -b2]) * Utils.rotx(q_[0]) * Utils.rotz(np.pi) * Utils.rotz(link_info[0, 0] + theta1) * Utils.trn([0, 0, link_info[1, 0]]) * Utils.rotx(link_info[2, 0]) * Utils.trn(
         [link_info[3, 0], 0, 0])
     Q02 = Q01 * (Utils.rotz(link_info[0, 0] + theta2) * Utils.trn([0, 0, link_info[1, 1]]) * Utils.rotx(link_info[2, 1]) * Utils.trn(
         [link_info[3, 1], 0, 0]))
@@ -238,7 +241,7 @@ def _create_davinci_arm1(color, opacity):
     #     1  2  3  4  5  6  7  8  9 10
     q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     htm_n_eef = Utils.trn([0, 0, 0.3025])#np.identity(4)
-    htm_base_0 = Utils.trn([0.1, 0.45, 1.1])  # np.identity(4)
+    htm_base_0 = Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
     # joint_limits = (np.pi / 180) * np.matrix([[-180, 180], [-180, 180], [-180, 180]])
