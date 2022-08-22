@@ -22,9 +22,9 @@ def _create_davinci_arm2(color, opacity):
         raise Exception(
             "The parameter 'opacity' should be a float between 0 and 1.")
 
-    r4 = 0  # 28.75 + 90
-    r5 = 0  # -45
-    r6 = 94
+    r4 = -44 # 28.75 + 90
+    r5 = -87.8 # -45
+    r6 = 94 + 180
     r7 = -170.5
     r8 = 61.5
     r9 = -15*0
@@ -32,37 +32,33 @@ def _create_davinci_arm2(color, opacity):
     theta1 = np.deg2rad(0)
     theta2 = np.deg2rad(-3)
     theta3 = np.deg2rad(98.5)
-    theta4 = np.deg2rad(108)
+    theta4 = np.deg2rad(108.5)
     theta5 = np.deg2rad(r4)  # -np.pi/2
     theta6 = np.deg2rad(r5)
     theta7 = np.deg2rad(r6)
     theta8 = np.deg2rad(r7)
     theta9 = np.deg2rad(r8)
 
-    d1 = 0
     d2 = 96e-3 * 1.2
-    d3 = 0
-    d4 = -96e-3 * 0.9
-    d5 = -96e-3 * 1.9  # -96e-3 * 2.9
-    d6 = (431.8 * 1.417)/1000  # -(144.54 - 431.8)
+    d4 = -96e-3 * 0.925
+    d5 = 431.8e-3 * 1.419 # -96e-3 * 2.9
+    d6 = 0  # -(144.54 - 431.8)
     d7 = 0
     d9 = -3.75e-2
     d10 = 3e-2  # old d6
 
-    alpha1 = 0
     alpha4 = np.deg2rad(90 + 36.5) # np.pi/2
-    alpha5 = -np.pi*(1/2 + 1/9)  # np.pi/2
-    alpha6 = -np.pi/2
+    alpha5 = np.pi/2  # np.pi/2
+    alpha6 = 0
     alpha7 = 0
     alpha8 = 0
     alpha9 = np.pi/2
     alpha10 = np.pi/2*0
 
-    a1 = 0
     a2 = 0.415  # -0.415
     a3 = 0.415  # -0.415  # -0.35
-    a4 = 0  # -0.407
-    a6 = -3.1e-3  # 40.09/1000
+    a5 = -8e-4
+    a6 = 0.27  # 40.09/1000
     a7 = 0.27  # 0.188
     a8 = 0.474
     a9 = 0.098
@@ -73,15 +69,15 @@ def _create_davinci_arm2(color, opacity):
     link_info = np.array([
         # "theta" rotation in z
         # -> changed [0, 3] from -pi/2 to pi/2
-        [0, 0,   0,  0,      0,      0,      0,      0,      0, ],
+        [0,  0,   0,       0,      0,      0,      0,      0,      0, ],
         # 0,  "d" translation in z
-        [d1, d2,  d3,  d4,     d5,     d6,     d7,      0,      d9, ],
+        [0, d2,   0,      d4,     d5,     d6,     d7,      0,      d9, ],
         # 0,  "alfa" rotation in x
-        [0, 0,   0,  alpha4, alpha5, alpha6, alpha7, alpha8, alpha9, ],
+        [0,  0,   0,  alpha4, alpha5, alpha6, alpha7, alpha8, alpha9, ],
         # 0,  "a" translation in x
-        [a1, a2, a3, a4,      0,     a6,     a7,      a8,      a9, ],
+        [0, a2,  a3,       0,     a5,     a6,     a7,      a8,      a9, ],
         # 0,  joint type
-        [1, 0,   0,  0,      0,      0,      0,      0,      1, ]
+        [1,  0,   0,       0,      0,      0,      0,      0,      1, ]
     ])
 
     scale = 1
@@ -91,6 +87,9 @@ def _create_davinci_arm2(color, opacity):
     mesh = MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5,
                         normal_scale=[0.5, 0.5], color=color,
                         opacity=opacity, side="DoubleSide")
+    mesh_test = MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5,
+                        normal_scale=[0.5, 0.5], color=color,
+                        opacity=opacity*0, side="DoubleSide")
     b1 = -0.086  # baixar 5mm
     b2 = 0.2634  # baixar 5mm
     b3 = 1.3
