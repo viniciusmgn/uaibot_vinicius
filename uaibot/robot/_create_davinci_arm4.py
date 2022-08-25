@@ -32,7 +32,7 @@ def _create_davinci_arm4(color, opacity):
 
     d3 = 96e-3 * 1.25
     d4 = 96e-3 * 3.68
-    d5 = 431.8e-3 * 1.419 * 0
+    d5 = 0.91
     d8 = -2.9e-2 * 0
 
     alpha4 = -np.deg2rad(90 + 63.1)
