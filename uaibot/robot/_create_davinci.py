@@ -12,6 +12,8 @@ from simobjects.group import Group
 from robot.links import Link
 from robot._create_davinci_arm1 import _create_davinci_arm1
 from robot._create_davinci_arm2 import _create_davinci_arm2
+from robot._create_davinci_arm3 import _create_davinci_arm3
+from robot._create_davinci_arm4 import _create_davinci_arm4
 from robot._create_davinci_chest import _create_davinci_chest
 import numpy as np
 
@@ -49,6 +51,10 @@ def _create_davinci(htm, name, color='#3e3f42', opacity=1, eef_frame_visible=Tru
         color=color, opacity=opacity)
     arm2_links, arm2_base_3d_obj, arm2_htmbase, arm2_htmeef, arm2_q0 = _create_davinci_arm2(
         color=color, opacity=opacity)
+    arm3_links, arm3_base_3d_obj, arm3_htmbase, arm3_htmeef, arm3_q0 = _create_davinci_arm3(
+       color=color, opacity=opacity)
+    arm4_links, arm4_base_3d_obj, arm4_htmbase, arm4_htmeef, arm4_q0 = _create_davinci_arm4(
+        color=color, opacity=opacity)
     chest = _create_davinci_chest(name=name, color=color, opacity=opacity)
     desl_z = htm * Utils.trn([0, 0, -0.18])
     robot_arm1 = rb.Robot(name + "__arm1", links=arm1_links,
@@ -65,4 +71,18 @@ def _create_davinci(htm, name, color='#3e3f42', opacity=1, eef_frame_visible=Tru
                           htm_n_eef=arm2_htmeef,
                           q0=arm2_q0, eef_frame_visible=eef_frame_visible,
                           joint_limits=joint_limits)
-    return Group([robot_arm1, robot_arm2, chest])
+    robot_arm3 = rb.Robot(name + "__arm3", links=arm3_links,
+                          list_base_3d_obj=arm3_base_3d_obj,
+                          htm=np.identity(4),
+                          htm_base_0=arm3_htmbase,
+                          htm_n_eef=arm3_htmeef,
+                          q0=arm3_q0, eef_frame_visible=eef_frame_visible,
+                          joint_limits=joint_limits)
+    robot_arm4 = rb.Robot(name + "__arm4", links=arm4_links,
+                          list_base_3d_obj=arm4_base_3d_obj,
+                          htm=np.identity(4),
+                          htm_base_0=arm4_htmbase,
+                          htm_n_eef=arm4_htmeef,
+                          q0=arm4_q0, eef_frame_visible=eef_frame_visible,
+                          joint_limits=joint_limits)
+    return Group([robot_arm1, robot_arm2, robot_arm3, robot_arm4, chest])

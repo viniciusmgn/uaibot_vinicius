@@ -89,7 +89,7 @@ def _create_davinci_chest(name, color, opacity):
     #link1_mth = Q01
     chest_obj.extend(
         [Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/1.obj', #feet
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/1.obj',  # feet
             scale=scale, htm=link1_mth, mesh_material=mesh),
          ]
     )
@@ -100,25 +100,18 @@ def _create_davinci_chest(name, color, opacity):
     #link2_mth = Q12
     chest_obj.extend(
         [Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/2.obj', #base rectangle
+            # base rectangle
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/2.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
          Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/3.obj', #vertical tower
+            # vertical tower
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/3.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
          Model3D(
             url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/17.obj',
             scale=scale, htm=link2_mth, mesh_material=mesh),
          Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/18.obj', #short cable
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/32.obj', #long cable
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/56.obj',
-            scale=scale, htm=link2_mth, mesh_material=mesh),
-            Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/57.obj',
+            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/18.obj',  # short cable
             scale=scale, htm=link2_mth, mesh_material=mesh),
          ]
     )
