@@ -25,26 +25,26 @@ def _create_davinci_arm4(color, opacity):
     theta2 = np.deg2rad(164.8)
     theta3 = np.deg2rad(-131.8)
     theta4 = np.deg2rad(-33)
-    theta5 = np.deg2rad(-44) * 0
-    theta6 = np.deg2rad(-85.5) * 0
-    theta7 = np.deg2rad(-171) * 0
-    theta8 = np.deg2rad(61.7) * 0
+    theta5 = np.deg2rad(-91)
+    theta6 = np.deg2rad(94.5)
+    theta7 = np.deg2rad(-169.82)
+    theta8 = np.deg2rad(37.1)
 
     d3 = 96e-3 * 1.25
     d4 = 96e-3 * 3.68
-    d5 = 0.91
-    d8 = -2.9e-2 * 0
+    d5 = 0.919
+    d8 = -3.4e-2
 
     alpha4 = -np.deg2rad(90 + 63.1)
-    alpha5 = np.pi/2 * 0
-    alpha8 = np.deg2rad(90) * 0
+    alpha5 = -np.pi/2
+    alpha8 = np.deg2rad(90.7)
 
     a2 = 0.3
     a3 = 0.3
-    a5 = -8e-4 * 0
-    a6 = 0.27 * 0
-    a7 = 0.474 * 0
-    a8 = 0.098 * 0
+    a5 = -8e-4
+    a6 = 0.27
+    a7 = 0.473
+    a8 = 0.115
 
     # Passive joints 1, 2, 3, 4, 7, 8
     # Active joints 5, 6, 9
@@ -67,8 +67,8 @@ def _create_davinci_arm4(color, opacity):
     link_3d_obj = []
     mesh = MeshMaterial(metalness=0.5, clearcoat=0, roughness=0.5, normal_scale=[
                         0.5, 0.5], color=color, opacity=opacity, side="DoubleSide")
-    b1 = 0.099#0.09779 0.0978     tirar 5 p/ direita
-    b2 = 0.0922#0.09
+    b1 = 0.099
+    b2 = 0.0922
     b3 = 1.54
 
     Q00 = Utils.trn([b1, b3, -b2]) * Utils.rotx(-np.pi/2) * \
@@ -177,8 +177,8 @@ def _create_davinci_arm4(color, opacity):
     # Define initial configuration
     #     1  2  3  4  5  6  7  8  9
     q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    htm_n_eef = Utils.trn([0, 0, 0.3323])  # np.identity(4)
-    htm_base_0 = np.identity(4)
+    htm_n_eef = Utils.trn([0, 0, 0.1899])  # np.identity(4)
+    htm_base_0 = Utils.trn([-b1, -b2, b3])#np.identity(4)
 
     # Create joint limits
     # joint_limits = (np.pi / 180) * np.matrix([[-180, 180], [-180, 180], [-180, 180]])
