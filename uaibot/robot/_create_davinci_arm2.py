@@ -12,7 +12,7 @@ from robot.links import Link
 import numpy as np
 
 
-def _create_davinci_arm2(color, opacity):
+def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
 
     if not Utils.is_a_color(color):
         raise Exception(
@@ -167,12 +167,42 @@ def _create_davinci_arm2(color, opacity):
                 scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
+    col_model = [[], [], [], [], [], [], [], [], []]
+
+    col_model[0].append(Box(htm=Utils.trn([-0.02, 0.006*0, -0.43]) @ Utils.rotz(np.pi/2),
+                            name=name + "_C0_0", width=0.14, height=0.4, depth=0.2, color="red", opacity=0.3))
+    col_model[0].append(Cylinder(htm=Utils.trn([0, 0, -0.16]) @ Utils.rotz(3.14 / 2) @ Utils.rotx(3.14),
+                                 name=name + "_C0_1", radius=0.075, height=0.19, color="red", opacity=0.3))
+
+    col_model[1].append(Box(htm=Utils.trn([-0.200, 0, -0.11]) @ Utils.roty(np.pi/2),
+                            name=name + "_C1_0", width=0.1, height=0.4, depth=0.12, color="green", opacity=0.3))
+    col_model[1].append(Cylinder(htm=Utils.trn([0, 0, -0.12]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C1_1", radius=0.075, height=0.12, color="green", opacity=0.3))
+    col_model[1].append(Cylinder(htm=Utils.trn([-0.415, 0, -0.11]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C1_2", radius=0.075, height=0.13, color="green", opacity=0.3))
+    
+    col_model[2].append(Box(htm=Utils.trn([-0.200, 0, 0.005]) @ Utils.roty(np.pi/2),
+                            name=name + "_C2_0", width=0.1, height=0.4, depth=0.12, color="blue", opacity=0.3))
+    col_model[2].append(Cylinder(htm=Utils.trn([0, 0, 0.01]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C2_1", radius=0.075, height=0.12, color="blue", opacity=0.3))
+    col_model[2].append(Cylinder(htm=Utils.trn([-0.415, 0, 0.01]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C2_2", radius=0.075, height=0.13, color="blue", opacity=0.3))
+
+    col_model[3].append(Cylinder(htm=Utils.trn([0, -0.025, 0.01]) @ Utils.rotx(-alpha4),
+                                 name=name + "_C3_1", radius=0.075, height=0.12, color="magenta", opacity=0.3))
+    col_model[3].append(Box(htm=Utils.trn([0, -0.02, 0.12]) @ Utils.roty(np.pi/2),
+                            name=name + "_C3_0", width=0.2, height=0.14, depth=0.14, color="magenta", opacity=0.3))
+    
+    col_model[4].append(Box(htm=Utils.trn([0, -0.3, 0]) @ Utils.roty(np.pi/2),
+                            name=name + "_C4_0", width=0.2, height=0.14, depth=0.14, color="orange", opacity=0.3))
+    
+
     links = []
     for i in range(n):
         links.append(Link(i, theta=link_info[0, i], d=link_info[1, i], alpha=link_info[2, i], a=link_info[3, i], joint_type=link_info[4, i],
                           list_model_3d=link_3d_obj[i]))
-        # for j in range(len(col_model[i])):
-        #    links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
+        for j in range(len(col_model[i])):
+            links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
 
     # Define initial configuration
     #     1  2  3  4  5  6  7  8  9
