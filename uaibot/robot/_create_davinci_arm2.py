@@ -193,8 +193,13 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
     col_model[3].append(Box(htm=Utils.trn([0, -0.02, 0.12]) @ Utils.roty(np.pi/2),
                             name=name + "_C3_0", width=0.2, height=0.14, depth=0.14, color="magenta", opacity=0.3))
     
-    col_model[4].append(Box(htm=Utils.trn([0, -0.3, 0]) @ Utils.roty(np.pi/2),
-                            name=name + "_C4_0", width=0.2, height=0.14, depth=0.14, color="orange", opacity=0.3))
+    col_model[4].append(Box(htm=Utils.trn([0, -0.355, -0.05]) @ Utils.roty(np.pi/2),
+                            name=name + "_C4_0", width=0.2, height=0.08, depth=0.05, color="orange", opacity=0.3))
+    col_model[4].append(Box(htm=Utils.trn([0, -0.15, -0.125]) @ Utils.roty(np.pi/2),
+                            name=name + "_C4_1", width=0.05, height=0.09, depth=0.4, color="orange", opacity=0.3))
+    
+    col_model[5].append(Box(htm=Utils.trn([-0.2, 0.025, -0.03]),
+                            name=name + "_C5_1", width=0.25, height=0.13, depth=0.15, color="cyan", opacity=0.3))
     
 
     links = []
