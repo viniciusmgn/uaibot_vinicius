@@ -198,9 +198,15 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
     col_model[4].append(Box(htm=Utils.trn([0, -0.15, -0.125]) @ Utils.roty(np.pi/2),
                             name=name + "_C4_1", width=0.05, height=0.09, depth=0.4, color="orange", opacity=0.3))
     
-    col_model[5].append(Box(htm=Utils.trn([-0.2, 0.025, -0.03]),
-                            name=name + "_C5_1", width=0.25, height=0.13, depth=0.15, color="cyan", opacity=0.3))
+    col_model[5].append(Box(htm=Utils.trn([-0.2, 0.025, -0.025]),
+                            name=name + "_C5_0", width=0.25, height=0.14, depth=0.15, color="cyan", opacity=0.3))
+    col_model[5].append(Box(htm=Utils.trn([-0.02, 0.025, -0.088]),
+                            name=name + "_C5_1", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
+    col_model[5].append(Box(htm=Utils.trn([-0.019, 0.025, 0.019]),
+                            name=name + "_C5_2", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
     
+    col_model[6].append(Box(htm=Utils.trn([-0.42, 0.08, -0.04]) @ Utils.rotz(np.pi/3),
+                            name=name + "_C6_0", width=0.23, height=0.07, depth=0.13, color="#88264a", opacity=0.3))
 
     links = []
     for i in range(n):
