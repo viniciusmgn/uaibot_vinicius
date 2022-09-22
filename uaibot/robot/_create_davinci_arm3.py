@@ -12,7 +12,7 @@ from robot.links import Link
 import numpy as np
 
 
-def _create_davinci_arm3(color, opacity):
+def _create_davinci_arm3(color, opacity, name='davinci_arm3'):
 
     if not Utils.is_a_color(color):
         raise Exception(
@@ -167,12 +167,79 @@ def _create_davinci_arm3(color, opacity):
                 scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
+    col_model = [[], [], [], [], [], [], [], [], []]
+
+    col_model[0].append(Box(htm=Utils.trn([-0.02, 0.006*0, -0.43]) @ Utils.rotz(np.pi/2),
+                            name=name + "_C0_0", width=0.14, height=0.4, depth=0.2, color="red", opacity=0.3))
+    col_model[0].append(Cylinder(htm=Utils.trn([0, 0, -0.16]) @ Utils.rotz(3.14 / 2) @ Utils.rotx(3.14),
+                                 name=name + "_C0_1", radius=0.075, height=0.19, color="red", opacity=0.3))
+
+    col_model[1].append(Box(htm=Utils.trn([-0.200, 0, -0.11]) @ Utils.roty(np.pi/2),
+                            name=name + "_C1_0", width=0.1, height=0.4, depth=0.12, color="green", opacity=0.3))
+    col_model[1].append(Cylinder(htm=Utils.trn([0, 0, -0.12]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C1_1", radius=0.075, height=0.12, color="green", opacity=0.3))
+    col_model[1].append(Cylinder(htm=Utils.trn([-0.415, 0, -0.11]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C1_2", radius=0.075, height=0.13, color="green", opacity=0.3))
+
+    col_model[2].append(Box(htm=Utils.trn([-0.200, 0, 0.005]) @ Utils.roty(np.pi/2),
+                            name=name + "_C2_0", width=0.1, height=0.4, depth=0.12, color="blue", opacity=0.3))
+    col_model[2].append(Cylinder(htm=Utils.trn([0, 0, 0.01]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C2_1", radius=0.075, height=0.12, color="blue", opacity=0.3))
+    col_model[2].append(Cylinder(htm=Utils.trn([-0.415, 0, 0.01]) @ Utils.rotz(np.pi/2) @ Utils.rotx(3.14),
+                                 name=name + "_C2_2", radius=0.075, height=0.13, color="blue", opacity=0.3))
+
+    col_model[3].append(Cylinder(htm=Utils.trn([0, -0.025, 0.01]) @ Utils.rotx(-alpha4),
+                                 name=name + "_C3_0", radius=0.075, height=0.12, color="magenta", opacity=0.3))
+    col_model[3].append(Box(htm=Utils.trn([0, -0.02, 0.12]) @ Utils.roty(np.pi/2),
+                            name=name + "_C3_1", width=0.2, height=0.14, depth=0.14, color="magenta", opacity=0.3))
+
+    col_model[4].append(Box(htm=Utils.trn([0, -0.355, -0.05]) @ Utils.roty(np.pi/2),
+                            name=name + "_C4_0", width=0.2, height=0.08, depth=0.05, color="orange", opacity=0.3))
+    col_model[4].append(Box(htm=Utils.trn([0, -0.15, -0.125]) @ Utils.roty(np.pi/2),
+                            name=name + "_C4_1", width=0.05, height=0.09, depth=0.4, color="orange", opacity=0.3))
+
+    col_model[5].append(Box(htm=Utils.trn([-0.2, 0.025, -0.025]),
+                            name=name + "_C5_0", width=0.25, height=0.14, depth=0.15, color="cyan", opacity=0.3))
+    col_model[5].append(Box(htm=Utils.trn([-0.02, 0.025, -0.088]),
+                            name=name + "_C5_1", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
+    col_model[5].append(Box(htm=Utils.trn([-0.019, 0.025, 0.019]),
+                            name=name + "_C5_2", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
+
+    col_model[6].append(Box(htm=Utils.trn([-0.42, 0.08, -0.034]) @ Utils.rotz(np.pi/3),
+                            name=name + "_C6_0", width=0.23, height=0.082, depth=0.13, color="#88264a", opacity=0.3))
+    col_model[6].append(Box(htm=Utils.trn([-0.22, 0.08, -0.034]) @ Utils.rotz(np.pi*7/18),
+                            name=name + "_C6_1", width=0.11, height=0.09, depth=0.39, color="#88264a", opacity=0.3))
+    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.01, 0.005]) @ Utils.rotz(np.pi*7/18),
+                            name=name + "_C6_2", width=0.08, height=0.01, depth=0.03, color="#88264a", opacity=0.3))
+    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.01, -0.068]) @ Utils.rotz(np.pi*7/18),
+                            name=name + "_C6_3", width=0.08, height=0.01, depth=0.03, color="#88264a", opacity=0.3))
+    col_model[6].append(Cylinder(htm=Utils.trn([0, 0, -0.068]),
+                                 name=name + "_C6_4", radius=0.035, height=0.01, color="#88264a", opacity=0.3))
+    col_model[6].append(Cylinder(htm=Utils.trn([0, 0, 0.005]),
+                                 name=name + "_C6_5", radius=0.035, height=0.01, color="#88264a", opacity=0.3))
+
+    col_model[7].append(Box(htm=Utils.trn([-0.052, 0.0, -0.042]),
+                            name=name + "_C7_0", width=0.02, height=0.31, depth=0.12, color="Brown", opacity=0.3))
+    col_model[7].append(Cylinder(htm=Utils.trn([-0.1, -0.005, -0.001]) @ Utils.rotx(np.pi/2),
+                                 name=name + "_C7_1", radius=0.035, height=0.056, color="Brown", opacity=0.3))
+    col_model[7].append(Box(htm=Utils.trn([-0.08, -0.005, 0]),
+                            name=name + "_C7_2", width=0.04, height=0.07, depth=0.056, color="Brown", opacity=0.3))
+    col_model[7].append(Box(htm=Utils.trn([-0.03, -0.001, 0.073]),
+                            name=name + "_C7_3", width=0.04, height=0.05, depth=0.04, color="Brown", opacity=0.3))
+    col_model[7].append(Cylinder(htm=Utils.trn([0, -0.001, 0.074]),
+                                 name=name + "_C7_4", radius=0.02, height=0.056, color="Brown", opacity=0.3))
+
+    col_model[8].append(Box(htm=Utils.trn([-0.005, 0.0, -0.22]),
+                            name=name + "_C8_0", width=0.07, height=0.4, depth=0.12, color="MidnightBlue", opacity=0.3))
+    col_model[8].append(Cylinder(htm=Utils.trn([0, 0, 0.135]),
+                                 name=name + "_C8_1", radius=0.01, height=0.4, color="MidnightBlue", opacity=0.3))
+
     links = []
     for i in range(n):
         links.append(Link(i, theta=link_info[0, i], d=link_info[1, i], alpha=link_info[2, i], a=link_info[3, i], joint_type=link_info[4, i],
                           list_model_3d=link_3d_obj[i]))
-        # for j in range(len(col_model[i])):
-        #    links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
+        for j in range(len(col_model[i])):
+           links[i].attach_col_object(col_model[i][j], col_model[i][j].htm)
 
     # Define initial configuration
     #     1  2  3  4  5  6  7  8  9
