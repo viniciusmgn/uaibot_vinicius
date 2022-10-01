@@ -255,20 +255,20 @@ def _create_davinci_arm1(color, opacity, name=''):
     col_model[7].append(Cylinder(htm=Utils.trn([0, -0.001, -0.073]),
                                  name=name + "_C7_5", radius=0.035, height=0.01, color="#88264a", opacity=0.3))
 
-    col_model[8].append(Box(htm=Utils.trn([-0.052, 0.0, -0.042]),
+    col_model[8].append(Box(htm=Utils.trn([-0.052, -0.001, -0.042]),
                             name=name + "_C8_0", width=0.02, height=0.31, depth=0.12, color="Brown", opacity=0.3))
-    col_model[8].append(Cylinder(htm=Utils.trn([-0.1, -0.005, -0.001]) @ Utils.rotx(np.pi/2),
+    col_model[8].append(Cylinder(htm=Utils.trn([-0.1, 0, 0]) @ Utils.rotx(np.pi/2),
                                  name=name + "_C8_1", radius=0.035, height=0.056, color="Brown", opacity=0.3))
-    col_model[8].append(Box(htm=Utils.trn([-0.08, -0.005, 0]),
+    col_model[8].append(Box(htm=Utils.trn([-0.08, 0, 0]),
                             name=name + "_C8_2", width=0.04, height=0.07, depth=0.056, color="Brown", opacity=0.3))
-    col_model[8].append(Box(htm=Utils.trn([-0.03, -0.001, 0.073]),
+    col_model[8].append(Box(htm=Utils.trn([-0.03, 0, 0.075]),
                             name=name + "_C8_3", width=0.04, height=0.05, depth=0.04, color="Brown", opacity=0.3))
-    col_model[8].append(Cylinder(htm=Utils.trn([0, -0.001, 0.074]),
+    col_model[8].append(Cylinder(htm=Utils.trn([0, 0, 0.075]),
                                  name=name + "_C8_4", radius=0.02, height=0.056, color="Brown", opacity=0.3))
 
-    col_model[9].append(Box(htm=Utils.trn([-0.005, 0.0, -0.22]),
+    col_model[9].append(Box(htm=Utils.trn([-0.005, 0.0, -0.2]),
                             name=name + "_C9_0", width=0.07, height=0.4, depth=0.12, color="MidnightBlue", opacity=0.3))
-    col_model[9].append(Cylinder(htm=Utils.trn([0, 0, 0.135]),
+    col_model[9].append(Cylinder(htm=Utils.trn([0, 0, 0.163]),
                                  name=name + "_C9_1", radius=0.01, height=0.4, color="MidnightBlue", opacity=0.3))
 
     links = []
