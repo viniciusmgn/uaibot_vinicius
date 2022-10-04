@@ -38,7 +38,10 @@ from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
 from ._create_darwin_mini import _create_darwin_mini
+from ._create_kuka_kr5_per import _create_kuka_kr5_per
 
+#teste
+from robot._create_davinci import _create_davinci
 
 class Robot:
     """
@@ -144,6 +147,12 @@ class Robot:
     def joint_limit(self):
         """A n x 2 numpy array containing the joint limits, either in rad or meters"""
         return self._joint_limit
+
+    #teste
+
+    @staticmethod
+    def create_davinci(htm=np.identity(4), name="davinci", color="#3e3f42", opacity=1, eef_frame_visible=True):
+        return _create_davinci(htm, name, color, opacity, eef_frame_visible)
 
     #######################################
     # Constructor
@@ -727,6 +736,39 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_kr5(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
+
+    @staticmethod
+    def create_kuka_kr5_per(htm=np.identity(4), name='kukakr5', color="#df6c25", opacity=1, eef_frame_visible=True, per=0.05):
+        """
+    Create a Kuka KR5 R850, a six-degree of freedom manipulator.
+    Thanks Sugi-Tjiu for the 3d model (see https://grabcad.com/library/kuka-kr-5-r850).
+
+    Parameters
+    ----------
+    htm : 4x4 numpy array or 4x4 nested list
+        The initial base configuration for the robot.
+        (default: np.identity(4))
+
+    name : string
+        The robot name.
+        (default: 'kukakr5').
+
+    htm : color
+        A HTML-compatible string representing the object color.
+        (default: '#df6c25')'.
+
+    opacity : positive float between 0 and 1
+        The opacity of the robot. 1 = fully opaque and 0 = transparent.
+        (default: 1)
+
+    Returns
+    -------
+    robot : Robot object
+        The robot.
+
+    """
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_kr5_per(htm, name, color, opacity, per)
         return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod
