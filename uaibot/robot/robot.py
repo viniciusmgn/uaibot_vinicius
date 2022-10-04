@@ -148,11 +148,6 @@ class Robot:
         """A n x 2 numpy array containing the joint limits, either in rad or meters"""
         return self._joint_limit
 
-    #teste
-
-    @staticmethod
-    def create_davinci(htm=np.identity(4), name="davinci", color="#3e3f42", opacity=1, eef_frame_visible=True):
-        return _create_davinci(htm, name, color, opacity, eef_frame_visible)
 
     #######################################
     # Constructor
