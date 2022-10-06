@@ -204,29 +204,29 @@ def _create_davinci_arm4(color, opacity, name=''):
 
     col_model[5].append(Box(htm=Utils.trn([-0.2, 0.025, -0.03]),
                             name=name + "_C5_0", width=0.25, height=0.14, depth=0.15, color="cyan", opacity=0.3))
-    col_model[5].append(Box(htm=Utils.trn([-0.02, 0.025, -0.088]),
+    col_model[5].append(Box(htm=Utils.trn([-0.018, 0.02, -0.09]),
                             name=name + "_C5_1", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
-    col_model[5].append(Box(htm=Utils.trn([-0.019, 0.025, 0.019]),
+    col_model[5].append(Box(htm=Utils.trn([-0.019, 0.02, 0.015]),
                             name=name + "_C5_2", width=0.14, height=0.02, depth=0.15, color="cyan", opacity=0.3))
 
-    col_model[6].append(Box(htm=Utils.trn([-0.42, 0.08, -0.034]) @ Utils.rotz(np.pi/3),
+    col_model[6].append(Box(htm=Utils.trn([-0.42, 0.08, -0.0372]) @ Utils.rotz(np.pi/3),
                             name=name + "_C6_0", width=0.23, height=0.082, depth=0.13, color="#88264a", opacity=0.3))
     col_model[6].append(Box(htm=Utils.trn([-0.22, 0.08, -0.034]) @ Utils.rotz(np.pi*7/18),
                             name=name + "_C6_1", width=0.11, height=0.09, depth=0.39, color="#88264a", opacity=0.3))
-    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.01, 0.005]) @ Utils.rotz(np.pi*7/18),
+    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.008, 0.002]) @ Utils.rotz(np.pi*7/18),
                             name=name + "_C6_2", width=0.08, height=0.01, depth=0.03, color="#88264a", opacity=0.3))
-    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.01, -0.068]) @ Utils.rotz(np.pi*7/18),
+    col_model[6].append(Box(htm=Utils.trn([-0.023, 0.008, -0.071]) @ Utils.rotz(np.pi*7/18),
                             name=name + "_C6_3", width=0.08, height=0.01, depth=0.03, color="#88264a", opacity=0.3))
-    col_model[6].append(Cylinder(htm=Utils.trn([0, 0, -0.068]),
+    col_model[6].append(Cylinder(htm=Utils.trn([0, 0.001, -0.071]),
                                  name=name + "_C6_4", radius=0.035, height=0.01, color="#88264a", opacity=0.3))
-    col_model[6].append(Cylinder(htm=Utils.trn([0, 0, 0.005]),
+    col_model[6].append(Cylinder(htm=Utils.trn([0, 0, 0.002]),
                                  name=name + "_C6_5", radius=0.035, height=0.01, color="#88264a", opacity=0.3))
 
-    col_model[7].append(Box(htm=Utils.trn([-0.052, 0.0, -0.042]),
-                            name=name + "_C7_0", width=0.02, height=0.31, depth=0.12, color="Brown", opacity=0.3))
-    col_model[7].append(Cylinder(htm=Utils.trn([-0.1, -0.005, -0.001]) @ Utils.rotx(np.pi/2),
+    col_model[7].append(Box(htm=Utils.trn([-0.065, 0, -0.18]),
+                            name=name + "_C7_0", width=0.028, height=0.63, depth=0.12, color="Brown", opacity=0.3))
+    col_model[7].append(Cylinder(htm=Utils.trn([-0.115, 0.001, -0.0013]) @ Utils.rotx(np.pi/2),
                                  name=name + "_C7_1", radius=0.035, height=0.056, color="Brown", opacity=0.3))
-    col_model[7].append(Box(htm=Utils.trn([-0.08, -0.005, 0]),
+    col_model[7].append(Box(htm=Utils.trn([-0.09, -0.005*0, 0.0]),
                             name=name + "_C7_2", width=0.04, height=0.07, depth=0.056, color="Brown", opacity=0.3))
     col_model[7].append(Box(htm=Utils.trn([-0.03, -0.001, 0.073]),
                             name=name + "_C7_3", width=0.04, height=0.05, depth=0.04, color="Brown", opacity=0.3))
