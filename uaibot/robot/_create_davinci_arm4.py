@@ -228,10 +228,12 @@ def _create_davinci_arm4(color, opacity, name=''):
                                  name=name + "_C7_1", radius=0.035, height=0.056, color="Brown", opacity=0.3))
     col_model[7].append(Box(htm=Utils.trn([-0.09, -0.005*0, 0.0]),
                             name=name + "_C7_2", width=0.04, height=0.07, depth=0.056, color="Brown", opacity=0.3))
-    col_model[7].append(Box(htm=Utils.trn([-0.03, -0.001, 0.073]),
-                            name=name + "_C7_3", width=0.04, height=0.05, depth=0.04, color="Brown", opacity=0.3))
+    col_model[7].append(Box(htm=Utils.trn([-0.03, -0.001, 0.095]),
+                            name=name + "_C7_3", width=0.04, height=0.09, depth=0.04, color="Brown", opacity=0.3))
     col_model[7].append(Cylinder(htm=Utils.trn([0, -0.001, 0.074]),
                                  name=name + "_C7_4", radius=0.02, height=0.056, color="Brown", opacity=0.3))
+    col_model[7].append(Box(htm=Utils.trn([-0.1, 0, -0.306]),
+                            name=name + "_C7_5", width=0.04, height=0.378, depth=0.12, color="Brown", opacity=0.3))
 
     col_model[8].append(Box(htm=Utils.trn([-0.005, 0.0, -0.22]),
                             name=name + "_C8_0", width=0.07, height=0.4, depth=0.12, color="MidnightBlue", opacity=0.3))
