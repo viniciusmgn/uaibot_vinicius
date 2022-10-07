@@ -235,10 +235,10 @@ def _create_davinci_arm4(color, opacity, name=''):
     col_model[7].append(Box(htm=Utils.trn([-0.1, 0, -0.306]),
                             name=name + "_C7_5", width=0.04, height=0.378, depth=0.12, color="Brown", opacity=0.3))
 
-    col_model[8].append(Box(htm=Utils.trn([-0.005, 0.0, -0.5]),
-                            name=name + "_C8_0", width=0.07, height=0.4, depth=0.12, color="MidnightBlue", opacity=0.3))
-    col_model[8].append(Cylinder(htm=Utils.trn([0, 0, 0.135]),
-                                 name=name + "_C8_1", radius=0.01, height=0.4, color="MidnightBlue", opacity=0.3))
+    col_model[8].append(Box(htm=Utils.trn([-0.002, 0.0, -0.52]),
+                            name=name + "_C8_0", width=0.09, height=0.36, depth=0.12, color="MidnightBlue", opacity=0.3))
+    col_model[8].append(Cylinder(htm=Utils.trn([0, 0, -0.109]),
+                                 name=name + "_C8_1", radius=0.013, height=0.6, color="MidnightBlue", opacity=0.3))
 
     links = []
     for i in range(n):
