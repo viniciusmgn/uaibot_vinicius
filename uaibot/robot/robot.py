@@ -891,8 +891,8 @@ class Robot:
     @staticmethod
     def create_davinci(htm=np.identity(4), name="davinci", color="#3e3f42", opacity=1, eef_frame_visible=True):
         """
-        Create an (oversized) Darwin Mini, a humanoid robot.
-        Thanks to Alexandre Le Falher for the 3D model (https://grabcad.com/library/darwin-mini-1).
+        Create a da Vinci Si, a surgical robot.
+        Thanks to Koray Okan for the 3D model (https://grabcad.com/library/da-vinci-surgical-robot-1/details).
 
         Parameters
         ----------
