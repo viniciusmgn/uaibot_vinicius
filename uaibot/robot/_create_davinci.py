@@ -10,10 +10,7 @@ from simobjects.cylinder import Cylinder
 from simobjects.rigidobject import RigidObject
 from simobjects.group import Group
 from robot.links import Link
-from robot._create_davinci_arm1 import _create_davinci_arm1
-from robot._create_davinci_arm2 import _create_davinci_arm2
-from robot._create_davinci_arm3 import _create_davinci_arm3
-from robot._create_davinci_arm4 import _create_davinci_arm4
+from robot._create_davinci_arms import _create_davinci_arm1, _create_davinci_arm2, _create_davinci_arm3, _create_davinci_arm4
 from robot._create_davinci_chest import _create_davinci_chest
 import numpy as np
 
@@ -48,13 +45,13 @@ def _create_davinci(htm, name, color='#3e3f42', opacity=1, eef_frame_visible=Tru
     desl_z = htm * Utils.trn([0, 0, 0])
 
     arm1_links, arm1_base_3d_obj, arm1_htmbase, arm1_htmeef, arm1_q0 = _create_davinci_arm1(
-        color=color, opacity=opacity)
+        color=color, opacity=opacity, name=name + '_arm_1')
     arm2_links, arm2_base_3d_obj, arm2_htmbase, arm2_htmeef, arm2_q0 = _create_davinci_arm2(
-        color=color, opacity=opacity)
+        color=color, opacity=opacity, name=name + '_arm_2')
     arm3_links, arm3_base_3d_obj, arm3_htmbase, arm3_htmeef, arm3_q0 = _create_davinci_arm3(
-       color=color, opacity=opacity)
+       color=color, opacity=opacity, name=name + '_arm_3')
     arm4_links, arm4_base_3d_obj, arm4_htmbase, arm4_htmeef, arm4_q0 = _create_davinci_arm4(
-        color=color, opacity=opacity)
+        color=color, opacity=opacity, name=name + '_arm_4')
     chest = _create_davinci_chest(name=name, color=color, opacity=opacity)
     desl_z = htm * Utils.trn([0, 0, -0.18])
     robot_arm1 = rb.Robot(name + "__arm1", links=arm1_links,
