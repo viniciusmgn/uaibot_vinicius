@@ -57,22 +57,22 @@ def _create_davinci_chest(name, color, opacity):
     link1_mth = Utils.inv_htm(Q01)
     chest_obj.extend([
         # feet
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/1.obj',
+        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/1.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
     ])
 
     link2_mth = Utils.inv_htm(Q12)
     chest_obj.extend([
         # base rectangle
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/2.obj',
+        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/2.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
         # vertical tower
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/3.obj',
+        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/3.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/17.obj',
+        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/17.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
         # short cable
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinci3/18.obj',
+        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/18.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
     ])
 
