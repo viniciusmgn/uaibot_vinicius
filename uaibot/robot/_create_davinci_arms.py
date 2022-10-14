@@ -525,7 +525,7 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
 
     # Create joint limits
     joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi],
-                             [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.06, 0.079]])
+                             [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
 
