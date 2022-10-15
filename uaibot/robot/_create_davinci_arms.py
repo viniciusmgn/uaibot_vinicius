@@ -282,7 +282,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     htm_base_0 = Utils.trn([-b1, -b2, b3])
 
     # Create joint limits
-    joint_limits = np.matrix([[-0.11, 0.636], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi],
+    joint_limits = np.matrix([[-0.11, 0.636], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.08, 0.05]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
@@ -524,7 +524,7 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
     htm_base_0 = Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
-    joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi],
+    joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
@@ -767,7 +767,7 @@ def _create_davinci_arm3(color, opacity, name='davinci_arm3'):
         np.pi) * Utils.trn([-3.4*b1, b2, b3])  # np.identity(4)
 
     # Create joint limits
-    joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi],
+    joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
@@ -1015,6 +1015,7 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     htm_base_0 = Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
-    # joint_limits = (np.pi / 180) * np.matrix([[-180, 180], [-180, 180], [-180, 180]])
+    joint_limits = np.matrix([[-0.423, 0.21], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi], [-np.pi, np.pi],
+                             [-np.pi, np.pi], [-np.deg2rad(111), np.deg2rad(55)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
