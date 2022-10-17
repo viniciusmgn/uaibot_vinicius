@@ -795,6 +795,7 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     d4 = 96e-3 * 3.68
     d5 = 0.919
     d8 = -3.4e-2
+    d9 = 0.069
 
     alpha4 = -np.deg2rad(90 + 63.1)
     alpha5 = -np.pi/2
@@ -813,7 +814,7 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
         # "theta" rotation in z
         [0,  0,   0,       0,      0,      0,      0,       0, 0],
         # 0,  "d" translation in z
-        [0,  0,  d3,      d4,     d5,      0,      0,      d8, 0],
+        [0,  0,  d3,      d4,     d5,      0,      0,      d8, d9],
         # 0,  "alfa" rotation in x
         [0,  0,   0,  alpha4, alpha5,      0,      0,  alpha8, 0],
         # 0,  "a" translation in x
@@ -1011,7 +1012,7 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     # Define initial configuration
     #     1  2  3  4  5  6  7  8  9
     q0 = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-    htm_n_eef = Utils.trn([0, 0, 0.1899])  # np.identity(4)
+    htm_n_eef = Utils.trn([0, 0, 0.1899 - d9])  # np.identity(4)
     htm_base_0 = Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
