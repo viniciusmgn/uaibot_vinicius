@@ -282,8 +282,8 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     htm_base_0 = Utils.trn([-b1, -b2, b3])
 
     # Create joint limits
-    joint_limits = np.matrix([[-0.11, 0.636], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
-                             [-np.pi, np.pi], [-np.deg2rad(175), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(70)], [-0.08, 0.05]])
+    joint_limits = np.matrix([[-0.11, 0.636], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi],
+                             [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(175), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(70)], [-0.08, 0.05]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
 
@@ -1016,7 +1016,7 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     htm_base_0 = Utils.trn([-b1, -b2, b3])  # np.identity(4)
 
     # Create joint limits
-    joint_limits = np.matrix([[-0.423, 0.21], [-np.pi, np.pi], [-np.deg2rad(158), np.deg2rad(156)], [-np.deg2rad(200), np.deg2rad(20)], [-np.pi, np.pi],
-                             [-np.pi, np.pi], [-np.deg2rad(170), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(60)], [-0.05, 0.079]])
+    joint_limits = np.matrix([[-0.423, 0.21], [-np.pi, np.pi], [-np.deg2rad(158), np.deg2rad(156)], [-np.deg2rad(200), np.deg2rad(
+        20)], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(170), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(60)], [0, 0.295]])
 
     return links, base_3d_obj, htm_base_0, htm_n_eef, q0
