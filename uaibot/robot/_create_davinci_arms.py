@@ -285,7 +285,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     joint_limits = np.matrix([[-0.11, 0.636], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(175), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(70)], [-0.08, 0.05]])
 
-    return links, base_3d_obj, htm_base_0, htm_n_eef, q0
+    return links, base_3d_obj, htm_base_0, htm_n_eef, q0, joint_limits
 
 
 def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
@@ -527,7 +527,7 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
     joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.deg2rad(175), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
-    return links, base_3d_obj, htm_base_0, htm_n_eef, q0
+    return links, base_3d_obj, htm_base_0, htm_n_eef, q0, joint_limits
 
 
 def _create_davinci_arm3(color, opacity, name='davinci_arm3'):
@@ -770,7 +770,7 @@ def _create_davinci_arm3(color, opacity, name='davinci_arm3'):
     joint_limits = np.matrix([[-0.1, 0.53], [-np.pi, np.pi], [-np.deg2rad(162), np.deg2rad(162)], [-np.pi, np.pi], [-np.pi, np.pi],
                              [-np.pi, np.pi], [-np.deg2rad(175), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(70)], [-0.05, 0.079]])
 
-    return links, base_3d_obj, htm_base_0, htm_n_eef, q0
+    return links, base_3d_obj, htm_base_0, htm_n_eef, q0, joint_limits
 
 
 def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
@@ -1019,4 +1019,4 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     joint_limits = np.matrix([[-0.423, 0.21], [-np.pi, np.pi], [-np.deg2rad(158), np.deg2rad(156)], [-np.deg2rad(200), np.deg2rad(
         20)], [-np.pi, np.pi], [-np.pi, np.pi], [-np.deg2rad(170), np.deg2rad(50)], [-np.deg2rad(108), np.deg2rad(60)], [0, 0.295]])
 
-    return links, base_3d_obj, htm_base_0, htm_n_eef, q0
+    return links, base_3d_obj, htm_base_0, htm_n_eef, q0, joint_limits
