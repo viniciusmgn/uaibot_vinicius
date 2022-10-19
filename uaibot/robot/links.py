@@ -187,7 +187,7 @@ class Link:
             string += " θ (rad) : [variable] \n"
             string += " d (m)   : " + str(self._d) + " \n"
         if self._joint_type == 1:
-            string += "with prismatric joint:\n\n"
+            string += "with prismatic joint:\n\n"
             string += " θ (rad) : " + str(self._theta) + " \n"
             string += " d (m)   : [variable] \n"
 

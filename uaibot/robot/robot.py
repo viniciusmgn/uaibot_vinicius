@@ -16,6 +16,7 @@ from ._ikm import _ikm
 from ._fkm import _fkm
 from ._jac_geo import _jac_geo
 from ._jac_jac_geo import _jac_jac_geo
+from ._jac_ana import _jac_ana
 
 from ._dyn_model import _dyn_model
 
@@ -37,8 +38,11 @@ from ._create_staubli_tx60 import _create_staubli_tx60
 from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
 from ._create_darwin_mini import _create_darwin_mini
+from ._create_kuka_kr5_per import _create_kuka_kr5_per
 from robot._create_davinci import _create_davinci
 
+#teste
+#from robot._create_davinci import _create_davinci
 
 class Robot:
     """
@@ -144,6 +148,7 @@ class Robot:
     def joint_limit(self):
         """A n x 2 numpy array containing the joint limits, either in rad or meters"""
         return self._joint_limit
+
 
     #######################################
     # Constructor
@@ -399,6 +404,36 @@ class Robot:
         n htms as a n x 4 x 4 numpy matrix.
     """
         return _jac_geo(self, q, axis, htm)
+
+    def jac_ana(self, q=None, htm=None):
+        """
+    Compute the analytic Jacobian for the end-effector. The Euler angle
+    convention is zyx. Also returns the end-effector htm and Euler angles
+    as a by-product.
+
+    Parameters
+    ----------
+    q : nd numpy vector or array
+        The manipulator's joint configuration
+        (default: the default joint configuration for the manipulator).
+    htm : 4x4 numpy array or 4x4 nested list
+        The robot base's configuration.
+        (default: the same as the current htm).
+
+    Returns
+    -------
+    jac_ana : 6 x n numpy matrix
+        The analytic Jacobian.
+
+    htm_eef : 4 x 4 numpy matrix
+        The end-effector htm.
+
+    phi : 3x1 numpy matrix
+        The euler angles in the z (alpha), y (beta) and x (gamma) convention,
+        as a column vector.
+    """
+        return _jac_ana(self, q, htm)
+
 
     def jac_jac_geo(self, q=None, axis='eef', htm=None):
         """
@@ -697,6 +732,39 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_kr5(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
+
+    @staticmethod
+    def create_kuka_kr5_per(htm=np.identity(4), name='kukakr5', color="#df6c25", opacity=1, eef_frame_visible=True, per=0.05):
+        """
+    Create a Kuka KR5 R850, a six-degree of freedom manipulator.
+    Thanks Sugi-Tjiu for the 3d model (see https://grabcad.com/library/kuka-kr-5-r850).
+
+    Parameters
+    ----------
+    htm : 4x4 numpy array or 4x4 nested list
+        The initial base configuration for the robot.
+        (default: np.identity(4))
+
+    name : string
+        The robot name.
+        (default: 'kukakr5').
+
+    htm : color
+        A HTML-compatible string representing the object color.
+        (default: '#df6c25')'.
+
+    opacity : positive float between 0 and 1
+        The opacity of the robot. 1 = fully opaque and 0 = transparent.
+        (default: 1)
+
+    Returns
+    -------
+    robot : Robot object
+        The robot.
+
+    """
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_kr5_per(htm, name, color, opacity, per)
         return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod

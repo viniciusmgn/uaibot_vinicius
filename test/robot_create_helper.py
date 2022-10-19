@@ -20,7 +20,7 @@ col_model = [[], [], [], [], [], []]
 # Create 3d objects
 
 base_3d_obj = [
-    Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/base_link.stl',
+    Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/base_link.stl',
             scale,
             np.identity(4),
             MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -29,7 +29,7 @@ base_3d_obj = [
 link_3d_obj = []
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_1.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_1.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -37,7 +37,7 @@ link_3d_obj.append(
 )
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_2.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_2.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -45,7 +45,7 @@ link_3d_obj.append(
 )
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_3.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_3.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -53,7 +53,7 @@ link_3d_obj.append(
 )
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_4.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_4.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -61,7 +61,7 @@ link_3d_obj.append(
 )
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_5.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_5.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -69,7 +69,7 @@ link_3d_obj.append(
 )
 
 link_3d_obj.append(
-    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_6.stl',
+    [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_6.stl',
              scale,
              np.identity(4),
              MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,

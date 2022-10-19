@@ -40,7 +40,7 @@ def _create_abb_crb(htm, name, color, opacity):
 
     base_3d_obj = [
         Model3D(
-            'https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/base_link.stl',
+            'https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/base_link.stl',
             scale,
             np.identity(4),
             MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -49,7 +49,7 @@ def _create_abb_crb(htm, name, color, opacity):
     link_3d_obj = []
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_1.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_1.stl',
                  scale,
                  Utils.rotx(-3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -57,7 +57,7 @@ def _create_abb_crb(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_2.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_2.stl',
                  scale,
                  Utils.trn([-0.444, 0, 0]) @ Utils.rotx(-3.14 / 2) @ Utils.roty(3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -65,7 +65,7 @@ def _create_abb_crb(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_3.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_3.stl',
                  scale,
                  Utils.trn([-0.11, 0, 0]) @ Utils.roty(3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="#606060",
@@ -73,7 +73,7 @@ def _create_abb_crb(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_4.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_4.stl',
                  scale,
                  Utils.trn([0, -0.47, 0]) @ Utils.roty(-3.14 / 2) @ Utils.rotz(3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -81,7 +81,7 @@ def _create_abb_crb(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_5.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_5.stl',
                  scale,
                  Utils.trn([-0.08, 0, 0]) @ Utils.rotz(3.14 / 2) @ Utils.roty(-3.14 / 2) @ Utils.rotx(3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color=color,
@@ -89,7 +89,7 @@ def _create_abb_crb(htm, name, color, opacity):
     )
 
     link_3d_obj.append(
-        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_vinicius/master/contents/ABBCRB15000/link_6.stl',
+        [Model3D('https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/ABBCRB15000/link_6.stl',
                  scale,
                  Utils.trn([0, 0, 0]) @ Utils.roty(-3.14 / 2),
                  MeshMaterial(metalness=0.7, clearcoat=1, roughness=0.5, normal_scale=[0.5, 0.5], color="silver",

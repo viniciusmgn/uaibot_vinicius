@@ -197,10 +197,10 @@ class Utils:
 
         inv_htm = np.matrix(np.zeros((4, 4)))
         inv_htm[0:3, 0:3] = Q.T
-        inv_htm[0:3, 3] = - Q.T * p
+        inv_htm[0:3, 3] = -Q.T * p
         inv_htm[3, 3] = 1
 
-        return np.matrix(inv_htm)
+        return inv_htm
 
     @staticmethod
     def axis_angle(htm):
@@ -224,7 +224,7 @@ class Utils:
         Q = htm[0:3, 0:3]
         trace = Q[0, 0] + Q[1, 1] + Q[2, 2]
         angle = acos((trace - 1) / 2)
-        G = Q @ Q - 2 * cos(angle) * Q + np.identity(3)
+        G = Q * Q - 2 * cos(angle) * Q + np.identity(3)
         ok = False
         while not ok:
             v = np.matrix(np.random.uniform(-100, 100, size=(3,1)))
@@ -243,6 +243,26 @@ class Utils:
 
     @staticmethod
     def euler_angles(htm):
+        """
+        Computer the Euler angles of a rotation matrix.
+        Find alpha, beta and gamma such that.
+
+        htm = Utils.rotz(alpha) * Utils.roty(beta) * Utils.rotx(gamma).
+
+        Parameters
+        ----------
+        htm: 4X4 numpy array or nested list
+            Homogeneous transformation matrix of the rotation.
+
+        Returns
+        -------
+        alpha : float
+            Rotation in z, in radians.
+        beta : float
+            Rotation in y, in radians.
+        gamma : float
+            Rotation in x, in radians.
+        """
 
         Q = np.matrix(htm[0:3, 0:3])
         sy = sqrt(Q[0, 0] ** 2 + Q[1, 0] ** 2)
@@ -261,7 +281,7 @@ class Utils:
     @staticmethod
     def dp_inv(mat, eps = 0.001):
         """
-      Compute the damped pseudoinverse of the matrix 'mat''.
+      Compute the damped pseudoinverse of the matrix 'mat'.
       
       Parameters
       ----------
@@ -277,8 +297,9 @@ class Utils:
       pinvA: mxn numpy array
           The damped pseudoinverse of 'mat'.
       """
-        n = np.shape(mat)[1]
-        return np.linalg.inv(mat.T * mat + eps * np.identity(n)) * mat.T
+        mat_int = np.matrix(mat)
+        n = np.shape(mat_int)[1]
+        return np.linalg.inv(mat_int.T * mat_int + eps * np.identity(n)) * mat_int.T
 
     @staticmethod
     def jac(f, x, delta=0.0001):
@@ -341,47 +362,6 @@ class Utils:
         return jac
 
     @staticmethod
-    def signed_shape_pow(x, x_bar, n):
-        """
-      Compute the following function, for x>=0
-
-      x^n/(x_bar^(n-1)*n) for x <= x_bar
-      x + (1/n-1)*x_bar   for x >  x_bar
-
-      The function is continuous. It is also differentiable once, except for
-      n<1 at x=0.
-
-      For x<=0, returns -signed_shape_pow(abs(x), x_bar, n), so the function
-      is odd.
-
-      This function is useful in control.
-
-      Parameters
-      ----------
-      x: float
-          Argument of the function.
-
-      x_bar: positive float
-          Parameter of the function.
-
-      n: positive float
-          Parameter of the function.
-
-      Returns
-      -------
-      y: float
-          The return of the function.
-      """
-
-        if x >= 0:
-            if x <= x_bar:
-                return pow(x, n) / (pow(x_bar, n - 1) * n)
-            else:
-                return x + (1 / n - 1) * x_bar
-        else:
-            return -Utils.signed_shape_pow(abs(x), x_bar, n)
-
-    @staticmethod
     def hierarchical_solve(mat_a, mat_b, eps=0.001):
         """
       Solve the lexicographical unconstrained quadratic optimization problem
@@ -434,7 +414,7 @@ class Utils:
     @staticmethod
     def interpolate(points):
         """
-      Create a function handle that generates an one-tme differentiable interpolated data from 'points'.
+      Create a function handle that generates an one-time differentiable interpolated data from 'points'.
 
       The simplest case in when 'points' is a list with m elements. In this case, it will output a function f.
       When this function is evaluated at a scalar t, it will coincide with points[i] when t = i/m, that is,
@@ -552,7 +532,7 @@ class Utils:
             for i in range(np.shape(arg_points)[0]):
                 fun = aux_interpolate_single(arg_points[i])
                 fun_out = fun(t)
-                fun_out = np.array(fun_out).reshape((1, len(fun_out)))
+                fun_out = np.array(fun_out).reshape((1, len(fun_out) if Utils.is_a_vector(fun_out) else 1))
                 y = np.block([[y], [fun_out]])
 
             return np.matrix(y)
@@ -996,8 +976,8 @@ class Utils:
     @staticmethod
     def get_uaibot_type(obj):
         """
-      Return the uaibot type of the object. 
-      Return the empty string if it is not a uaibot object.
+      Return the UAIBot type of the object.
+      Return the empty string if it is not an UAIBot object.
       
       Parameters
       ----------
@@ -1007,7 +987,7 @@ class Utils:
       Returns
       -------
       obj_type: string
-          uaibot type.   
+          UAIBot type.
       """
         type_str = str(type(obj))
 
@@ -1173,9 +1153,9 @@ class Utils:
         # end error handling
         if n > 1:
             for i in range(n):
-                fig.add_scatter(x=xv, y=yv[i,:].tolist()[0], mode="lines", name=list_names[i])
+                fig.add_scatter(x=xv, y=np.matrix(yv[i,:]).tolist()[0], mode="lines", name=list_names[i])
         else:
-            fig.add_scatter(x=xv, y=yv.tolist()[0], mode="lines", name=list_names[0])
+            fig.add_scatter(x=xv, y=np.matrix(yv).tolist()[0], mode="lines", name=list_names[0])
 
         fig.update_xaxes(title_text=xname)
         fig.update_yaxes(title_text=yname)
