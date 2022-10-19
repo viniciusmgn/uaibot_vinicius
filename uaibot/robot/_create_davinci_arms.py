@@ -98,17 +98,17 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link1_mth = Utils.inv_htm(Q01)
     link_3d_obj.append([
         # torre movel
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/4.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/4.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
         # cilindro conector
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/5.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/5.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
     ])
 
     link2_mth = Utils.inv_htm(Q02)
     link_3d_obj.append([
         # ligacao de cilindros curta
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/8.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/8.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
     ])
 
@@ -116,11 +116,11 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # cilindro conector
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/59.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/59.obj',
             scale=scale, htm=link3_mth, mesh_material=mesh),
         # ligacao de cilindros longa
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/9.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/9.obj',
             scale=scale, htm=link3_mth, mesh_material=mesh),
     ])
 
@@ -129,7 +129,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
         # ligacao de cilindros longa
         Model3D(
 
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/11.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/11.obj',
             scale=scale, htm=link4_mth, mesh_material=mesh),
     ])
 
@@ -137,7 +137,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # cotovelo
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/10.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/10.obj',
             scale=scale, htm=link5_mth, mesh_material=mesh),
     ])
 
@@ -145,7 +145,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # pá dobrada
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/38.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/38.obj',
             scale=scale, htm=link6_mth, mesh_material=mesh),
     ])
 
@@ -153,7 +153,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # conecta pá com bumerangue
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/19.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/19.obj',
             scale=scale, htm=link7_mth, mesh_material=mesh),
     ])
 
@@ -161,7 +161,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # bumerangue
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/21.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/21.obj',
             scale=scale, htm=link8_mth, mesh_material=mesh),
 
     ])
@@ -170,7 +170,7 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # envoltoria agulha
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/43.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/43.obj',
             scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
@@ -178,19 +178,19 @@ def _create_davinci_arm1(color, opacity, name='davinci_arm1'):
     link_3d_obj.append([
         # guia
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/45.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/45.obj',
                 scale=scale, htm=link10_mth, mesh_material=mesh),
         # agulha
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/54.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/54.obj',
                 scale=scale, htm=link10_mth, mesh_material=mesh),
         # abridor de garrafa
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/51.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/51.obj',
             scale=scale, htm=link10_mth, mesh_material=mesh),
         # botao
         Model3D(
-            url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/52.obj',
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/52.obj',
                 scale=scale, htm=link10_mth, mesh_material=mesh),
     ])
 
@@ -371,75 +371,75 @@ def _create_davinci_arm2(color, opacity, name='davinci_arm2'):
     link1_mth = Utils.inv_htm(Q01)
     link_3d_obj.append([
         # torre movel
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/58.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/58.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
         # cilindro conector
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/63.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/63.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
     ])
 
     link2_mth = Utils.inv_htm(Q02)
     link_3d_obj.append([
         # ligacao de cilindros longa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/64.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/64.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
     ])
 
     link3_mth = Utils.inv_htm(Q03)
     link_3d_obj.append([
         # ligacao de cilindros longa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/61.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/61.obj',
                 scale=scale, htm=link3_mth, mesh_material=mesh),
     ])
 
     link4_mth = Utils.inv_htm(Q04)
     link_3d_obj.append([
         # cotovelo
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/14.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/14.obj',
                 scale=scale, htm=link4_mth, mesh_material=mesh),
     ])
 
     link5_mth = Utils.inv_htm(Q05)
     link_3d_obj.append([
         # pá dobrada
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/36.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/36.obj',
                 scale=scale, htm=link5_mth, mesh_material=mesh),
     ])
 
     link6_mth = Utils.inv_htm(Q06)
     link_3d_obj.append([
         # conecta pá com bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/34.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/34.obj',
                 scale=scale, htm=link6_mth, mesh_material=mesh),
     ])
 
     link7_mth = Utils.inv_htm(Q07)
     link_3d_obj.append([
         # bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/39.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/39.obj',
                 scale=scale, htm=link7_mth, mesh_material=mesh),
     ])
 
     link8_mth = Utils.inv_htm(Q08)
     link_3d_obj.append([
         # envoltoria agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/42.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/42.obj',
                 scale=scale, htm=link8_mth, mesh_material=mesh),
     ])
 
     link9_mth = Utils.inv_htm(Q09)
     link_3d_obj.append([
         # guia
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/23.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/23.obj',
                     scale=scale, htm=link9_mth, mesh_material=mesh),
         # agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/55.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/55.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # abridor de garrafa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/25.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/25.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # botao
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/53.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/53.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
@@ -613,75 +613,75 @@ def _create_davinci_arm3(color, opacity, name='davinci_arm3'):
     link1_mth = Utils.inv_htm(Q01)
     link_3d_obj.append([
         # torre movel
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/58.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/58.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
         # cilindro conector
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/63.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/63.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
     ])
 
     link2_mth = Utils.inv_htm(Q02)
     link_3d_obj.append([
         # ligacao de cilindros longa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/64.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/64.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
     ])
 
     link3_mth = Utils.inv_htm(Q03)
     link_3d_obj.append([
         # ligacao de cilindros longa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/61.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/61.obj',
                 scale=scale, htm=link3_mth, mesh_material=mesh),
     ])
 
     link4_mth = Utils.inv_htm(Q04)
     link_3d_obj.append([
         # cotovelo
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/14.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/14.obj',
                 scale=scale, htm=link4_mth, mesh_material=mesh),
     ])
 
     link5_mth = Utils.inv_htm(Q05)
     link_3d_obj.append([
         # pá dobrada
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/36.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/36.obj',
                 scale=scale, htm=link5_mth, mesh_material=mesh),
     ])
 
     link6_mth = Utils.inv_htm(Q06)
     link_3d_obj.append([
         # conecta pá com bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/34.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/34.obj',
                 scale=scale, htm=link6_mth, mesh_material=mesh),
     ])
 
     link7_mth = Utils.inv_htm(Q07)
     link_3d_obj.append([
         # bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/39.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/39.obj',
                 scale=scale, htm=link7_mth, mesh_material=mesh),
     ])
 
     link8_mth = Utils.inv_htm(Q08)
     link_3d_obj.append([
         # envoltoria agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/42.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/42.obj',
                 scale=scale, htm=link8_mth, mesh_material=mesh),
     ])
 
     link9_mth = Utils.inv_htm(Q09)
     link_3d_obj.append([
         # guia
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/23.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/23.obj',
                     scale=scale, htm=link9_mth, mesh_material=mesh),
         # agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/55.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/55.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # abridor de garrafa
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/25.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/25.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # botao
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/53.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/53.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
@@ -857,75 +857,75 @@ def _create_davinci_arm4(color, opacity, name='davinci_arm4'):
     link1_mth = Utils.inv_htm(Q01)
     link_3d_obj.append([
         # torre movel
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/57.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/57.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
         # cilindro conector
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/60.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/60.obj',
                 scale=scale, htm=link1_mth, mesh_material=mesh),
     ])
 
     link2_mth = Utils.inv_htm(Q02)
     link_3d_obj.append([
         # ligacao de cilindros curta
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/15.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/15.obj',
                 scale=scale, htm=link2_mth, mesh_material=mesh),
     ])
 
     link3_mth = Utils.inv_htm(Q03)
     link_3d_obj.append([
         # ligacao de cilindros curta
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/66.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/66.obj',
                 scale=scale, htm=link3_mth, mesh_material=mesh),
     ])
 
     link4_mth = Utils.inv_htm(Q04)
     link_3d_obj.append([
         # cotovelo
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/16.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/16.obj',
                 scale=scale, htm=link4_mth, mesh_material=mesh),
     ])
 
     link5_mth = Utils.inv_htm(Q05)
     link_3d_obj.append([
         # pá dobrada
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/37.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/37.obj',
                 scale=scale, htm=link5_mth, mesh_material=mesh),
     ])
 
     link6_mth = Utils.inv_htm(Q06)
     link_3d_obj.append([
         # conecta pá com bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/33.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/33.obj',
                 scale=scale, htm=link6_mth, mesh_material=mesh),
     ])
 
     link7_mth = Utils.inv_htm(Q07)
     link_3d_obj.append([
         # bumerangue
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/41.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/41.obj',
                 scale=scale, htm=link7_mth, mesh_material=mesh),
     ])
 
     link8_mth = Utils.inv_htm(Q08)
     link_3d_obj.append([
         # envoltoria agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/28.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/28.obj',
                 scale=scale, htm=link8_mth, mesh_material=mesh),
     ])
 
     link9_mth = Utils.inv_htm(Q09)
     link_3d_obj.append([
         # guia
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/29.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/29.obj',
                     scale=scale, htm=link9_mth, mesh_material=mesh),
         # agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/31.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/31.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # base agulha
-        Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/30.obj',
+        Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/30.obj',
                 scale=scale, htm=link9_mth, mesh_material=mesh),
         # cabo longo
-        # Model3D(url='https://raw.githubusercontent.com/fbartelt/uaibot/master/contents/DaVinciSi/32.obj',
+        # Model3D(url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/DaVinci/32.obj',
         #        scale=scale, htm=link9_mth, mesh_material=mesh),
     ])
 
