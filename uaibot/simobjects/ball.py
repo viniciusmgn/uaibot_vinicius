@@ -80,7 +80,7 @@ class Ball:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genBall", radius=1, mass=1, color="red", opacity=1,
+    def __init__(self, htm=np.identity(4), name="", radius=1, mass=1, color="red", opacity=1,
                  mesh_material=None):
 
         # Error handling
@@ -92,6 +92,9 @@ class Ball:
 
         if not Utils.is_a_number(radius) or radius < 0:
             raise Exception("The parameter 'radius' should be a positive float.")
+
+        if name=="":
+            name="var_ball_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
@@ -296,9 +299,9 @@ class Ball:
         d = max(dd-self.radius,0)
 
         if d == 0:
-            return point, d
+            return np.matrix(point).reshape((3,1)), d
         else:
-            cp = htm[0:3, 3] + self.radius * (point - htm[0:3, 3]) / dd
+            cp = htm[0:3, 3] + self.radius * (np.matrix(point).reshape((3,1)) - htm[0:3, 3]) / dd
             return cp, d
 
 

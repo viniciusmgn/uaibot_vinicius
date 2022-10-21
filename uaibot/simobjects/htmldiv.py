@@ -43,9 +43,13 @@ class HTMLDiv:
     # Constructor
     #######################################
 
-    def __init__(self, name="genHTMLDiv", html_text="Text", style=""):
+    def __init__(self, name="", html_text="Text", style=""):
 
         # Error handling
+
+        if name=="":
+            name="var_htmldiv_id_"+str(id(self))
+
         if not (Utils.is_a_name(name)):
             raise Exception(
                 "The parameter 'name' should be a string. Only characters 'a-z', 'A-Z', '0-9' and '_' are allowed. "

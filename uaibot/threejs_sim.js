@@ -120,10 +120,10 @@ class SmoothBox extends Objsim{
 		this.depth = _depth;
 
 		const geometry = new ParametricGeometry( function fun(u,v,target) {
-			let cosu = signFun(Math.cos(Math.Pi*u),0.5)
-			let sinu = signFun(Math.sin(Math.Pi*u),0.5)
-			let cosv = signFun(Math.cos(2*Math.Pi*v),0.5)
-			let sinv = signFun(Math.sin(2*Math.Pi*v),0.5)
+			let cosu = signFun(Math.cos(0.0001*Math.PI + 0.9999*Math.PI*u),0.5)
+			let sinu = signFun(Math.sin(0.0001*Math.PI + 0.9999*Math.PI*u),0.5)
+			let cosv = signFun(Math.cos(2*Math.PI*v),0.5)
+			let sinv = signFun(Math.sin(2*Math.PI*v),0.5)
 
 			let x = (_width/2)*sinu*cosv;
 			let y = (_height/2)*sinu*sinv;

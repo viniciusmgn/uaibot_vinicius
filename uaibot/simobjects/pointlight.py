@@ -64,12 +64,15 @@ class PointLight:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genLight", color="white", intensity=1, max_distance=0):
+    def __init__(self, htm=np.identity(4), name="", color="white", intensity=1, max_distance=0):
 
         # Error handling
 
         if not Utils.is_a_matrix(htm, 4, 4):
             raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
+
+        if name=="":
+            name="var_pointlight_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(

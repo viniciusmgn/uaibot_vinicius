@@ -1168,6 +1168,56 @@ class Utils:
     #######################################
 
     @staticmethod
+    def bissection(fun, t0, tf, eps):
+
+        tA = t0
+        fA = fun(tA)
+        tB = tf
+        fB = fun(tB)
+
+        if abs(fA) < eps:
+            return tA
+        elif abs(fB) < eps:
+            return tB
+        else:
+            while fA*fB>0:
+                tA = 0.8*tA
+                fA = fun(tA)
+                tB = 1.2*tB
+                fB = fun(tB)
+
+            tm = (tA + tB) / 2
+            fm = fun(tm)
+
+            k=1
+
+            while abs(fm)>eps:
+                if fA*fm>0:
+                   tA = tm
+                   fA = fm
+                else:
+                   tB = tm
+                   fB = fm
+
+                tm = (tA + tB) / 2
+                fm = fun(tm)
+                k+=1
+
+
+            return tm
+
+    @staticmethod
+    def cubicsolve(p,lam):
+        q=abs(p)
+        a = q/(2*lam)
+        b = sqrt(a**2+1/(27*lam**3))
+        u = np.sign(p)* ( (b+a)**(1/3) - (b-a)**(1/3))
+        error = u-p+lam*(u**3)
+        return u
+
+
+
+    @staticmethod
     def fun_Int(v, h, L):
 
         def fun_J(u):

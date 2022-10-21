@@ -31,6 +31,8 @@ from ._attach_object import _attach_object
 from ._detach_object import _detach_object
 
 from ._compute_dist import _compute_dist
+from ._compute_dist_auto import _compute_dist_auto
+from ._check_free_configuration import _check_free_configuration
 
 from ._create_kuka_kr5 import _create_kuka_kr5
 from ._create_epson_t6 import _create_epson_t6
@@ -980,9 +982,9 @@ class Robot:
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current htm).
-    old_dist_struct : 'DistStruct' object
-        'DistStruct' obtained previously for the same robot and external object.
-        Can be used to enhance the algorith speed using the previous closest 
+    old_dist_struct : 'DistStructRobotObj' object
+        'DistStructRobotObj' obtained previously for the same robot and external object.
+        Can be used to enhance the algorithm speed using the previous closest
         point as an initial guess.
         (default: None).
     tol : positive float
@@ -994,9 +996,98 @@ class Robot:
 
     Returns
     -------
-    dist_struct : '_DistStructRobotObj' object
+    dist_struct : 'DistStructRobotObj' object
         Distance struct for each one of the m objects that compose the robot's
-        collision model. Contains a list of m '_DisStructLinkObj' objects.
+        collision model. Contains a list of m 'DistStructLinkObj' objects.
     """
 
         return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max)
+
+    def compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005,
+                     no_iter_max=20):
+        """
+    Compute the  distance structure from each one of the robot's links to itself
+    (auto collision), given a joint and base configuration.
+
+    This function consider only non-sequential links, since the collision between
+    sequential links in the kinematic chain can be verified by checking joint limits.
+    This saves times. This verification should be done elsewhere (by checking if the
+    configuration is inside the joint limits).
+
+    Use an iterative algorithm, based on projections
+    (Von Neumann's cyclic projection algorithm).
+
+    Parameters
+    ----------
+    q : nd numpy vector or array
+        The manipulator's joint configuration.
+        (default: the default joint configuration for the manipulator).
+    old_dist_struct : 'DistStructRobotAuto' object
+        'DistStructRobotAuto' obtained previously for the same robot.
+        Can be used to enhance the algorithm speed using the previous closest
+        point as an initial guess.
+        (default: None).
+    tol : positive float
+        Tolerance for convergence in the iterative algorithm, in meters.
+        (default: 0.0005 m).
+    no_iter_max : positive int
+        The maximum number of iterations for the algorithm.
+        (default: 20 iterations).
+
+    Returns
+    -------
+    dist_struct : 'DistStructRobotAuto' object
+        Distance struct for each one of the m objects that compose the robot's
+        collision model. Contains a list of m 'DistStructLinkLink' objects.
+    """
+
+        return _compute_dist_auto(self, q, old_dist_struct, tol, no_iter_max)
+
+    def check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, dist_tol=0.005,
+                     no_iter_max=20):
+        """
+    Check if the joint configuration q is in the free configuration, considering only
+    joint limits and auto collision. It also outputs a message about a possible violation.
+
+    For efficiency purposes, the program halts in the first violation it finds (if there is any).
+    So, the message, if any, is only about one of the possible violations. There can be more.
+
+    Parameters
+    ----------
+    q : nd numpy vector or array
+        The manipulator's joint configuration.
+        (default: the default joint configuration for the manipulator).
+        (default: the same as the current htm).
+    old_dist_struct : 'DistStructRobotAuto' object
+        'DistStructRobotAuto' obtained previously for the same robot and external object.
+        Can be used to enhance the algorithm speed using the previous closest
+        point as an initial guess.
+        (default: None).
+    tol : positive float
+        Tolerance for convergence in the iterative algorithm, in meters.
+        (default: 0.0005 m).
+    dist_tol : positive float
+        The tolerance to consider that two links are colliding.
+        (default: 0.005 m).
+    no_iter_max : positive int
+        The maximum number of iterations for the algorithm.
+        (default: 20 iterations).
+
+    Returns
+    -------
+    is_free : boolean
+        If the configuration is free or not.
+    message: string
+        A message about what is colliding (is otherwise just 'Ok!').
+    info: list
+        Contains a list with information of the violation of free space (if there is any, otherwise
+        it is empty). The first element is the violation type: either 0 (lower joint limit violated), 1 (upper joint
+        limit violated) and 2 (collision between links). The last elements depends on the violation type.
+        If lower joint limit or upper joint limit, contains which joint was violated. If collision, contains
+        the 4-tuple [i,isub,j,jsub], containing the first link number i, the number of collision object in the first
+        link isub, the second link number j and the number of collision object in the second
+        link jsub.
+
+    """
+
+        return _check_free_configuration(self, q, old_dist_struct, tol, dist_tol, no_iter_max)

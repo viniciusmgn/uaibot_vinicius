@@ -100,7 +100,7 @@ class SmoothBox:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genSmoothBox", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
+    def __init__(self, htm=np.identity(4), name="", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
                  mesh_material=None):
 
         # Error handling
@@ -118,6 +118,9 @@ class SmoothBox:
 
         if not Utils.is_a_number(depth) or depth < 0:
             raise Exception("The parameter 'depth' should be a positive float.")
+
+        if name=="":
+            name="var_smoothbox_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
@@ -275,9 +278,9 @@ class SmoothBox:
             raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
         # end error handling
 
-        Ixx = (1 / 12) * self.mass * (self.height * self.height + self.depth * self.depth)
-        Iyy = (1 / 12) * self.mass * (self.width * self.width + self.depth * self.depth)
-        Izz = (1 / 12) * self.mass * (self.height * self.height + self.width * self.width)
+        Ixx = 0.05486 * self.mass * (self.height * self.height + self.depth * self.depth)
+        Iyy = 0.05486 * self.mass * (self.width * self.width + self.depth * self.depth)
+        Izz = 0.05486 * self.mass * (self.height * self.height + self.width * self.width)
         Q = htm[0:3, 0:3]
         S = Utils.S(htm[0:3, 3])
 
@@ -324,27 +327,33 @@ class SmoothBox:
         # end error handling
         tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
-        if abs(tpoint[0,0]) < self.width/2:
-            x = tpoint[0,0]
-            dx2 = 0
+        A = self.width/2
+        B = self.depth/2
+        C = self.height/2
+
+        d4 = (tpoint[0, 0]/A)**4 + (tpoint[1, 0]/B)**4 + (tpoint[2, 0]/C)**4
+
+        if d4 <= 1:
+            return point, 0
         else:
-            x = self.width/2 if tpoint[0,0] > 0 else -self.width/2
-            dx2 = (abs(tpoint[0,0]) - self.width/2)**2
 
-        if abs(tpoint[1,0]) < self.depth/2:
-            y = tpoint[1,0]
-            dy2 = 0
-        else:
-            y = self.depth/2 if tpoint[1,0] > 0 else -self.depth/2
-            dy2 = (abs(tpoint[1,0]) - self.depth/2)**2
+            fun = lambda lam: (Utils.cubicsolve(tpoint[0, 0], lam / (A ** 4)) / A) ** 4 + \
+                              (Utils.cubicsolve(tpoint[1, 0], lam / (B ** 4)) / B) ** 4 + \
+                              (Utils.cubicsolve(tpoint[2, 0], lam / (C ** 4)) / C) ** 4 - 1
 
-        if abs(tpoint[2,0]) < self.height/2:
-            z = tpoint[2,0]
-            dz2 = 0
-        else:
-            z = self.height/2 if tpoint[2,0] > 0 else -self.height/2
-            dz2 = (abs(tpoint[2,0]) - self.height/2)**2
+            maxR = max(A, B, C)
+            minR = min(A, B, C)
+            dp = np.linalg.norm(tpoint)
 
-        d = sqrt(dx2+dy2+dz2)
+            lam0 = 0.00001
+            lamf = maxR*(dp-minR)/0.75
 
-        return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d
+            lam_star = Utils.bissection(fun,lam0,lamf,0.0001)
+
+            x = Utils.cubicsolve(tpoint[0, 0], lam_star / (A ** 4))
+            y = Utils.cubicsolve(tpoint[1, 0], lam_star / (B ** 4))
+            z = Utils.cubicsolve(tpoint[2, 0], lam_star / (C ** 4))
+
+            d = sqrt( (x-tpoint[0,0])**2 + (y-tpoint[1,0])**2 + (z-tpoint[2,0])**2 )
+
+            return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

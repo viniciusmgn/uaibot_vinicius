@@ -98,7 +98,7 @@ class Box:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genBox", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
+    def __init__(self, htm=np.identity(4), name="", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
                  mesh_material=None):
 
         # Error handling
@@ -116,6 +116,9 @@ class Box:
 
         if not Utils.is_a_number(depth) or depth < 0:
             raise Exception("The parameter 'depth' should be a positive float.")
+
+        if name=="":
+            name="var_box_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(

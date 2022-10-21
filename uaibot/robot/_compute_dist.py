@@ -1,6 +1,6 @@
 from utils import *
 import numpy as np
-from ._dist_struct_robot_obj import _DistStructRobotObj
+from ._dist_struct_robot_obj import DistStructRobotObj
 
 
 # Compute the distance from each link to an object, for the current configuration
@@ -33,15 +33,15 @@ def _compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005,
     if not (old_dist_struct is None):
         try:
             if not (id(old_dist_struct.obj) == id(obj) and id(old_dist_struct.robot) == id(self)):
-                Exception("The parameter 'old_dist_struct' is a '_DistStructRobotObj' object, but it " \
+                Exception("The parameter 'old_dist_struct' is a 'DistStructRobotObj' object, but it " \
                           "must have to be relative to the SAME robot object and SAME external object, and " \
                           "this is not the case.")
         except:
-            raise Exception("The parameter 'old_dist_struct' must be a '_DistStructRobotObj' object.")
+            raise Exception("The parameter 'old_dist_struct' must be a 'DistStructRobotObj' object.")
 
     # end error handling
 
-    dist_struct = _DistStructRobotObj(obj, self)
+    dist_struct = DistStructRobotObj(obj, self)
 
     jac_dh, mth_dh = self.jac_geo(q, "dh", htm)
 
@@ -65,7 +65,7 @@ def _compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005,
             else:
                 p_obj_0 = old_dist_struct.get_item(i, j).point_object
 
-            p_obj, p_obj_col, d = Utils.compute_dist(obj, col_object_copy[i][j], h, g, p_obj_0, tol, no_iter_max)
+            p_obj, p_obj_col, d = Utils.compute_dist(obj, col_object_copy[i][j], p_obj_0, tol, no_iter_max)
 
             jac_obj_col = jac_dh[i][0:3, :] - Utils.S(p_obj_col - mth_dh[i][0:3, 3]) * jac_dh[i][3:6, :]
             jac_dist = ((p_obj_col - p_obj).T * jac_obj_col) / d

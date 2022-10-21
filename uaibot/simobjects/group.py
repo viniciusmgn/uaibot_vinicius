@@ -56,9 +56,12 @@ class Group:
     # Constructor
     #######################################
 
-    def __init__(self, list_of_objects, name="genGroup", htm=np.identity(4)):
+    def __init__(self, list_of_objects, name="", htm=np.identity(4)):
 
         # Error handling
+
+        if name=="":
+            name="var_group_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
