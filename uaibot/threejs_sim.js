@@ -1,6 +1,6 @@
 import { Object3D, Vector3, BoxBufferGeometry, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, OrthographicCamera,
 Scene, WebGLRenderer, AmbientLight, DirectionalLight, HemisphereLight, MeshStandardMaterial,
-AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
+AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, ParametricGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
 	BackSide, DoubleSide, PMREMGenerator, TextureLoader, PointLight, UVMapping, CubeReflectionMapping, CubeRefractionMapping,
 	EquirectangularReflectionMapping, EquirectangularRefractionMapping, CubeUVReflectionMapping,
 	CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping,
@@ -102,6 +102,44 @@ class Cylinder extends Objsim{
 		cylinder.matrixAutoUpdate = false;
 		this.shape = cylinder;
 	}
+}
+
+function signFun(x,n){
+	return Math.sign(x)*( Math.pow(Math.abs(x),n))
+}
+
+class SmoothBox extends Objsim{
+
+
+
+	constructor(_width, _height, _depth, _frames, _material){
+		super(_frames);
+		this.width = _width;
+		this.height = _height;
+		this.depth = _depth;
+
+		const geometry = new ParametricGeometry( function fun(u,v,target) {
+			let cosu = signFun(Math.cos(Math.Pi*u),0.5)
+			let sinu = signFun(Math.sin(Math.Pi*u),0.5)
+			let cosv = signFun(Math.cos(2*Math.Pi*v),0.5)
+			let sinv = signFun(Math.sin(2*Math.Pi*v),0.5)
+
+			let x = (this.width/2)*sinu*cosv;
+			let y = (this.depth/2)*sinu*sinv;
+			let z = (this.height/2)*cosu;
+
+	    target.set( x, y, z );
+
+		}, 25, 25 );
+
+
+		const smoothCube = new Mesh( geometry, _material );
+		smoothCube.matrixAutoUpdate = false;
+		this.shape = smoothCube;
+	}
+
+
+
 }
 
 class PointCloud extends Objsim{

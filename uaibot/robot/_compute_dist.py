@@ -5,7 +5,7 @@ from ._dist_struct_robot_obj import _DistStructRobotObj
 
 # Compute the distance from each link to an object, for the current configuration
 # of the robot
-def _compute_dist(self, obj, h, g, q=None, htm=None, old_dist_struct=None, tol=0.0005, no_iter_max=20):
+def _compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005, no_iter_max=20):
     n = len(self.links)
 
     if q is None:
@@ -23,12 +23,6 @@ def _compute_dist(self, obj, h, g, q=None, htm=None, old_dist_struct=None, tol=0
 
     if not Utils.is_a_simple_object(obj):
         raise Exception("The parameter 'obj' should be one of the following types: " + str(Utils.IS_SIMPLE) + ".")
-
-    if not Utils.is_a_number(h) or h <= 0:
-        raise Exception("The parameter 'h' should be a positive number.")
-
-    if not Utils.is_a_number(g) or g <= 0:
-        raise Exception("The parameter 'g' should be a positive number.")
 
     if not Utils.is_a_number(tol) or tol <= 0:
         raise Exception("The parameter 'tol' should be a positive number.")

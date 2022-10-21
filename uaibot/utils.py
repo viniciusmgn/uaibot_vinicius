@@ -1249,7 +1249,7 @@ class Utils:
                 c * (h * h * (a1 - a2) / v + 2 * r * exp((0.5 * (v - r) * (v - r) - Utils.fun_Int(v, h, r)) / (h * h))))
 
     @staticmethod
-    def compute_dist(obj_a, obj_b, h=0.000001, g=0.000001, p_a_init=None, tol=0.001, no_iter_max=20):
+    def compute_dist(obj_a, obj_b, p_a_init=None, tol=0.001, no_iter_max=20):
 
         # Error handling
 
@@ -1258,12 +1258,6 @@ class Utils:
 
         if not Utils.is_a_simple_object(obj_b):
             raise Exception("The parameter 'obj_b' must be one of the following: " + str(Utils.IS_SIMPLE) + ".")
-
-        if not Utils.is_a_number(h) or h <= 0:
-            raise Exception("The optional parameter 'h' must be a nonnegative number.")
-
-        if not Utils.is_a_number(g) or g <= 0:
-            raise Exception("The optional parameter 'g' must be a nonnegative number.")
 
         if not (p_a_init is None or Utils.is_a_vector(p_a_init, 3)):
             raise Exception("The optional parameter 'p_a_init' must be a 3D vector or 'None'.")
@@ -1286,12 +1280,11 @@ class Utils:
 
         while (not converged) and i < no_iter_max:
             p_a_ant = p_a
-            p_b, dp_a = obj_b.h_projection(p_a, g)
-            p_a, dp_b = obj_a.h_projection(p_b, h)
+            p_b, dp_a = obj_b.projection(p_a)
+            p_a, dp_b = obj_a.projection(p_b)
             converged = np.linalg.norm(p_a - p_a_ant) < tol
             i += 1
 
         dist = np.linalg.norm(p_a - p_b)
-        hg_dist = sqrt(max(2 * (dp_a + dp_b - 0.5 * dist * dist), 0))
 
-        return p_a, p_b, hg_dist
+        return p_a, p_b, dist

@@ -959,28 +959,21 @@ class Robot:
     # Advanced methods
     #######################################
 
-    def compute_dist(self, obj, h=0.00001, g=0.00001, q=None, htm=None, old_dist_struct=None, tol=0.0005,
+    def compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005,
                      no_iter_max=20):
         """
-    Compute the (h,g) distance structure from each one of the robot's link to a
+    Compute the  distance structure from each one of the robot's link to a
     'simple' external object (ball, box or cylinder), given a joint and base 
-    configuration. If h and g are very small, this is simply the traditional
-    distance.
+    configuration.
 
-    Use an iterative algorithm, based on h-projections and a modification of
-    Von Neumann's cyclic projection algorithm.
+    Use an iterative algorithm, based on projections
+    (Von Neumann's cyclic projection algorithm).
 
     Parameters
     ----------
     obj : a simple object (ball, box or cylinder)
         The external object for which the distance structure is going to be 
         computed, for each robot link.
-    h : positive float
-        Smoothing parameter for the robot's links, in meters.
-        (default: 0.0001 m).
-    g : positive float
-        Smoothing parameter for the external object.
-        (default: 0.0001 m).
     q : nd numpy vector or array
         The manipulator's joint configuration.
         (default: the default joint configuration for the manipulator).
@@ -1006,4 +999,4 @@ class Robot:
         collision model. Contains a list of m '_DisStructLinkObj' objects.
     """
 
-        return _compute_dist(self, obj, h, g, q, htm, old_dist_struct, tol, no_iter_max)
+        return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max)

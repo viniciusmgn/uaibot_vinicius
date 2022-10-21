@@ -272,20 +272,16 @@ class Cylinder:
         """Return a deep copy of the object, without copying the animation frames."""
         return Cylinder(self.htm, self.name + "_copy", self.radius, self.height, self.mass, self.color)
 
-    # Compute the h projection of a point into an object
-    def h_projection(self, point, h=0.001, htm=None):
+    # Compute the projection of a point into an object
+    def projection(self, point, htm=None):
         """
-    The h projection of a point in the object, that is, the 
-    h-closest point in the object to a point 'point'.
+    The projection of a point in the object, that is, the
+    closest point in the object to a point 'point'.
 
     Parameters
     ----------
     point : 3D vector
         The point for which the projection will be computed.
-
-    h : positive float
-        Smoothing parameter, in meters
-        (defalt: 0.001 m)
 
     htm : 4x4 numpy array or 4x4 nested list
         The object's configuration
@@ -294,10 +290,10 @@ class Cylinder:
     Returns
     -------
      proj_point : 3D vector
-        The h-projection of the point 'point' in the object.
+        The projection of the point 'point' in the object.
 
      d : positive float
-        The h-distance between the object and 'point'.     
+        The distance between the object and 'point'.
     """
 
         if htm is None:
@@ -310,27 +306,28 @@ class Cylinder:
         if not Utils.is_a_vector(point, 3):
             raise Exception("The parameter 'point' should be a 3D vector")
 
-        if not Utils.is_a_number(h) or h <= 0:
-            raise Exception("The optional parameter 'h' should be a positive number")
         # end error handling
         tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
-        delta = 0.001
 
         r = sqrt(tpoint[0,0] ** 2 + tpoint[1,0] ** 2)
 
-        drf = Utils.fun_Cir(r + delta, h, self.radius)
-        drb = Utils.fun_Cir(r - delta, h, self.radius)
+        if r < self.radius:
+            x = tpoint[0,0]
+            y = tpoint[1,0]
+            dr2=0
+        else:
+            x = self.radius * tpoint[0,0] / r
+            y = self.radius * tpoint[1,0] / r
+            dr2 = (r-self.radius)**2
 
-        dzf = Utils.fun_Int(tpoint[2,0] + delta, h, 0.5 * self.height)
-        dzb = Utils.fun_Int(tpoint[2,0] - delta, h, 0.5 * self.height)
+        if abs(tpoint[2,0]) < self.height/2:
+            z = tpoint[2,0]
+            dz2 = 0
+        else:
+            z = self.height/2 if tpoint[2,0] > 0 else -self.height/2
+            dz2 = (abs(tpoint[2,0]) - self.height/2)**2
 
-        dr = (drf - drb) / (2 * delta)
-
-        x = tpoint[0,0] - dr * tpoint[0,0] / (r + 0.00001)
-        y = tpoint[1,0] - dr * tpoint[1,0] / (r + 0.00001)
-        z = tpoint[2,0] - (dzf - dzb) / (2 * delta)
-
-        d = 0.5 * (drf + drb + dzf + dzb)
+        d = sqrt(dr2+dz2)
 
         return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

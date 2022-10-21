@@ -256,20 +256,16 @@ class Ball:
         """Return a deep copy of the object, without copying the animation frames."""
         return Ball(self.htm, self.name + "_copy", self.radius, self.mass, self.color)
 
-    # Compute the h projection of a point into an object
-    def h_projection(self, point, h=0.001, htm=None):
+    # Compute the projection of a point into an object
+    def projection(self, point, htm=None):
         """
-    The h projection of a point in the object, that is, the 
-    h-closest point in the object to a point 'point'.
+    The projection of a point in the object, that is, the
+    closest point in the object to a point 'point'.
 
     Parameters
     ----------
     point : 3D vector
         The point for which the projection will be computed.
-
-    h : positive float
-        Smoothing parameter, in meters
-        (defalt: 0.001 m)
 
     htm : 4x4 numpy array or 4x4 nested list
         The object's configuration
@@ -278,10 +274,10 @@ class Ball:
     Returns
     -------
      proj_point : 3D vector
-        The h-projection of the point 'point' in the object.
+        The projection of the point 'point' in the object.
 
      d : positive float
-        The h-distance between the object and 'point'.     
+        The distance between the object and 'point'.
     """
 
         if htm is None:
@@ -294,19 +290,15 @@ class Ball:
         if not Utils.is_a_vector(point, 3):
             raise Exception("The parameter 'point' should be a 3D vector.")
 
-        if not Utils.is_a_number(h) or h <= 0:
-            raise Exception("The optional parameter 'h' should be a positive number.")
         # end error handling
-        tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
-        delta = 0.001
-        r = np.linalg.norm(tpoint)
+        dd = np.linalg.norm(point - htm[0:3, 3])
+        d = max(dd-self.radius,0)
 
-        drf = Utils.fun_Int(r + delta, h, self.radius)
-        drb = Utils.fun_Int(r - delta, h, self.radius)
+        if d == 0:
+            return point, d
+        else:
+            cp = htm[0:3, 3] + self.radius * (point - htm[0:3, 3]) / dd
+            return cp, d
 
-        dr = (drf - drb) / (2 * delta)
-        d = 0.5 * (drf + drb)
-        ppoint = tpoint - (dr / (r + 0.00001)) * tpoint
 
-        return htm[0:3, 0:3] * ppoint + htm[0:3, 3], d
