@@ -44,15 +44,15 @@ def _control_demo_davinci(arm=0):
 
         return ok1 and ok2, error_pos, error_ori
 
-    def dist_computation(q, old_struct, h):
+    def dist_computation(q, old_struct):
         dist_wall_1 = robot.compute_dist(
-            obj=wall1, q=q, h=h, g=h, old_dist_struct=old_struct[0])
+            obj=wall1, q=q, old_dist_struct=old_struct[0])
         dist_wall_2 = robot.compute_dist(
-            obj=wall2, q=q, h=h, g=h, old_dist_struct=old_struct[1])
+            obj=wall2, q=q, old_dist_struct=old_struct[1])
         dist_wall_3 = robot.compute_dist(
-            obj=wall3, q=q, h=h, g=h, old_dist_struct=old_struct[2])
+            obj=wall3, q=q, old_dist_struct=old_struct[2])
         dist_wall_4 = robot.compute_dist(
-            obj=wall4, q=q, h=h, g=h, old_dist_struct=old_struct[3])
+            obj=wall4, q=q, old_dist_struct=old_struct[3])
 
         struct = [dist_wall_1, dist_wall_2, dist_wall_3, dist_wall_4]
 
@@ -143,8 +143,8 @@ def _control_demo_davinci(arm=0):
 
             # Compute dist_vect, dist_vect_dot and the distance Jacobian
 
-            dist_vect, gradD_list, struct = dist_computation(q, struct, h)
-            dist_vect_next, gradD_list_next, struct = dist_computation(q + qdot * dt, struct, h)
+            dist_vect, gradD_list, struct = dist_computation(q, struct)
+            dist_vect_next, gradD_list_next, struct = dist_computation(q + qdot * dt, struct)
 
             dist_vect_dot = (dist_vect_next - dist_vect) / dt
             jac_dist_dot = (gradD_list_next - gradD_list) / dt
@@ -176,7 +176,7 @@ def _control_demo_davinci(arm=0):
             robot.add_ani_frame(i * dt, q)
 
             # Store data for showing the graphs later
-            dist_vect, _, _ = dist_computation(q, struct, 0.000001)
+            dist_vect, _, _ = dist_computation(q, struct)
 
             hist_time.append(i * dt)
             hist_dist.append(np.amin(dist_vect))
@@ -244,13 +244,13 @@ def _control_demo_davinci2(arm=0):
 
     def dist_computation(q, old_struct, h):
         dist_wall_1 = robot.compute_dist(
-            obj=wall1, q=q, h=h, g=h, old_dist_struct=old_struct[0])
+            obj=wall1, q=q, old_dist_struct=old_struct[0])
         dist_wall_2 = robot.compute_dist(
-            obj=wall2, q=q, h=h, g=h, old_dist_struct=old_struct[1])
+            obj=wall2, q=q, old_dist_struct=old_struct[1])
         dist_wall_3 = robot.compute_dist(
-            obj=wall3, q=q, h=h, g=h, old_dist_struct=old_struct[2])
+            obj=wall3, q=q, old_dist_struct=old_struct[2])
         dist_wall_4 = robot.compute_dist(
-            obj=wall4, q=q, h=h, g=h, old_dist_struct=old_struct[3])
+            obj=wall4, q=q, old_dist_struct=old_struct[3])
 
         struct = [dist_wall_1, dist_wall_2, dist_wall_3, dist_wall_4]
 
