@@ -58,4 +58,4 @@ def _jac_geo(self, q=None, axis='eef', htm=None):
         return jac, htm_for_jac
 
     if axis == 'eef':
-        return jac[-1][:, :], htm_for_jac[-1][:, :] @ self.htm_n_eef
+        return jac[-1][:, :], htm_for_jac[-1][:, :]
