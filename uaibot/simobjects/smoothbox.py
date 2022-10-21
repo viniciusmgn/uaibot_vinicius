@@ -3,27 +3,33 @@ import numpy as np
 from graphics.meshmaterial import *
 
 
-class Cylinder:
+class SmoothBox:
     """
-  A cylinder object.
+  A smooth box object. Smooth boxes satisfy the parametric equation (in their own aligned axis)
+
+  (x/width)^4+(y/depth)^4+(z/height)^4 = 1
 
   Parameters
   ----------
   htm : 4x4 numpy array or 4x4 nested list
-      The object's configuration.
+      The object's configuration
       (default: the same as the current HTM).
 
   name : string
       The object's name.
-      (default: 'genCylinder').
+      (default: 'genBox').
 
-  radius : positive float
-      The cylinder base radius, in meters.
-      (default: 1).    
+  width : positive float
+      The object's width, in meters.
+      (default: 1).
+
+  depth : positive float
+      The object's depth, in meters.
+      (default: 1).
 
   height : positive float
-      The cylinder's height, in meters.
-      (default: 1).  
+      The object's height, in meters.
+      (default: 1).
 
   mass : positive float
       The object's mass, in kg.
@@ -46,14 +52,19 @@ class Cylinder:
     #######################################
 
     @property
-    def radius(self):
-        """The cylinder base radius, in meters."""
-        return self._radius
+    def width(self):
+        """The box width, in meters."""
+        return self._width
 
     @property
     def height(self):
-        """The cylinder height, in meters."""
+        """The box height, in meters."""
         return self._height
+
+    @property
+    def depth(self):
+        """The box depth, in meters."""
+        return self._depth
 
     @property
     def name(self):
@@ -89,7 +100,7 @@ class Cylinder:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="", radius=1, height=1, mass=1, color="red", opacity=1, \
+    def __init__(self, htm=np.identity(4), name="", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
                  mesh_material=None):
 
         # Error handling
@@ -99,14 +110,17 @@ class Cylinder:
         if not Utils.is_a_number(mass) or mass < 0:
             raise Exception("The parameter 'mass' should be a positive float.")
 
-        if not Utils.is_a_number(radius) or radius < 0:
-            raise Exception("The parameter 'radius' should be a positive float.")
+        if not Utils.is_a_number(width) or width < 0:
+            raise Exception("The parameter 'width' should be a positive float.")
 
         if not Utils.is_a_number(height) or height < 0:
             raise Exception("The parameter 'height' should be a positive float.")
 
+        if not Utils.is_a_number(depth) or depth < 0:
+            raise Exception("The parameter 'depth' should be a positive float.")
+
         if name=="":
-            name="var_cylinder_id_"+str(id(self))
+            name="var_smoothbox_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
@@ -120,16 +134,17 @@ class Cylinder:
                 "The parameter 'mesh_material' should be either 'None' or a 'uaibot.MeshMaterial' object.")
 
         if (not Utils.is_a_number(opacity)) or opacity < 0 or opacity > 1:
-            raise Exception("The parameter 'opacity' should be a float between 0 and 1.")
-        # end error handling
+            raise Exception("The parameter 'opacity' should be a float between 0 and 1")
+            # end error handling
 
-        self._radius = radius
+        self._width = width
         self._height = height
+        self._depth = depth
         self._htm = np.matrix(htm)
         self._name = name
         self._mass = 1
         self._frames = []
-        self._volume = np.pi * self.height * self.radius * self.radius
+        self._volume = self.width * self.depth * self.height
         self._max_time = 0
 
         if mesh_material is None:
@@ -146,8 +161,9 @@ class Cylinder:
 
     def __repr__(self):
 
-        string = "Cylinder with name '" + self.name + "': \n\n"
-        string += " Radius (m): " + str(self.radius) + "\n"
+        string = "SmoothBox with name '" + self.name + "': \n\n"
+        string += " Width (m): " + str(self.width) + "\n"
+        string += " Depth (m): " + str(self.depth) + "\n"
         string += " Height (m): " + str(self.height) + "\n"
         string += " Color: " + str(self.color) + "\n"
         string += " Mass (kg): " + str(self.mass) + "\n"
@@ -197,7 +213,7 @@ class Cylinder:
 
     def set_ani_frame(self, htm=None):
         """
-    Reset object's animation queue and add a single configuration to the 
+    Reset object's animation queue and add a single configuration to the
     object's animation queue.
 
     Parameters
@@ -228,13 +244,12 @@ class Cylinder:
         """Generate code for injection."""
 
         string = "\n"
-        string += "//BEGIN DECLARATION OF THE CYLINDER '" + self.name + "'\n\n"
-        string += self.mesh_material.gen_code(self._name) + "\n"
-        string += "const var_" + self._name + " = new Cylinder(" + str(self._radius) + "," + str(
-            self._height) + "," + str(self._frames) + ", material_" + self._name + ");\n"
-        string += "sceneElements.push(var_" + self._name + ");\n"
+        string += "//BEGIN DECLARATION OF THE SMOOTH BOX '" + self.name + "'\n\n"
+        string += self.mesh_material.gen_code(self.name) + "\n"
+        string += "const var_" + self.name + " = new SmoothBox(" + str(self.width) + "," + str(
+            self.height) + "," + str(self.depth) + "," + str(self._frames) + ", material_" + self.name + ");\n"
+        string += "sceneElements.push(var_" + self.name + ");\n"
         string += "//USER INPUT GOES HERE"
-
         return string
 
     # Compute inertia matrix with respect to the inertia frame
@@ -260,12 +275,12 @@ class Cylinder:
 
         # Error handling
         if not Utils.is_a_matrix(htm, 4, 4):
-            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix")
+            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
         # end error handling
 
-        Ixx = (1 / 12) * self.mass * (3 * self.radius * self.radius + self.height * self.height)
-        Iyy = (1 / 12) * self.mass * (3 * self.radius * self.radius + self.height * self.height)
-        Izz = (1 / 2) * self.mass * (self.radius * self.radius)
+        Ixx = 0.05486 * self.mass * (self.height * self.height + self.depth * self.depth)
+        Iyy = 0.05486 * self.mass * (self.width * self.width + self.depth * self.depth)
+        Izz = 0.05486 * self.mass * (self.height * self.height + self.width * self.width)
         Q = htm[0:3, 0:3]
         S = Utils.S(htm[0:3, 3])
 
@@ -273,7 +288,7 @@ class Cylinder:
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
-        return Cylinder(self.htm, self.name + "_copy", self.radius, self.height, self.mass, self.color)
+        return Box(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
 
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
@@ -288,7 +303,7 @@ class Cylinder:
 
     htm : 4x4 numpy array or 4x4 nested list
         The object's configuration
-        (default: the same as the current HTM).            
+        (default: the same as the current HTM).
 
     Returns
     -------
@@ -304,33 +319,41 @@ class Cylinder:
 
         # Error handling
         if not Utils.is_a_matrix(htm, 4, 4):
-            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix")
+            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
 
         if not Utils.is_a_vector(point, 3):
-            raise Exception("The parameter 'point' should be a 3D vector")
+            raise Exception("The parameter 'point' should be a 3D vector.")
 
         # end error handling
         tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
+        A = self.width/2
+        B = self.depth/2
+        C = self.height/2
 
-        r = sqrt(tpoint[0,0] ** 2 + tpoint[1,0] ** 2)
+        d4 = (tpoint[0, 0]/A)**4 + (tpoint[1, 0]/B)**4 + (tpoint[2, 0]/C)**4
 
-        if r < self.radius:
-            x = tpoint[0,0]
-            y = tpoint[1,0]
-            dr2=0
+        if d4 <= 1:
+            return point, 0
         else:
-            x = self.radius * tpoint[0,0] / r
-            y = self.radius * tpoint[1,0] / r
-            dr2 = (r-self.radius)**2
 
-        if abs(tpoint[2,0]) < self.height/2:
-            z = tpoint[2,0]
-            dz2 = 0
-        else:
-            z = self.height/2 if tpoint[2,0] > 0 else -self.height/2
-            dz2 = (abs(tpoint[2,0]) - self.height/2)**2
+            fun = lambda lam: (Utils.cubicsolve(tpoint[0, 0], lam / (A ** 4)) / A) ** 4 + \
+                              (Utils.cubicsolve(tpoint[1, 0], lam / (B ** 4)) / B) ** 4 + \
+                              (Utils.cubicsolve(tpoint[2, 0], lam / (C ** 4)) / C) ** 4 - 1
 
-        d = sqrt(dr2+dz2)
+            maxR = max(A, B, C)
+            minR = min(A, B, C)
+            dp = np.linalg.norm(tpoint)
 
-        return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d
+            lam0 = 0.00001
+            lamf = maxR*(dp-minR)/0.75
+
+            lam_star = Utils.bissection(fun,lam0,lamf,0.0001)
+
+            x = Utils.cubicsolve(tpoint[0, 0], lam_star / (A ** 4))
+            y = Utils.cubicsolve(tpoint[1, 0], lam_star / (B ** 4))
+            z = Utils.cubicsolve(tpoint[2, 0], lam_star / (C ** 4))
+
+            d = sqrt( (x-tpoint[0,0])**2 + (y-tpoint[1,0])**2 + (z-tpoint[2,0])**2 )
+
+            return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

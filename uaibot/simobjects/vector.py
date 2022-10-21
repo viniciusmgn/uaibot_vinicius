@@ -52,9 +52,12 @@ class Vector:
     # Constructor
     #######################################
 
-    def __init__(self, name="genVector", color="black", thickness=1, origin=[0, 0, 0], vector=[0.5, 0.5, 0.5]):
+    def __init__(self, name="", color="black", thickness=1, origin=[0, 0, 0], vector=[0.5, 0.5, 0.5]):
 
         # Error handling
+
+        if name=="":
+            name="var_vector_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(

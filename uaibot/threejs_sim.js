@@ -12,6 +12,7 @@ import {OBJLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/load
 import {STLLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/STLLoader.js';
 import {ColladaLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/ColladaLoader.js';
 import {GUI} from 'https://cdn.skypack.dev/dat.gui';
+import {ParametricGeometry} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/geometries/ParametricGeometry.js'
 
 
 //0.126.1 0.137.5
@@ -102,6 +103,44 @@ class Cylinder extends Objsim{
 		cylinder.matrixAutoUpdate = false;
 		this.shape = cylinder;
 	}
+}
+
+function signFun(x,n){
+	return Math.sign(x)*( Math.pow(Math.abs(x),n))
+}
+
+class SmoothBox extends Objsim{
+
+
+
+	constructor(_width, _height, _depth, _frames, _material){
+		super(_frames);
+		this.width = _width;
+		this.height = _height;
+		this.depth = _depth;
+
+		const geometry = new ParametricGeometry( function fun(u,v,target) {
+			let cosu = signFun(Math.cos(0.0001*Math.PI + 0.9999*Math.PI*u),0.5)
+			let sinu = signFun(Math.sin(0.0001*Math.PI + 0.9999*Math.PI*u),0.5)
+			let cosv = signFun(Math.cos(2*Math.PI*v),0.5)
+			let sinv = signFun(Math.sin(2*Math.PI*v),0.5)
+
+			let x = (_width/2)*sinu*cosv;
+			let y = (_height/2)*sinu*sinv;
+			let z = (_depth/2)*cosu;
+
+	    	target.set( x, y, z );
+
+		}, 25, 25 );
+
+
+		const smoothCube = new Mesh( geometry, _material );
+		smoothCube.matrixAutoUpdate = false;
+		this.shape = smoothCube;
+	}
+
+
+
 }
 
 class PointCloud extends Objsim{

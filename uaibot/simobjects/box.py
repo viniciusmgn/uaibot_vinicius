@@ -98,7 +98,7 @@ class Box:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genBox", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
+    def __init__(self, htm=np.identity(4), name="", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
                  mesh_material=None):
 
         # Error handling
@@ -116,6 +116,9 @@ class Box:
 
         if not Utils.is_a_number(depth) or depth < 0:
             raise Exception("The parameter 'depth' should be a positive float.")
+
+        if name=="":
+            name="var_box_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
@@ -285,20 +288,16 @@ class Box:
         """Return a deep copy of the object, without copying the animation frames."""
         return Box(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
 
-    # Compute the h projection of a point into an object
-    def h_projection(self, point, h=0.001, htm=None):
+    # Compute the projection of a point into an object
+    def projection(self, point, htm=None):
         """
-    The h projection of a point in the object, that is, the 
-    h-closest point in the object to a point 'point'.
+    The projection of a point in the object, that is, the
+    closest point in the object to a point 'point'.
 
     Parameters
     ----------
     point : 3D vector
         The point for which the projection will be computed.
-
-    h : positive float
-        Smoothing parameter, in meters
-        (defalt: 0.001 m)
 
     htm : 4x4 numpy array or 4x4 nested list
         The object's configuration
@@ -307,10 +306,10 @@ class Box:
     Returns
     -------
      proj_point : 3D vector
-        The h-projection of the point 'point' in the object.
+        The projection of the point 'point' in the object.
 
      d : positive float
-        The h-distance between the object and 'point'.     
+        The distance between the object and 'point'.
     """
 
         if htm is None:
@@ -323,25 +322,30 @@ class Box:
         if not Utils.is_a_vector(point, 3):
             raise Exception("The parameter 'point' should be a 3D vector.")
 
-        if not Utils.is_a_number(h) or h <= 0:
-            raise Exception("The optional parameter 'h' should be a positive number.")
         # end error handling
         tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
-        delta = 0.001
+        if abs(tpoint[0,0]) < self.width/2:
+            x = tpoint[0,0]
+            dx2 = 0
+        else:
+            x = self.width/2 if tpoint[0,0] > 0 else -self.width/2
+            dx2 = (abs(tpoint[0,0]) - self.width/2)**2
 
-        dxf = Utils.fun_Int(tpoint[0,0] + delta, h, 0.5 * self.width)
-        dxb = Utils.fun_Int(tpoint[0,0] - delta, h, 0.5 * self.width)
+        if abs(tpoint[1,0]) < self.depth/2:
+            y = tpoint[1,0]
+            dy2 = 0
+        else:
+            y = self.depth/2 if tpoint[1,0] > 0 else -self.depth/2
+            dy2 = (abs(tpoint[1,0]) - self.depth/2)**2
 
-        dyf = Utils.fun_Int(tpoint[1,0] + delta, h, 0.5 * self.depth)
-        dyb = Utils.fun_Int(tpoint[1,0] - delta, h, 0.5 * self.depth)
+        if abs(tpoint[2,0]) < self.height/2:
+            z = tpoint[2,0]
+            dz2 = 0
+        else:
+            z = self.height/2 if tpoint[2,0] > 0 else -self.height/2
+            dz2 = (abs(tpoint[2,0]) - self.height/2)**2
 
-        dzf = Utils.fun_Int(tpoint[2,0] + delta, h, 0.5 * self.height)
-        dzb = Utils.fun_Int(tpoint[2,0] - delta, h, 0.5 * self.height)
-
-        d = 0.5 * (dxf + dxb + dyf + dyb + dzf + dzb)
-        x = tpoint[0,0] - (dxf - dxb) / (2 * delta)
-        y = tpoint[1,0] - (dyf - dyb) / (2 * delta)
-        z = tpoint[2,0] - (dzf - dzb) / (2 * delta)
+        d = sqrt(dx2+dy2+dz2)
 
         return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

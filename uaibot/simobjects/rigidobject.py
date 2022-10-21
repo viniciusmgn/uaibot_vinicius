@@ -46,9 +46,13 @@ class RigidObject:
     # Constructor
     #######################################
 
-    def __init__(self, list_model_3d, name="genRigidObject", htm=np.identity(4)):
+    def __init__(self, list_model_3d, name="", htm=np.identity(4)):
 
         # Error handling
+
+        if name=="":
+            name="var_rigidobject_id_"+str(id(self))
+
         if not (Utils.is_a_name(name)):
             raise Exception(
                 "The parameter 'name' should be a string. Only characters 'a-z', 'A-Z', '0-9' and '_' are allowed. "

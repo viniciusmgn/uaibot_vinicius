@@ -56,11 +56,14 @@ class PointCloud:
     # Constructor
     #######################################
 
-    def __init__(self, name="genPointCloud", points=[], size=0.1, color="blue"):
+    def __init__(self, name="", points=[], size=0.1, color="blue"):
 
         # Error handling
         if not Utils.is_a_number(size) or size < 0:
             raise Exception("The parameter 'size' should be a positive float")
+
+        if name=="":
+            name="var_pointcloud_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(

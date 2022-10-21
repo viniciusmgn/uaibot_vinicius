@@ -58,4 +58,11 @@ def _jac_geo(self, q=None, axis='eef', htm=None):
         return jac, htm_for_jac
 
     if axis == 'eef':
-        return jac[-1][:, :], htm_for_jac[-1][:, :]
+        htm_0_eef =  htm_for_jac[-1][:, :] * self.htm_n_eef
+        jg = jac[-1][:, :]
+        jv = jg[0:3,:]
+        jw = jg[3:6,:]
+        jv = jv + Utils.S(htm_for_jac[-1][0:3,-1] - htm_0_eef[0:3,-1]) * jw
+        jg = np.block([[jv],[jw]])
+
+        return jg , htm_0_eef

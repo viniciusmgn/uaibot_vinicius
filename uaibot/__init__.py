@@ -7,6 +7,7 @@ from uaibot.robot.links import *
 from .simulation import *
 from uaibot.simobjects.ball import *
 from uaibot.simobjects.box import *
+from uaibot.simobjects.smoothbox import *
 from uaibot.simobjects.cylinder import *
 from uaibot.graphics.meshmaterial import *
 from uaibot.simobjects.pointlight import *

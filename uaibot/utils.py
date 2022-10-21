@@ -26,17 +26,17 @@ class Utils:
     _CONSTI0HAT1 = 0.24273
     _CONSTI0HAT2 = 0.43023
 
-    UAIBOT_NAME_TYPES = ['uaibot.', 'cylinder.', 'box.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
+    UAIBOT_NAME_TYPES = ['uaibot.', 'cylinder.', 'box.', 'smoothbox.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
                              'texture.',
                              'pointlight.', 'frame.', 'model3d.', 'links.', 'pointcloud.', 'vector.', 'rigidobject.',
                              '.group', '.htmldiv']
 
-    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder']
+    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.SmoothBox']
 
-    IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Frame',
+    IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Frame',
                     'uaibot.RigidObject', 'uaibot.Group', 'uaibot.Robot', 'uaibot.PointLight']
 
-    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Robot',
+    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Robot',
                   'uaibot.PointLight', 'uaibot.Frame', 'uaibot.PointCloud', 'uaibot.Vector',
                   'uaibot.RigidObject', 'uaibot.Group', 'uaibot.HTMLDiv']
 
@@ -1168,6 +1168,56 @@ class Utils:
     #######################################
 
     @staticmethod
+    def bissection(fun, t0, tf, eps):
+
+        tA = t0
+        fA = fun(tA)
+        tB = tf
+        fB = fun(tB)
+
+        if abs(fA) < eps:
+            return tA
+        elif abs(fB) < eps:
+            return tB
+        else:
+            while fA*fB>0:
+                tA = 0.8*tA
+                fA = fun(tA)
+                tB = 1.2*tB
+                fB = fun(tB)
+
+            tm = (tA + tB) / 2
+            fm = fun(tm)
+
+            k=1
+
+            while abs(fm)>eps:
+                if fA*fm>0:
+                   tA = tm
+                   fA = fm
+                else:
+                   tB = tm
+                   fB = fm
+
+                tm = (tA + tB) / 2
+                fm = fun(tm)
+                k+=1
+
+
+            return tm
+
+    @staticmethod
+    def cubicsolve(p,lam):
+        q=abs(p)
+        a = q/(2*lam)
+        b = sqrt(a**2+1/(27*lam**3))
+        u = np.sign(p)* ( (b+a)**(1/3) - (b-a)**(1/3))
+        error = u-p+lam*(u**3)
+        return u
+
+
+
+    @staticmethod
     def fun_Int(v, h, L):
 
         def fun_J(u):
@@ -1249,7 +1299,7 @@ class Utils:
                 c * (h * h * (a1 - a2) / v + 2 * r * exp((0.5 * (v - r) * (v - r) - Utils.fun_Int(v, h, r)) / (h * h))))
 
     @staticmethod
-    def compute_dist(obj_a, obj_b, h=0.000001, g=0.000001, p_a_init=None, tol=0.001, no_iter_max=20):
+    def compute_dist(obj_a, obj_b, p_a_init=None, tol=0.001, no_iter_max=20):
 
         # Error handling
 
@@ -1258,12 +1308,6 @@ class Utils:
 
         if not Utils.is_a_simple_object(obj_b):
             raise Exception("The parameter 'obj_b' must be one of the following: " + str(Utils.IS_SIMPLE) + ".")
-
-        if not Utils.is_a_number(h) or h <= 0:
-            raise Exception("The optional parameter 'h' must be a nonnegative number.")
-
-        if not Utils.is_a_number(g) or g <= 0:
-            raise Exception("The optional parameter 'g' must be a nonnegative number.")
 
         if not (p_a_init is None or Utils.is_a_vector(p_a_init, 3)):
             raise Exception("The optional parameter 'p_a_init' must be a 3D vector or 'None'.")
@@ -1286,12 +1330,11 @@ class Utils:
 
         while (not converged) and i < no_iter_max:
             p_a_ant = p_a
-            p_b, dp_a = obj_b.h_projection(p_a, g)
-            p_a, dp_b = obj_a.h_projection(p_b, h)
+            p_b, dp_a = obj_b.projection(p_a)
+            p_a, dp_b = obj_a.projection(p_b)
             converged = np.linalg.norm(p_a - p_a_ant) < tol
             i += 1
 
         dist = np.linalg.norm(p_a - p_b)
-        hg_dist = sqrt(max(2 * (dp_a + dp_b - 0.5 * dist * dist), 0))
 
-        return p_a, p_b, hg_dist
+        return p_a, p_b, dist

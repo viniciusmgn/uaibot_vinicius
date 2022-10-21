@@ -63,7 +63,7 @@ class Frame:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="genFrame", size=0.3, axis_color=['red', 'lime', 'blue'],
+    def __init__(self, htm=np.identity(4), name="", size=0.3, axis_color=['red', 'lime', 'blue'],
                  axis_names=['x', 'y', 'z']):
 
         # Error handling
@@ -72,6 +72,9 @@ class Frame:
 
         if not Utils.is_a_number(size) or size <= 0:
             raise Exception("The parameter 'size' should be a positive float.")
+
+        if name=="":
+            name="var_frame_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(

@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class _DisStructLinkObj:
+class DistStructLinkObj:
 
     @property
     def link_number(self):
@@ -62,7 +62,7 @@ class _DisStructLinkObj:
         return string
 
 
-class _DistStructRobotObj:
+class DistStructRobotObj:
 
     #######################################
     # Attributes
@@ -133,7 +133,7 @@ class _DistStructRobotObj:
     def _append(self, link_number, link_col_obj_number, distance, point_link, point_object, jac_distance):
 
         self._list_info.append(
-            _DisStructLinkObj(link_number, link_col_obj_number, distance, point_link, point_object, jac_distance))
+            DistStructLinkObj(link_number, link_col_obj_number, distance, point_link, point_object, jac_distance))
 
         self._jac_dist_mat = np.vstack((self._jac_dist_mat, jac_distance))
         self._dist_vect.append(distance)
