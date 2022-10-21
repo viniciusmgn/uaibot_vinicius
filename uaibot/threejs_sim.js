@@ -125,11 +125,11 @@ class SmoothBox extends Objsim{
 			let cosv = signFun(Math.cos(2*Math.Pi*v),0.5)
 			let sinv = signFun(Math.sin(2*Math.Pi*v),0.5)
 
-			let x = (this.width/2)*sinu*cosv;
-			let y = (this.depth/2)*sinu*sinv;
-			let z = (this.height/2)*cosu;
+			let x = (_width/2)*sinu*cosv;
+			let y = (_height/2)*sinu*sinv;
+			let z = (_depth/2)*cosu;
 
-	    target.set( x, y, z );
+	    	target.set( x, y, z );
 
 		}, 25, 25 );
 
