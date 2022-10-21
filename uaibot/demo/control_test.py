@@ -68,8 +68,8 @@ def _control_demo_davinci(arm=0):
     pose_tg = []
     #pose_tg.append(Utils.trn([0.2, 0.8, 0.7]) @ Utils.rotz(np.deg2rad(-200)) @ Utils.rotx(np.deg2rad(250)))
     pose_tg.append(Utils.trn([0.2, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130))) # rotz -100 ou -130
-    pose_tg.append(Utils.trn([-0.1, 0.8, 0.9]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
-    pose_tg.append(Utils.trn([-0.5, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-150)))
+    # pose_tg.append(Utils.trn([-0.1, 0.8, 1]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
+    # pose_tg.append(Utils.trn([-0.5, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-150)))
 
     # Create simulation
     sim = Simulation.create_sim_grid(
@@ -83,8 +83,8 @@ def _control_demo_davinci(arm=0):
     alpha = 2
     beta = 0.005
     K = 2
-    eta = 0.9
-    sigma = 0.5
+    eta = 0.5
+    sigma = -1
     dist_safe = 0.2
     # qdot_max = np.matrix([[2], [np.deg2rad(85)], [np.deg2rad(100)], [np.deg2rad(75)], [np.deg2rad(130)], [np.deg2rad(135)], [np.deg2rad(135)], [np.deg2rad(135)], [np.deg2rad(135)], [2]])
     # qdot_min = -qdot_max
@@ -118,6 +118,9 @@ def _control_demo_davinci(arm=0):
     qaux[6] = -np.deg2rad(110)
     qaux[7] = 0
     robot.add_ani_frame(0, qaux)
+    q65_c = qaux[6] - qaux[5]
+    q75_c = qaux[7] - qaux[5]
+    print(q65_c, q75_c)
 
     # Main loop
     for k in range(len(pose_tg)):
@@ -154,11 +157,12 @@ def _control_demo_davinci(arm=0):
             b = eta * (dist_vect - 0.02)
             H = 2 * (jac_r.T * jac_r) + 0.01 * np.identity(n)
             f = (2 * K * r.T @ jac_r).T
-
-            A = np.block([[A], [np.identity(n)], [-np.identity(n)]])
+            q6_rest = np.array([0, 0, 0, 0, 0, 1, -1, 0, 0]).reshape(1, -1)
+            q7_rest = np.array([0, 0, 0, 0, 0, 1, 0, -1, 0]).reshape(1, -1)
+            A = np.block([[A], [np.identity(n)], [-np.identity(n)], [q6_rest], [q7_rest]])
             #A = np.block([[A], ])
-
-            b = np.block([[b], [xi * qdot_max], [-xi * qdot_min]])
+            
+            b = np.block([[b], [xi * qdot_max], [-xi * qdot_min], [-sigma * (q[6] - q[5] - q65_c)], [-sigma * (q[7] - q[5] - q75_c)]])
 
             # Solve the quadratic program
             try:
