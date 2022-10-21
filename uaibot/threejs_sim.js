@@ -1,6 +1,6 @@
 import { Object3D, Vector3, BoxBufferGeometry, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, OrthographicCamera,
 Scene, WebGLRenderer, AmbientLight, DirectionalLight, HemisphereLight, MeshStandardMaterial,
-AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, ParametricGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
+AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
 	BackSide, DoubleSide, PMREMGenerator, TextureLoader, PointLight, UVMapping, CubeReflectionMapping, CubeRefractionMapping,
 	EquirectangularReflectionMapping, EquirectangularRefractionMapping, CubeUVReflectionMapping,
 	CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping,
@@ -12,6 +12,7 @@ import {OBJLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/load
 import {STLLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/STLLoader.js';
 import {ColladaLoader} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/loaders/ColladaLoader.js';
 import {GUI} from 'https://cdn.skypack.dev/dat.gui';
+import {ParametricGeometry} from 'https://cdn.skypack.dev/three@0.135.0/examples/jsm/geometries/ParametricGeometry.js'
 
 
 //0.126.1 0.137.5

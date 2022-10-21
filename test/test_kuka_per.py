@@ -8,8 +8,9 @@ box1 = ub.Box(name="box1", width=0.5, height=0.3, depth=0.2, color="blue")
 box2 = ub.Box(name="box2", width=0.25, height=0.4, depth=0.6, color="red")
 cil1 = ub.Cylinder(name="cyl1", radius=0.3, height=0.4, color="purple")
 ball1 = ub.Ball(name="ball1", radius=0.4, color="brown")
+smoothBox1 = ub.SmoothBox(name="box1", width=0.5, height=0.3, depth=0.2, color="blue")
 
-obj1=box1
+obj1=smoothBox1
 obj2=cil1
 
 pointA = ub.Ball(name="pointA", radius=0.035, color="yellow")

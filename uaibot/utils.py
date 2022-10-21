@@ -26,17 +26,17 @@ class Utils:
     _CONSTI0HAT1 = 0.24273
     _CONSTI0HAT2 = 0.43023
 
-    UAIBOT_NAME_TYPES = ['uaibot.', 'cylinder.', 'box.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
+    UAIBOT_NAME_TYPES = ['uaibot.', 'cylinder.', 'box.', 'smoothbox.', 'ball.', 'robot.', 'simulation.', 'meshmaterial.',
                              'texture.',
                              'pointlight.', 'frame.', 'model3d.', 'links.', 'pointcloud.', 'vector.', 'rigidobject.',
                              '.group', '.htmldiv']
 
-    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder']
+    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.SmoothBox']
 
-    IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Frame',
+    IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Frame',
                     'uaibot.RigidObject', 'uaibot.Group', 'uaibot.Robot', 'uaibot.PointLight']
 
-    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.Robot',
+    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Robot',
                   'uaibot.PointLight', 'uaibot.Frame', 'uaibot.PointCloud', 'uaibot.Vector',
                   'uaibot.RigidObject', 'uaibot.Group', 'uaibot.HTMLDiv']
 
