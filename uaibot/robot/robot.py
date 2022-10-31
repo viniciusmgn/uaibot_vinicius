@@ -23,6 +23,7 @@ from ._dyn_model import _dyn_model
 from ._vector_field import _vector_field
 from ._task_function import _task_function
 from ._coop_task_function import _coop_task_function
+from ._const_control import _const_control
 
 from ._gen_code import _gen_code
 from ._update_col_object import _update_col_object
@@ -649,6 +650,12 @@ class Robot:
     """
         return _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b)
 
+    def const_control(self, htm_des, q=None, htm=None, obstacles = [], eta_obs=0.5, eta_joint=0.5, dist_safe=0.01,
+                      kp = 0.5, dict_old_dist_struct=None, eps=0.001, max_dist = np.inf):
+
+        return _const_control(self, htm_des, q, htm, obstacles, eta_obs, eta_joint, dist_safe, kp,
+                              dict_old_dist_struct, eps, max_dist)
+
     #######################################
     # Methods for simulation
     #######################################
@@ -962,11 +969,14 @@ class Robot:
     #######################################
 
     def compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005,
-                     no_iter_max=20):
+                     no_iter_max=20, max_dist = np.inf):
         """
     Compute the  distance structure from each one of the robot's link to a
-    'simple' external object (ball, box or cylinder), given a joint and base 
+    'simple' external object (see Utils.IS_SIMPLE), given a joint and base
     configuration.
+
+    This function can be faster if some distance computations are avoided.
+    See the description of the parameter 'max_dist'.
 
     Use an iterative algorithm, based on projections
     (Von Neumann's cyclic projection algorithm).
@@ -992,7 +1002,12 @@ class Robot:
         (default: 0.0005 m).        
     no_iter_max : positive int
         The maximum number of iterations for the algorithm.
-        (default: 20 iterations). 
+        (default: 20 iterations).
+    max_dist: positive float
+        The algorithm uses an axis aligned bounding box (aabb) to avoid some distance computations.
+        The algorithm skips a more precise distance computation if the distance between the aabb
+        of the primitive objects composing the link and 'obj' is less than 'max_dist' (in meters).
+        (default: infinite).
 
     Returns
     -------
@@ -1001,10 +1016,10 @@ class Robot:
         collision model. Contains a list of m 'DistStructLinkObj' objects.
     """
 
-        return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max)
+        return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max, max_dist)
 
     def compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005,
-                     no_iter_max=20):
+                     no_iter_max=20, max_dist = np.inf):
         """
     Compute the  distance structure from each one of the robot's links to itself
     (auto collision), given a joint and base configuration.
@@ -1013,6 +1028,9 @@ class Robot:
     sequential links in the kinematic chain can be verified by checking joint limits.
     This saves times. This verification should be done elsewhere (by checking if the
     configuration is inside the joint limits).
+
+    This function can be faster if some distance computations are avoided.
+    See the description of the parameter 'max_dist'.
 
     Use an iterative algorithm, based on projections
     (Von Neumann's cyclic projection algorithm).
@@ -1033,6 +1051,11 @@ class Robot:
     no_iter_max : positive int
         The maximum number of iterations for the algorithm.
         (default: 20 iterations).
+    max_dist: positive float
+        The algorithm uses an axis aligned bounding box (aabb) to avoid some distance computations.
+        The algorithm skips a more precise distance computation if the distance between the aabb
+        of the primitive objects composing the link and 'obj' is less than 'max_dist' (in meters).
+        (default: infinite).
 
     Returns
     -------
@@ -1041,7 +1064,7 @@ class Robot:
         collision model. Contains a list of m 'DistStructLinkLink' objects.
     """
 
-        return _compute_dist_auto(self, q, old_dist_struct, tol, no_iter_max)
+        return _compute_dist_auto(self, q, old_dist_struct, tol, no_iter_max, max_dist)
 
     def check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, dist_tol=0.005,
                      no_iter_max=20):

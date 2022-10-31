@@ -4,7 +4,7 @@ from ._dist_struct_robot_auto import DistStructRobotAuto
 
 
 # Compute the distance from each non-sequential link to other link
-def _compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005, no_iter_max=20):
+def _compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005, no_iter_max=20, max_dist = np.inf):
     n = len(self.links)
 
     if q is None:
@@ -16,6 +16,9 @@ def _compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005, no_iter_m
 
     if not Utils.is_a_number(tol) or tol <= 0:
         raise Exception("The parameter 'tol' should be a positive number.")
+
+    if not Utils.is_a_number(max_dist) or tol <= 0:
+        raise Exception("The parameter 'max_dist' should be a positive number, or np.inf.")
 
     if not Utils.is_a_natural_number(no_iter_max) or no_iter_max <= 0:
         raise Exception("The parameter 'no_iter_max' should be a positive natural number.")
@@ -52,19 +55,24 @@ def _compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005, no_iter_m
             for isub in range(len(self.links[i].col_objects)):
                 for jsub in range(len(self.links[j].col_objects)):
 
-                    if old_dist_struct is None:
-                        p_obj_0 = np.matrix(np.random.uniform(-100, 100, size=(3, 1)))
-                    else:
-                        p_obj_0 = old_dist_struct.get_item(i, isub, j, jsub).point_object
+                    est_dist = 0 if math.isinf(max_dist) else Utils.compute_aabbdist(col_object_copy[i][isub], col_object_copy[j][jsub])
 
-                    p_obj_i, p_obj_j, d = Utils.compute_dist(col_object_copy[i][isub], col_object_copy[j][jsub] \
-                                                             , p_obj_0, tol, no_iter_max)
+                    if est_dist <= max_dist:
 
-                    jac_obj_i = jac_dh[i][0:3, :] - Utils.S(p_obj_i - mth_dh[i][0:3, 3]) * jac_dh[i][3:6, :]
-                    jac_obj_j = jac_dh[j][0:3, :] - Utils.S(p_obj_j - mth_dh[j][0:3, 3]) * jac_dh[j][3:6, :]
+                        if old_dist_struct is None:
+                            p_obj_0 = np.matrix(np.random.uniform(-100, 100, size=(3, 1)))
+                        else:
+                            p_obj_0 = old_dist_struct.get_item(i, isub, j, jsub).point_object
 
-                    jac_dist = (p_obj_i - p_obj_j).T * (jac_obj_i - jac_obj_j) / d
-                    dist_struct._append(i, isub, j, jsub, d, p_obj_i, p_obj_j, jac_dist)
+                        p_obj_i, p_obj_j, d = Utils.compute_dist(col_object_copy[i][isub], col_object_copy[j][jsub] \
+                                                                 , p_obj_0, tol, no_iter_max)
+
+                        jac_obj_i = jac_dh[i][0:3, :] - Utils.S(p_obj_i - mth_dh[i][0:3, 3]) * jac_dh[i][3:6, :]
+                        jac_obj_j = jac_dh[j][0:3, :] - Utils.S(p_obj_j - mth_dh[j][0:3, 3]) * jac_dh[j][3:6, :]
+
+                        jac_dist = (p_obj_i - p_obj_j).T * (jac_obj_i - jac_obj_j) / d
+                        dist_struct._append(i, isub, j, jsub, d, p_obj_i, p_obj_j, jac_dist)
+
 
 
     return dist_struct

@@ -177,6 +177,18 @@ class Utils:
                          [0, 0, 0, 1]])
 
     @staticmethod
+    def htm_rand(desl=1,rot=np.pi/2):
+
+        x = np.random.uniform(-desl / 2, desl / 2)
+        y = np.random.uniform(-desl / 2, desl / 2)
+        z = np.random.uniform(-desl / 2, desl / 2)
+        ax = np.random.uniform(-rot / 2, rot / 2)
+        ay = np.random.uniform(-rot / 2, rot / 2)
+        az = np.random.uniform(-rot / 2, rot / 2)
+
+        return Utils.trn([x,y,z]) * Utils.rotx(ax) * Utils.roty(ay) * Utils.rotz(az)
+
+    @staticmethod
     def inv_htm(htm):
         """
       Given an homogeneous transformation matrix, compute its inverse.
@@ -310,11 +322,13 @@ class Utils:
       Parameters
       ----------
       f: function handle
-          The function handle. It should accept a single 'm' dimensional list
-          of floats and returns a single 'n' dimensional list of floats.
-      
-      x: m dimensional numpy vector or list
-          Point in which the Jacobian will be computed.
+          The function handle. It should accept a single 'm' dimensional numpy array/matrix
+          which is a *column* matrix and return a single 'n' dimensional numpy/array/matrix
+          which is a *column* matrix.
+
+      x: m dimensional numpy *columsn* array/matrix
+          Point in which the Jacobian will be computed. This object should be of the same nature of the input of
+          f, so f(x) is well-defined.
 
       delta: float
           Variation used in the numerical differentiation
@@ -324,32 +338,26 @@ class Utils:
       -------
       jac: n x m numpy array
           The numerical Jacobian of f at point x. It is a n x m numpy array.
+          If f_i(x) is the i-th entry of f(x) (1<=i<=n) and x_j the j-th variable (1<=j<=m), then
+          the entry in the i-th row and j-th column is partial f_i/partial x_j evaluated at x.
       """
 
         if not (str(type(f)) == "<class 'function'>"):
-            raise Exception("The parameter 'f' must be a function that maps 'm' dimensional lists" \
-                            ", in which 'm' is the size of the vector 'x', into 'n' dimensional lists.")
+            raise Exception("The parameter 'f' must be a function handle.")
 
-        if not Utils.is_a_vector(x):
-            raise Exception("Parameter 'x' should be a vector")
+        if not str(type(x)) == "<class 'numpy.array'>" and not str(type(x)) == "<class 'numpy.matrix'>":
+            raise Exception("Parameter 'x' should be a numpy array/matrix")
 
-        if str(type(x)) == "<class 'numpy.ndarray'>":
-            m = max(np.shape(x))
+        if not(np.shape(x)[1] == 1):
+            raise Exception("Parameter 'x' should be a column numpy array/matrix.")
 
-        if str(type(x)) == "<class 'list'>":
-            m = len(x)
+        m = np.shape(x)[0]
 
         try:
             y = f(x)
-
-            if str(type(y)) == "<class 'list'>" and Utils.is_a_vector(y):
-                n = len(y)
-            else:
-                raise Exception("The parameter 'f' must be a function that maps 'm' dimensional vectors" \
-                                ", in which 'm' is the size of the vector 'x', into 'n' dimensional vectors.")
+            n = np.shape(y)[0]
         except:
-            raise Exception("The parameter 'f' must be a function that maps 'm' dimensional vectors" \
-                            ", in which 'm' is the size of the vector 'x', into 'n' dimensional vectors.")
+            raise Exception("f(x) is not well defined.")
 
         jac = np.matrix(np.zeros((n, m)))
         idm = np.matrix(np.identity(m))
@@ -1297,6 +1305,59 @@ class Utils:
             a2 = 1
             return 0.5 * (v - r) * (v - r) - h * h * log(
                 c * (h * h * (a1 - a2) / v + 2 * r * exp((0.5 * (v - r) * (v - r) - Utils.fun_Int(v, h, r)) / (h * h))))
+
+    @staticmethod
+    def softmin(x,h):
+        minval = np.min(x)
+        s=0
+
+        for val in x:
+            s+= exp(-h*(val-minval))
+
+        return minval -(1/h)*np.log(s)
+
+    @staticmethod
+    def softselectmin(x, y, h):
+        minval = np.min(x)
+        s = 0
+
+        coef = []
+        for val in x:
+            coef.append(exp(-h * (val - minval)))
+            s += coef[-1]
+
+        coef = [c/s for c in coef]
+
+        sselect = 0 * y[0]
+        for i in range(len(coef)):
+            sselect+=coef[i]*y[i]
+
+        return sselect
+
+
+        return minval - (1 / h) * np.log(s)
+
+    @staticmethod
+    def softmax(x, h):
+        return Utils.softmin(x,-h)
+
+    @staticmethod
+    def softselectmax(x, y, h):
+        return Utils.softselectmin(x,y,-h)
+
+    @staticmethod
+    def compute_aabbdist(obj1, obj2):
+
+        w1, d1, h1 = obj1.aabb()
+        w2, d2, h2 = obj2.aabb()
+        delta = obj1.htm[0:3, -1] - obj2.htm[0:3, -1]
+
+        dx = max(abs(delta[0, 0]) - (w1 + w2) / 2, 0)
+        dy = max(abs(delta[1, 0]) - (d1 + d2) / 2, 0)
+        dz = max(abs(delta[2, 0]) - (h1 + h2) / 2, 0)
+
+        return np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
+
 
     @staticmethod
     def compute_dist(obj_a, obj_b, p_a_init=None, tol=0.001, no_iter_max=20):

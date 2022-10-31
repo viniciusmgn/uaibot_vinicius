@@ -259,6 +259,9 @@ class Ball:
         """Return a deep copy of the object, without copying the animation frames."""
         return Ball(self.htm, self.name + "_copy", self.radius, self.mass, self.color)
 
+    def aabb(self):
+        return 2 * self.radius, 2 * self.radius, 2 * self.radius
+
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
         """
