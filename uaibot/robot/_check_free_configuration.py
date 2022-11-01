@@ -1,19 +1,36 @@
 from utils import *
 import numpy as np
-from ._dist_struct_robot_auto import DistStructRobotAuto
 
 
-# Compute the distance from each non-sequential link to other link
-def _check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, dist_tol=0.005, no_iter_max=20):
+def _check_free_configuration(self, q=None, htm=None, obstacles=[],
+                              check_joint=True, check_auto=True,
+                              tol=0.0005, dist_tol=0.005, no_iter_max=20):
     n = len(self.links)
 
     if q is None:
         q = self.q
-
+    if htm is None:
+        htm = self.htm
 
     # Error handling
     if not Utils.is_a_vector(q, n):
         raise Exception("The parameter 'q' should be a " + str(n) + " dimensional vector.")
+
+    if not Utils.is_a_matrix(htm, 4, 4):
+        raise Exception("The parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
+
+    if not str(type(obstacles)) == "<class 'list'>":
+        raise Exception("The parameter 'list' should be a list of simple objects.")
+
+    for obs in obstacles:
+        if not Utils.is_a_simple_object(obs):
+            raise Exception("The parameter 'list' should be a list of simple objects.")
+
+    if not str(type(check_joint)) == "<class 'bool'>":
+        raise Exception("The parameter 'check_joint' should be a boolean.")
+
+    if not str(type(check_auto)) == "<class 'bool'>":
+        raise Exception("The parameter 'check_auto' should be a boolean.")
 
     if not Utils.is_a_number(tol) or tol <= 0:
         raise Exception("The parameter 'tol' should be a positive number.")
@@ -24,20 +41,11 @@ def _check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, di
     if not Utils.is_a_natural_number(no_iter_max) or no_iter_max <= 0:
         raise Exception("The parameter 'no_iter_max' should be a positive natural number.")
 
-    if not (old_dist_struct is None):
-        try:
-            if not id(old_dist_struct.robot) == id(self):
-                Exception("The parameter 'old_dist_struct' is a '_DistStructRobotAuto' object, but it " \
-                          "must have to be relative to the SAME robot object, and " \
-                          "this is not the case.")
-        except:
-            raise Exception("The parameter 'old_dist_struct' must be a '_DistStructRobotAuto' object.")
 
     # end error handling
 
-    dist_struct = DistStructRobotAuto(self)
 
-    jac_dh, mth_dh = self.jac_geo(q, "dh")
+    jac_dh, mth_dh = self.jac_geo(q, "dh", htm)
 
     col_object_copy = []
 
@@ -51,64 +59,89 @@ def _check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, di
             col_object_copy[i].append(temp_copy)
 
 
-    #Create the list of all possible collision checks
-    list_col_check = []
+    #Create the list of all possible auto collision check
+    list_auto_col_check = []
     for i in range(n):
         for j in range(i+2,n):
             for isub in range(len(self.links[i].col_objects)):
                 for jsub in range(len(self.links[j].col_objects)):
-                    list_col_check.append([i,isub,j,jsub])
+                    list_auto_col_check.append([i,isub,j,jsub])
 
-    #Check if there is collision
+    #Create the list of all possible collisions
+    list_col_check = []
+    for i in range(n):
+        for isub in range(len(self.links[i].col_objects)):
+            for j in range(len(obstacles)):
+                list_col_check.append([i,isub,j])
+
+    #Check if there is any violation
     collided = False
-    ended = False
     message = "Ok!"
     info = []
 
-    while (not collided and not ended):
-        #Check joint limits:
-        k=0
-        while (not collided and k < n):
-            collided = self.q[k] < self.joint_limit[k,0]
-            if collided:
-                message="Joint number "+str(k)+" is below minimum limit."
-                info = [0,k]
-
-            k+=1
-
+    # Check joint limits:
+    if check_joint:
         k = 0
-        while (not collided and k < n):
-            collided = self.q[k] > self.joint_limit[k, 1]
+        while not collided and k < n:
+            collided = self.q[k] < self.joint_limit[k, 0]
             if collided:
-                message = "Joint number " + str(k) + " is above maximum limit."
-                info = [1,k]
+                message = "Joint number " + str(k) + " is below minimum limit."
+                info = [0, k]
 
             k += 1
 
-        # Check auto collision:
         k = 0
-        while (not collided and k < len(list_col_check)) :
+        while not collided and k < n:
+            collided = self.q[k] > self.joint_limit[k, 1]
+            if collided:
+                message = "Joint number " + str(k) + " is above maximum limit."
+                info = [1, k]
 
-            i = list_col_check[k][0]
-            isub = list_col_check[k][1]
-            j = list_col_check[k][2]
-            jsub = list_col_check[k][3]
+            k += 1
 
-            if old_dist_struct is None:
-                p_obj_0 = np.matrix(np.random.uniform(-100, 100, size=(3, 1)))
-            else:
-                p_obj_0 = old_dist_struct.get_item(i, isub, j, jsub).point_object
+    # Check collision with the obstacles
+    k = 0
+    while not collided and k < len(list_col_check):
 
-            p_obj_i, p_obj_j, d = Utils.compute_dist(col_object_copy[i][isub], col_object_copy[j][jsub] \
-                                                     , p_obj_0, tol, no_iter_max)
+        i = list_col_check[k][0]
+        isub = list_col_check[k][1]
+        j = list_col_check[k][2]
 
-            if d<dist_tol:
+        if Utils.compute_aabbdist(obstacles[j], col_object_copy[i][isub]) == 0:
+            _, _, d = Utils.compute_dist(obstacles[j], col_object_copy[i][isub] \
+                                                     , None, tol, no_iter_max)
+            if d < dist_tol:
                 collided = True
-                message = "Collision between link "+str(i)+" (col object "+str(isub)+") and link "+str(j)+" " \
-                            "(col object "+str(jsub)+")."
-                info = [2,i,isub,j,jsub]
+                message = "Collision between link " + str(i) + " (col object " + str(isub) + ") and obstacle "+str(j)+"."
+                info = [2, i, isub, j]
 
-            k+=1
-            ended = (k==len(list_col_check))
+        k += 1
+
+
+    # Check auto collision:
+    if check_auto:
+        k = 0
+        while not collided and k < len(list_auto_col_check):
+
+            i = list_auto_col_check[k][0]
+            isub = list_auto_col_check[k][1]
+            j = list_auto_col_check[k][2]
+            jsub = list_auto_col_check[k][3]
+
+            if Utils.compute_aabbdist(col_object_copy[i][isub], col_object_copy[j][jsub]) == 0:
+
+                _, _, d = Utils.compute_dist(col_object_copy[i][isub], col_object_copy[j][jsub] \
+                                                         , None, tol, no_iter_max)
+                if d < dist_tol:
+                    collided = True
+                    message = "Collision between link " + str(i) + " (col object " + str(isub) + ") and link " + str(
+                        j) + " " \
+                             "(col object " + str(jsub) + ")."
+                    info = [3, i, isub, j, jsub]
+
+            k += 1
+
+
+
 
     return (not collided), message, info
