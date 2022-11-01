@@ -291,6 +291,22 @@ class SmoothBox:
         return SmoothBox(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
 
     def aabb(self):
+        """
+    Compute the width, depth and height of an axis aligned bounding box (aabb) that
+    covers the object. It also considers the current orientation.
+
+    Returns
+    -------
+     width : positive float
+        The width of the box, in meters.
+
+     depth : positive float
+        The depth of the box, in meters.
+
+     height : positive float
+        The depth of the box, in meters.
+    """
+
         p1 = self.width * self.htm[:,0] + self.depth * self.htm[:,1] + self.height * self.htm[:,2]
         p2 = -self.width * self.htm[:, 0] + self.depth * self.htm[:, 1] + self.height * self.htm[:, 2]
         p3 = self.width * self.htm[:, 0] - self.depth * self.htm[:, 1] + self.height * self.htm[:, 2]

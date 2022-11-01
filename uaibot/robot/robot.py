@@ -341,7 +341,7 @@ class Robot:
 
     Important: it disregards the current htm of the base of the robot. That is,
     it assumes that robot.htm = np.identity(4). You can easily consider other
-    cases by transforming htm_target as Utils.inv_htm(robot.htm) @ htm_target.
+    cases by transforming htm_target as Utils.inv_htm(robot.htm) * htm_target.
 
     Uses an iterative algorithm.
 
@@ -452,7 +452,7 @@ class Robot:
     i-th DH or COM frame is always the 6 x n zero matrix, regardless of the 'q' and 'htm' chosen.
 
     jj_geo[i][j] could be alternatively computed numerically. For example, for axis='dh', by defining the function of q
-    f = lambda q_var: robot.jac_geo(q = q_var, htm = htm, axis = 'dh')[0][i][j].tolist()
+    f = lambda q_var: np.matrix(robot.jac_geo(q = q_var, htm = htm, axis = 'dh')[0][i][j])
     and then computing the numerical Jacobian as Utils.jac(f,q).
     However, this function  is faster and has greater numerical accuracy, since it is computed analytically
     instead of numerically.

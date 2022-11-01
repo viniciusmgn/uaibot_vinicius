@@ -98,14 +98,17 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
         A = np.block([[A], [-np.identity(n)]])
         b = np.block([[b], [-eta_joint * (self.joint_limit[:, 1] - q)]])
 
+    #Create auto collision constraints
+    #TO DO
+
     #Create objective function
 
     H = 2 * Jr.T * Jr + 2 * eps*np.identity(n)
     f = 2 * Jr.T * tg_dot_r
 
-    failure=False
     try:
         qdot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
+        failure = False
     except:
         qdot = np.matrix(np.zeros( (n,1) ))
         failure=True

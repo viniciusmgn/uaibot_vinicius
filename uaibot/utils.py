@@ -177,11 +177,29 @@ class Utils:
                          [0, 0, 0, 1]])
 
     @staticmethod
-    def htm_rand(desl=1,rot=np.pi/2):
+    def htm_rand(trn=1,rot=np.pi/2):
+        """
+      Returns a random homogeneous transformation matrix.
 
-        x = np.random.uniform(-desl / 2, desl / 2)
-        y = np.random.uniform(-desl / 2, desl / 2)
-        z = np.random.uniform(-desl / 2, desl / 2)
+      Parameters
+      ----------
+      trn: float
+          Maximum parameter for random translation in x, y and z.
+          (default: 1)
+
+      rot: float
+          Maximum parameter for random rotation in x, y and z.
+          (default: 1)
+
+      Returns
+      -------
+      htm : 4x4 numpy matrix
+          A homogeneous transformation matrix.
+      """
+
+        x = np.random.uniform(-trn / 2, trn / 2)
+        y = np.random.uniform(-trn / 2, trn / 2)
+        z = np.random.uniform(-trn / 2, trn / 2)
         ax = np.random.uniform(-rot / 2, rot / 2)
         ay = np.random.uniform(-rot / 2, rot / 2)
         az = np.random.uniform(-rot / 2, rot / 2)
@@ -191,7 +209,7 @@ class Utils:
     @staticmethod
     def inv_htm(htm):
         """
-      Given an homogeneous transformation matrix, compute its inverse.
+      Given a homogeneous transformation matrix, compute its inverse.
       It is faster than using numpy.linalg.inv in the case of HTMs.
       
       Parameters
@@ -728,8 +746,6 @@ class Utils:
 
         return kd_tree, limits, points_outside, points_inside
 
-
-
     @staticmethod
     def get_data_from_model(path):
         type = path[path.rfind(".") + 1:len(path) + 1]
@@ -1223,8 +1239,6 @@ class Utils:
         error = u-p+lam*(u**3)
         return u
 
-
-
     @staticmethod
     def fun_Int(v, h, L):
 
@@ -1357,7 +1371,6 @@ class Utils:
         dz = max(abs(delta[2, 0]) - (h1 + h2) / 2, 0)
 
         return np.sqrt(dx ** 2 + dy ** 2 + dz ** 2)
-
 
     @staticmethod
     def compute_dist(obj_a, obj_b, p_a_init=None, tol=0.001, no_iter_max=20):
