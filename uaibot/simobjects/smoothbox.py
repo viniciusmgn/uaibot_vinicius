@@ -288,7 +288,7 @@ class SmoothBox:
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
-        return Box(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
+        return SmoothBox(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
 
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
