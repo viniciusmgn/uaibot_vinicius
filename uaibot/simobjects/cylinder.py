@@ -275,6 +275,34 @@ class Cylinder:
         """Return a deep copy of the object, without copying the animation frames."""
         return Cylinder(self.htm, self.name + "_copy", self.radius, self.height, self.mass, self.color)
 
+    def aabb(self):
+        """
+    Compute the width, depth and height of an axis aligned bounding box (aabb) that
+    covers the object. It also considers the current orientation.
+
+    Returns
+    -------
+     width : positive float
+        The width of the box, in meters.
+
+     depth : positive float
+        The depth of the box, in meters.
+
+     height : positive float
+        The depth of the box, in meters.
+    """
+
+        p1 = 2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p2 = -2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p3 = 2*self.radius * self.htm[:, 0] - 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p4 = 2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] - self.height * self.htm[:, 2]
+
+        w = np.max([abs(p1[0, 0]), abs(p2[0, 0]), abs(p3[0, 0]), abs(p4[0, 0])])
+        d = np.max([abs(p1[1, 0]), abs(p2[1, 0]), abs(p3[1, 0]), abs(p4[1, 0])])
+        h = np.max([abs(p1[2, 0]), abs(p2[2, 0]), abs(p3[2, 0]), abs(p4[2, 0])])
+
+        return w, d, h
+
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
         """

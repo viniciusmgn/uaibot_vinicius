@@ -259,6 +259,24 @@ class Ball:
         """Return a deep copy of the object, without copying the animation frames."""
         return Ball(self.htm, self.name + "_copy", self.radius, self.mass, self.color)
 
+    def aabb(self):
+        """
+    Compute the width, depth and height of an axis aligned bounding box (aabb) that
+    covers the object. It also considers the current orientation.
+
+    Returns
+    -------
+     width : positive float
+        The width of the box, in meters.
+
+     depth : positive float
+        The depth of the box, in meters.
+
+     height : positive float
+        The depth of the box, in meters.
+    """
+        return 2 * self.radius, 2 * self.radius, 2 * self.radius
+
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
         """

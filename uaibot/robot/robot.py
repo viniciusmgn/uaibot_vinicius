@@ -23,6 +23,7 @@ from ._dyn_model import _dyn_model
 from ._vector_field import _vector_field
 from ._task_function import _task_function
 from ._coop_task_function import _coop_task_function
+from ._const_control import _const_control
 
 from ._gen_code import _gen_code
 from ._update_col_object import _update_col_object
@@ -287,7 +288,7 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration .
-        (default: the default joint configuration for the manipulator, q0).
+        (default: the current  joint configuration (robot.q) for the manipulator, q0).
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current HTM).
@@ -314,7 +315,7 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration.
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
     axis : string
         For which axis you want to compute the FK:
         'eef': for the end-effector;
@@ -341,7 +342,7 @@ class Robot:
 
     Important: it disregards the current htm of the base of the robot. That is,
     it assumes that robot.htm = np.identity(4). You can easily consider other
-    cases by transforming htm_target as Utils.inv_htm(robot.htm) @ htm_target.
+    cases by transforming htm_target as Utils.inv_htm(robot.htm) * htm_target.
 
     Uses an iterative algorithm.
 
@@ -384,7 +385,7 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration 
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
     axis : string
         For which axis you want to compute the FK:
         'eef': for the end-effector;
@@ -417,7 +418,7 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current htm).
@@ -436,7 +437,6 @@ class Robot:
     """
         return _jac_ana(self, q, htm)
 
-
     def jac_jac_geo(self, q=None, axis='eef', htm=None):
         """
     Compute the Jacobians of the columns of the geometric Jacobian in the joint variable 'q'.
@@ -453,7 +453,7 @@ class Robot:
     i-th DH or COM frame is always the 6 x n zero matrix, regardless of the 'q' and 'htm' chosen.
 
     jj_geo[i][j] could be alternatively computed numerically. For example, for axis='dh', by defining the function of q
-    f = lambda q_var: robot.jac_geo(q = q_var, htm = htm, axis = 'dh')[0][i][j].tolist()
+    f = lambda q_var: np.matrix(robot.jac_geo(q = q_var, htm = htm, axis = 'dh')[0][i][j])
     and then computing the numerical Jacobian as Utils.jac(f,q).
     However, this function  is faster and has greater numerical accuracy, since it is computed analytically
     instead of numerically.
@@ -465,7 +465,7 @@ class Robot:
     ----------
     q : n-dimensional numpy vector or array
         The manipulator's joint configuration
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
 
     axis : string
         For which axis you want to compute the FK:
@@ -581,7 +581,7 @@ class Robot:
  
     q : nd numpy vector or array
         The manipulator's joint configuration.
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
 
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
@@ -634,21 +634,175 @@ class Robot:
 
     q_a : nd numpy vector or array
         'robot_a'' joint configuration
-        (default: the default joint configuration for 'robot_a').
+        (default: the current  joint configuration (robot.q) for 'robot_a').
 
     q_b : md numpy vector or array
         'robot_b'' joint configuration
-        (default: the default joint configuration for 'robot_b').
+        (default: the current  joint configuration (robot.q) for 'robot_b').
 
     Returns
     -------
     r : 12-dimensional numpy column vector
-        The task function.
+        The task vector.
 
     jac_r : 12 x (n+m) numpy matrix
         The respective task Jacobian.
     """
         return _coop_task_function(robot_a, robot_b, htm_a_des, htm_a_b_des, q_a, q_b)
+
+    def const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dist_struct=None,
+                   eta_obs=0.5, eta_joint=0.5, eta_auto=0.5,
+                   dist_safe_obs=0.01, dist_safe_auto=0.01,
+                   max_dist_obs=np.inf, max_dist_auto = np.inf, task_rate_fun = 0.5, eps=0.001):
+        """
+    Computes the constrained joint velocity aiming a target pose (htm_des).
+    Consider three kind of constraints: collision with obstacles, joint limits and
+    auto collision.
+
+    The obstacles should be simple objects (see Utils.IS_SIMPLE for the list).
+
+    Parameters
+    ----------
+
+    htm_des :4x4 numpy array or 4x4 nested list
+        The desired pose for the end-effector of the robot.
+
+    q : nd numpy vector or array
+        The joint configuration in which we want to compute the control action.
+        (default: the current joint configuration for the robot).
+
+    htm : 4x4 numpy array or 4x4 nested list
+        The robot base's configuration.
+        (default: the same as the current HTM).
+
+    obstacles : list of simple objects
+        A list of obstacles as simple objects (see Utils.IS_SIMPLE)
+        (default: empty list).
+
+    dict_old_dist_struct: a dictionary that maps each obstacle to a 'DistStructRobotObj'
+        Used to speed up computation using data from a previous run. The output
+        'dict_dist_struct' of this function can be fed as this parameter in a next
+        call. If None is provided, this speed up is ignored.
+        (default: None)
+
+    eta_obs : positive float
+        Parameter that controls obstacle avoidance, measured in s^(-1)
+        (inverse seconds). The rule is that the rate of approximation
+        to each obstacle, in meters per seconds, should be at most:
+
+        eta_obs * (distance-safe_distance).
+
+        So, the higher is this value, the less the robot
+        is "afraid" of obstacles. Not that if this value is too high
+        there can be collisions. If this value is np.inf, obstacle avoidance
+        is skipped.
+        (default: 0.5 s^(-1)).
+
+    eta_joint : positive float
+        Parameter that controls joint limits avoidance, measured in s^(-1)
+        (inverse seconds). The rule is that the rate of approximation
+        to each joint limit, in meters per seconds, should be at most:
+
+        eta_joint * (distance to joint limit).
+
+        So, the higher is this value, the less the robot
+        is "afraid" of joint limits. Not that if this value is too high
+        there can be collisions. If this value is np.inf, joint limits
+        are skipped.
+        (default: 0.5 s^(-1)).
+
+    eta_joint : positive float
+        Parameter that controls joint limits avoidance, measured in s^(-1)
+        (inverse seconds). The rule is that the rate of approximation
+        to each joint limit, in meters per seconds, should be at most:
+
+        eta_joint * (distance to joint limit -safe_distance).
+
+        So, the higher is this value, the less the robot
+        is "afraid" of joint limits. Not that if this value is too high
+        there can be collisions. If this value is np.inf, joint limits
+        are skipped.
+        (default: 0.5 s^(-1)).
+
+    eta_auto : positive float
+        Parameter that controls auto collision avoidance, measured in s^(-1)
+        (inverse seconds). The rule is that the rate of approximation
+        between each non-sequential link, in meters per seconds, should be at most:
+
+        eta_auto * (distance -safe_distance).
+
+        So, the higher is this value, the less the robot
+        is "afraid" of auto collision. Not that if this value is too high
+        there can be collisions. If this value is np.inf, auto collision is
+        skipped.
+        (default: 0.5 s^(-1)).
+
+    dist_safe_obs : positive float
+        Parameter that controls a safety margin to collision to obstacles,
+        in meters.
+        (default: 0.01 meter).
+
+    dist_safe_auto : positive float
+        Parameter that controls a safety margin to auto collision,
+        in meters.
+        (default: 0.01 meter).
+
+    max_dist_obs : positive float
+        Controls the maximum distance considered to skip collision between the object
+        and obstacles. See the parameter 'max_dist' in the function 'compute_dist' of
+        the robot.
+        (default: np.inf).
+
+    max_dist_auto : positive float
+        Controls the maximum distance considered when skipping collision between the object
+        and itself (auto collision). See the parameter 'max_dist' in the function 'compute_dist' of
+        the robot.
+        (default: np.inf).
+
+    task_rate_fun : positive float or a function handle
+        const_fun should be either a function handle that receives a 6x1 numpy column vector and
+        outputs a 6x1 numpy column vector or a positive float.
+
+        If task_rate_fun is a function f(r), it controls the target task function decrease. So we
+        aim to have the task function decrease dr/dt as -f(r). In order to be suitable function, there
+        should exist a positive definite function V(r) such that grad -V(r).T * f(r) <=0. This is
+        not checked and is a responability of the user.
+
+        If task_rate_fun is a positive float, is the same result as using the function handle
+        lambda r : task_rate_fun*r. In this case V(r) = ||r||² is suitable.
+        (default: 0.5).
+
+    eps : positive float
+        Damping factor. Control inputs generated by this procedure can be quite noisy/discontinuous. The
+        higher is this value, the less is this behaviour. However, this can generate steady state errors
+        in the controller.
+        (default: 0.001).
+
+    Returns
+    -------
+
+    qdot, failure, r, dict_dist_struct
+
+    qdot : n-dimensional numpy column vector
+        The joint velocity that can be used to control.
+
+    failure: boolean
+        The controller is computed using a quadratic program. If the problem is unfeasible,
+        then this variable returns 'false. This typically happens when the configuration
+        'q' violates one of the constraints (collision to obstacle, joint limits or
+        auto collision).
+
+    r : 6-dimensional numpy column vector
+        The task vector.
+
+    dict_dist_struct : a dictionary that maps each obstacle to a 'DistStructRobotObj'
+        Used to speed up computation using data from a previous run. This output can be
+        fed as the parameter 'dict_old_dist_struct' in a next call.
+    """
+
+        return _const_control(self, htm_des, q, htm, obstacles, dict_old_dist_struct,
+                              eta_obs, eta_joint, eta_auto, dist_safe_obs, dist_safe_auto,
+                              max_dist_obs, max_dist_auto, task_rate_fun, eps)
 
     #######################################
     # Methods for simulation
@@ -995,41 +1149,55 @@ class Robot:
 
 
     #######################################
-    # Advanced methods
+    # Distance computation and collision
     #######################################
 
     def compute_dist(self, obj, q=None, htm=None, old_dist_struct=None, tol=0.0005,
-                     no_iter_max=20):
+                     no_iter_max=20, max_dist = np.inf):
         """
     Compute the  distance structure from each one of the robot's link to a
-    'simple' external object (ball, box or cylinder), given a joint and base 
+    'simple' external object (see Utils.IS_SIMPLE), given a joint and base
     configuration.
+
+    This function can be faster if some distance computations are avoided.
+    See the description of the parameter 'max_dist'.
 
     Use an iterative algorithm, based on projections
     (Von Neumann's cyclic projection algorithm).
 
     Parameters
     ----------
-    obj : a simple object (ball, box or cylinder)
+    obj : a simple object (see Utils.IS_SIMPLE)
         The external object for which the distance structure is going to be 
         computed, for each robot link.
+
     q : nd numpy vector or array
         The manipulator's joint configuration.
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
+
     htm : 4x4 numpy array or 4x4 nested list
         The robot base's configuration.
         (default: the same as the current htm).
+
     old_dist_struct : 'DistStructRobotObj' object
         'DistStructRobotObj' obtained previously for the same robot and external object.
         Can be used to enhance the algorithm speed using the previous closest
         point as an initial guess.
         (default: None).
+
     tol : positive float
         Tolerance for convergence in the iterative algorithm, in meters.
-        (default: 0.0005 m).        
+        (default: 0.0005 m).
+
     no_iter_max : positive int
         The maximum number of iterations for the algorithm.
-        (default: 20 iterations). 
+        (default: 20 iterations).
+
+    max_dist: positive float
+        The algorithm uses an axis aligned bounding box (aabb) to avoid some distance computations.
+        The algorithm skips a more precise distance computation if the distance between the aabb
+        of the primitive objects composing the link and 'obj' is less than 'max_dist' (in meters).
+        (default: infinite).
 
     Returns
     -------
@@ -1038,10 +1206,10 @@ class Robot:
         collision model. Contains a list of m 'DistStructLinkObj' objects.
     """
 
-        return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max)
+        return _compute_dist(self, obj, q, htm, old_dist_struct, tol, no_iter_max, max_dist)
 
     def compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005,
-                     no_iter_max=20):
+                     no_iter_max=20, max_dist = np.inf):
         """
     Compute the  distance structure from each one of the robot's links to itself
     (auto collision), given a joint and base configuration.
@@ -1051,6 +1219,9 @@ class Robot:
     This saves times. This verification should be done elsewhere (by checking if the
     configuration is inside the joint limits).
 
+    This function can be faster if some distance computations are avoided.
+    See the description of the parameter 'max_dist'.
+
     Use an iterative algorithm, based on projections
     (Von Neumann's cyclic projection algorithm).
 
@@ -1058,18 +1229,27 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration.
-        (default: the default joint configuration for the manipulator).
+        (default: the current  joint configuration (robot.q) for the manipulator).
+
     old_dist_struct : 'DistStructRobotAuto' object
         'DistStructRobotAuto' obtained previously for the same robot.
         Can be used to enhance the algorithm speed using the previous closest
         point as an initial guess.
         (default: None).
+
     tol : positive float
         Tolerance for convergence in the iterative algorithm, in meters.
         (default: 0.0005 m).
+
     no_iter_max : positive int
         The maximum number of iterations for the algorithm.
         (default: 20 iterations).
+
+    max_dist: positive float
+        The algorithm uses an axis aligned bounding box (aabb) to avoid some distance computations.
+        The algorithm skips a more precise distance computation if the distance between the aabb
+        of the primitive objects composing the link and 'obj' is less than 'max_dist' (in meters).
+        (default: infinite).
 
     Returns
     -------
@@ -1078,13 +1258,15 @@ class Robot:
         collision model. Contains a list of m 'DistStructLinkLink' objects.
     """
 
-        return _compute_dist_auto(self, q, old_dist_struct, tol, no_iter_max)
+        return _compute_dist_auto(self, q, old_dist_struct, tol, no_iter_max, max_dist)
 
-    def check_free_configuration(self, q=None, old_dist_struct=None, tol=0.0005, dist_tol=0.005,
-                     no_iter_max=20):
+    def check_free_configuration(self, q=None, htm=None, obstacles=[],
+                              check_joint=True, check_auto=True,
+                              tol=0.0005, dist_tol=0.005, no_iter_max=20):
         """
-    Check if the joint configuration q is in the free configuration, considering only
-    joint limits and auto collision. It also outputs a message about a possible violation.
+    Check if the joint configuration q is in the free configuration space, considering
+    joint limits, collision with obstacles and auto collision. It also outputs a message about a
+    possible violation.
 
     For efficiency purposes, the program halts in the first violation it finds (if there is any).
     So, the message, if any, is only about one of the possible violations. There can be more.
@@ -1093,38 +1275,61 @@ class Robot:
     ----------
     q : nd numpy vector or array
         The manipulator's joint configuration.
-        (default: the default joint configuration for the manipulator).
+        (default: the current joint configuration (robot.q) for the manipulator).
+
+    obstacles : list of simple objects
+        A list of obstacles as simple objects (see Utils.IS_SIMPLE)
+        (default: empty list).
+
+    htm : 4x4 numpy array or 4x4 nested list
+        The robot base's configuration.
         (default: the same as the current htm).
-    old_dist_struct : 'DistStructRobotAuto' object
-        'DistStructRobotAuto' obtained previously for the same robot and external object.
-        Can be used to enhance the algorithm speed using the previous closest
-        point as an initial guess.
-        (default: None).
+
+
+    check_joint: boolean
+        If joint limits should be considered or not.
+        (default: True).
+
+    check_auto: boolean
+        If auto collision should be considered or not.
+        (default: True).
+
     tol : positive float
         Tolerance for convergence in the iterative algorithm, in meters.
         (default: 0.0005 m).
+
     dist_tol : positive float
         The tolerance to consider that two links are colliding.
         (default: 0.005 m).
+
     no_iter_max : positive int
-        The maximum number of iterations for the algorithm.
+        The maximum number of iterations for the distance computing algorithm.
         (default: 20 iterations).
 
     Returns
     -------
     is_free : boolean
         If the configuration is free or not.
+
     message: string
         A message about what is colliding (is otherwise just 'Ok!').
+
     info: list
         Contains a list with information of the violation of free space (if there is any, otherwise
         it is empty). The first element is the violation type: either 0 (lower joint limit violated), 1 (upper joint
-        limit violated) and 2 (collision between links). The last elements depends on the violation type.
-        If lower joint limit or upper joint limit, contains which joint was violated. If collision, contains
-        the 4-tuple [i,isub,j,jsub], containing the first link number i, the number of collision object in the first
-        link isub, the second link number j and the number of collision object in the second
-        link jsub.
+        limit violated) 2 (collision with obstacles) and 3 (collision between links). The last elements depends on
+        the violation type.
+
+        If lower joint limit or upper joint limit, contains which joint was violated.
+
+        If collision with obstacles, contains the list [i,isub,j], containing the index of the link i
+        i, the index of the collision object in the link isub and the obstacle index in the list, j.
+
+        If collision, contains the list [i,isub,j,jsub], containing the index of the first link i,
+        the index of the collision object in the first link isub, the index of the second link j and
+        the index of the collision object in the second link jsub.
+
 
     """
 
-        return _check_free_configuration(self, q, old_dist_struct, tol, dist_tol, no_iter_max)
+        return _check_free_configuration(self, q, htm, obstacles, check_joint, check_auto, tol, dist_tol, no_iter_max)
