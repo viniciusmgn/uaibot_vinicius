@@ -13,8 +13,8 @@ import time
 def create_ballpoints(N):
     balls = []
     for i in range(N):
-        ball_link = Ball(name=f'LinkBall{i}', radius=0.03, color='black')
-        ball_obj = Ball(name=f'ObjBall{i}', radius=0.03, color='white')
+        ball_link = Ball(name=f'LinkBall{i}', radius=0.02, color='black')
+        ball_obj = Ball(name=f'ObjBall{i}', radius=0.02, color='white')
         balls.append((ball_link, ball_obj))
     
     return balls
@@ -121,26 +121,6 @@ def _control_demo_davinci(arm=0):
 
         return dist_vect, gradD_list, struct
     
-
-    def dist_computation2(q, old_struct):
-        dist_wall_1 = robot.compute_dist(
-            obj=wall1, q=q, old_dist_struct=old_struct[0])
-        dist_wall_2 = robot.compute_dist(
-            obj=wall2, q=q, old_dist_struct=old_struct[1])
-        dist_wall_3 = robot.compute_dist(
-            obj=wall3, q=q, old_dist_struct=old_struct[2])
-        dist_wall_4 = robot.compute_dist(
-            obj=wall4, q=q, old_dist_struct=old_struct[3])
-
-        struct = [dist_wall_1, dist_wall_2, dist_wall_3, dist_wall_4]
-
-        gradD_list = np.block(
-            [[dist_wall_1.jac_dist_mat], [dist_wall_2.jac_dist_mat], [dist_wall_3.jac_dist_mat],
-             [dist_wall_4.jac_dist_mat]])
-        dist_vect = np.block(
-            [[dist_wall_1.dist_vect], [dist_wall_2.dist_vect], [dist_wall_3.dist_vect], [dist_wall_4.dist_vect]])
-
-        return dist_vect, gradD_list, struct
 
     # Target pose definition
     pose_tg = []
@@ -252,18 +232,25 @@ def _control_demo_davinci(arm=0):
             A = A[idx[:Ntest], :]
             qdot_max[1:-1] = 100
             qdot_min[1:-1] = -100
-            # for idx, b_ in enumerate(b):
-            #     if b_ >= 0.06:
-            #         b[idx] = 100
+            
+            # AutoCollision
+            auto_dist = robot.compute_dist_auto()
+            dist_vect_auto, jac_dist_auto = auto_dist.dist_vect, auto_dist.jac_dist_mat
+            dist_vect_auto, jac_dist_auto = np.array(dist_vect_auto), np.array(jac_dist_auto)
+            idx_auto = np.argsort(dist_vect_auto.ravel())
+            b_auto = eta * (np.array(dist_vect_auto).reshape(-1, 1) - dist_safe)
+            b_auto = b_auto[idx_auto[:-1]]
+            A_auto = -np.array(jac_dist_auto).reshape(-1, n)
+            A_auto = A_auto[idx_auto[:-1], :]
 
             H = 2 * (jac_r.T * jac_r) + 0.001 * np.identity(n)
             f = (2 * K * r.T @ jac_r).T
             q6_rest = np.array([0, 0, 0, 0, 0, -1, 1, 0, 0]).reshape(1, -1)
             q7_rest = np.array([0, 0, 0, 0, 0, -1, 0, 1, 0]).reshape(1, -1)
-            A = np.block([[A], [np.identity(n)], [-np.identity(n)], [q6_rest], [q7_rest], [-q6_rest], [-q7_rest]])
+            A = np.block([[A], [A_auto], [np.identity(n)], [-np.identity(n)], [q6_rest], [q7_rest], [-q6_rest], [-q7_rest]])
             # ,
             # ,
-            b = np.block([[b], [xi * qdot_max], [-xi * qdot_min], [-sigma * (q[6] - q[5] - q65_c)], [-sigma * (q[7] - q[5] - q75_c)], [sigma * (q[6] - q[5] - q65_c)], [sigma * (q[7] - q[5] - q75_c)]])
+            b = np.block([[b], [b_auto], [xi * qdot_max], [-xi * qdot_min], [-sigma * (q[6] - q[5] - q65_c)], [-sigma * (q[7] - q[5] - q75_c)], [sigma * (q[6] - q[5] - q65_c)], [sigma * (q[7] - q[5] - q75_c)]])
             deltaT_build = time.time() - build_t0
             test1.append(-sigma * (q[6] - q[5] - q65_c))
             test2.append(-sigma * (q[7] - q[5] - q75_c))
@@ -305,11 +292,13 @@ def _control_demo_davinci(arm=0):
                 print(error_pos, error_ori)
 
             iteration_end  = i>imax
+    print(A_auto.shape, b_auto.shape)
+    print(A.shape, b.shape)
     print(converged, error_qp, iteration_end, i)
-    for i in robot.links:
-        for j in i.col_objects:
-            sim.add(j[0])
-    robot.update_col_object(0)
+    # for i in robot.links:
+    #     for j in i.col_objects:
+    #         sim.add(j[0])
+    # robot.update_col_object(0)
     # Run simulation
     sim.run()
 
@@ -322,5 +311,5 @@ def _control_demo_davinci(arm=0):
     fig = Utils.plot(hist_time, hist_r, "", "Time (s)", "Task function",
                      ["posx", "posy", "posz", "orix", "oriy", "oriz"])
 
-    return sim, (build_ts, solve_ts, hist_q, test1, test2)
+    return sim, (build_ts, solve_ts, hist_q, test1, test2, robot)
 
