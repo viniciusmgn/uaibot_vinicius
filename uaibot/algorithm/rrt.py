@@ -26,6 +26,7 @@ class RRTNode:
     def index(self):
         return self._index
 
+
     #######################################
     # Constructor
     #######################################
@@ -43,10 +44,10 @@ class RRTNode:
 
     def __repr__(self):
 
-        string = "RRT Node with id" + str(self.index) + "': \n\n"
-        string += "Value: "+str(round(self.value_node,5)) + "': \n\n"
-        string += "Parent node: "+(str(self.parent.index) if (not parent is None) else "root node")+ "': \n\n"
-        string += "Children nodes: "+str([node.index for node in self.children])+ "': \n\n"
+        string = "RRT Node with id " + str(self.index) + ": \n\n"
+        string += "Value: "+str(round(self.value_node,5)) + " \n"
+        string += "Parent node: "+(str(self.parent.index) if (not self.parent is None) else "root node")+ " \n"
+        string += "Children nodes: "+str([node.index for node in self.children])+ " \n"
         string += "Configuration: "+str(self.q.T)
 
         return string
@@ -70,6 +71,9 @@ class RRTNode:
         list_node=[]
         while not current_node is None:
             list_node.append(current_node)
+            current_node = current_node.parent
+
+        list_node.reverse()
 
         return list_node
 
@@ -106,8 +110,8 @@ class RRTEdge:
 
     def __repr__(self):
 
-        string = "RRT Edge from node" + str(self.from_node.index) + " to "+ str(self.to_node.index) +"': \n\n"
-        string += "Weight: "+str(round(self.weight,5)) + "': \n\n"
+        string = "RRT Edge from node " + str(self.from_node.index) + " to "+ str(self.to_node.index) +": \n\n"
+        string += "Weight: "+str(round(self.weight,5)) + "\n"
         return string
 
 
@@ -127,7 +131,7 @@ class RRTTree:
 
     @property
     def list_edge(self):
-        return self._list_node
+        return self._list_edge
 
     @property
     def fun_eval_node(self):
@@ -162,7 +166,7 @@ class RRTTree:
     #######################################
 
     def __init__(self, root_q, fun_eval_node, fun_free, q_inf, q_sup,
-                 fun_dist_node = lambda q1, q2 : np.linalg.norm(q1-q2), min_dist=0.01, step_size=0.01):
+                 fun_dist_node = lambda q1, q2 : np.linalg.norm(q1-q2), min_dist=0.01, step_size=0.4):
 
         self._root_node = RRTNode(root_q, fun_eval_node(root_q), 0)
         self._fun_eval_node = fun_eval_node
@@ -175,6 +179,9 @@ class RRTTree:
         self._q_inf = q_inf
         self._q_sup = q_sup
         self._step_size = step_size
+
+
+
 
     #######################################
     # Std. Print
@@ -193,7 +200,7 @@ class RRTTree:
 
         list_dist=[]
         for i in range(len(self.list_node)):
-            list_dist.append(self.fun_dist_node(q_query, self.list_node[i]))
+            list_dist.append(self.fun_dist_node(q_query, self.list_node[i].q))
 
         ind = np.argsort(list_dist)
 
@@ -205,38 +212,55 @@ class RRTTree:
 
     def sample_free_config(self):
 
+
         n = np.shape(self.root_node.q)[0]
-
         ok = False
-
         while not ok:
             q_rand = np.matrix(np.zeros( (n,1) ))
             for i in range(n):
-                q_rand[i,0] = q_inf[i,0] + (q_sup[i,0]-q_inf[i,0])*np.random.uniform(0,1)
+                q_rand[i,0] = self.q_inf[i,0] + (self.q_sup[i,0]-self.q_inf[i,0])*np.random.uniform(0,1)
 
             ok = self.fun_free(q_rand)
 
         return q_rand
 
-    def add_node_tree(self):
+    def config_inside_bounds(self, q):
 
-        ok = False
+        inside = True
+        n = np.shape(self.root_node.q)[0]
+        k=0
 
-        while not ok:
-            q_rand = self.sample_free_config()
-            node_prox = self.nearest_neighbors(q_rand)
-            q_prox = node_prox.q
-            dir = (q_rand-q_prox)/(0.0001 + np.linalg.norm(q_rand-q_prox))
-            q_target = q_prox + np.random.uniform(0.2*self.step_size, self.step_size) * dir
+        while inside and k < n:
+            inside = self.q_sup[k, 0] >= q[k, 0] >= self.q_inf[k, 0]
+            k+=1
 
-            ok = self.is_path_free(q_prox, q_target)
+        return inside
 
-            if ok:
-                new_node = RRTNode(q_target, self.fun_eval_node(q_target), len(list_node))
-                new_node.set_parent(node_prox)
-                new_edge = RRTEdge(node_prox, new_node)
-                self.list_node.append(new_node)
-                self.list_edge.append(new_edge)
+    def add_node_tree(self, k=1):
+
+
+        if k==1:
+            ok = False
+
+            while not ok:
+
+                q_rand = self.sample_free_config()
+                node_prox = self.nearest_neighbors(q_rand)
+                q_prox = node_prox.q
+                dir = (q_rand - q_prox) / (0.0001 + np.linalg.norm(q_rand - q_prox))
+                q_target = q_prox + np.random.uniform(0.2 * self.step_size, self.step_size) * dir
+
+                ok = self.config_inside_bounds(q_target) and self.is_path_free(q_prox, q_target)
+
+                if ok:
+                    new_node = RRTNode(q_target, self.fun_eval_node(q_target), len(self.list_node))
+                    new_node.set_parent(node_prox)
+                    new_edge = RRTEdge(node_prox, new_node)
+                    self.list_node.append(new_node)
+                    self.list_edge.append(new_edge)
+        else:
+            for i in range(k):
+                self.add_node_tree(1)
 
     def is_path_free(self, q_init, q_end):
 
@@ -248,6 +272,17 @@ class RRTTree:
                                                                                              q_end)
         else:
             return False
+
+    def node_smallest_value(self):
+
+        min_node = self.root_node
+
+        for node in self.list_node:
+            if node.value_node < min_node.value_node:
+                min_node = node
+
+        return min_node
+
 
 
 

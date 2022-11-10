@@ -19,3 +19,4 @@ from uaibot.simobjects.vector import *
 from uaibot.simobjects.rigidobject import *
 from uaibot.simobjects.group import *
 from uaibot.simobjects.htmldiv import *
+from uaibot.algorithm.rrt import *
