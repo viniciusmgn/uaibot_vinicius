@@ -73,6 +73,40 @@ def heatmatp(robot, q, obstacles, i, j, res=30):
     
     return mat, msgs
 
+right_foot = Box(htm=Utils.trn([0.26, -0.26, 0.09]), width=0.25, height=0.19, depth=1.4, opacity=0.5)
+left_foot = Box(htm=Utils.trn([-0.46, -0.26, 0.09]), width=0.25, height=0.19, depth=1.4, opacity=0.5)
+center_foot = Box(htm=Utils.trn([-0.1037, -0.52, 0.21]), width=0.62, height=0.44, depth=0.8, opacity=0.5)
+cable_rest = Box(htm=Utils.trn([-0.1037, -0.93, 0.4]), width=0.35, height=0.82, depth=0.35, opacity=0.5)
+tower = Box(htm=Utils.trn([-0.10, -0.275, 0.9]), width=0.2, height=1.7, depth=0.19, opacity=0.5)
+stat_parts = [right_foot, left_foot, center_foot, cable_rest, tower]
+
+def auto_collision_helper(robot_, q=None, stat_parts=stat_parts, old_struct=[None, None, None, None, None], max_dist=np.inf):
+    """Computes autocollision between joints and stationary part (chest) of davinci"""
+    dist_vect, gradD_list, struct = [], [], []
+    n = len(robot_.links)
+
+    for i, obj in enumerate(stat_parts):
+        dist_struct = robot_.compute_dist(obj, q=q, old_dist_struct=old_struct[i], max_dist=max_dist)
+        dist, grad = np.array(dist_struct.dist_vect), np.array(dist_struct.jac_dist_mat)
+        idxs_aux = 1 - np.zeros_like(dist, dtype=bool).ravel()
+
+        #Skip first joint distances
+        for k, d in enumerate(dist_struct):
+            if d.link_number == 0:
+                idxs_aux[k] = False
+        
+        dist = dist[idxs_aux.astype(bool)]
+        grad = grad[idxs_aux.astype(bool)]
+        if dist.size > 0:
+            dist_vect.append(dist)
+            gradD_list.append(grad)
+        struct.append(dist_struct)
+    
+    dist_vect = np.array(dist_vect).reshape(-1, 1)
+    gradD_list = np.array(gradD_list).reshape(-1, n)
+
+    return dist_vect, gradD_list, struct
+
 
 def _control_demo_davinci(arm=0):
     solvers.options['show_progress'] = False
@@ -108,13 +142,14 @@ def _control_demo_davinci(arm=0):
 
         return ok1 and ok2, error_pos, error_ori
 
-    def dist_computation(q, old_struct, obstacles=[wall1, wall2, wall3, wall4, wall5]):
+    def dist_computation(q, old_struct, obstacles=[wall1, wall2, wall3, wall4, wall5], max_dist=np.inf):
         dist_vect, gradD_list, struct = [], [], []
         for i, obstacle in enumerate(obstacles):
-            dist = robot.compute_dist(obj=obstacle, q=q, old_dist_struct=old_struct[i])
+            dist = robot.compute_dist(obj=obstacle, q=q, old_dist_struct=old_struct[i], max_dist=max_dist)
             struct.append(dist)
-            dist_vect.append(dist.dist_vect)
-            gradD_list.append(dist.jac_dist_mat)
+            if dist.dist_vect.size > 0:
+                dist_vect.append(dist.dist_vect)
+                gradD_list.append(dist.jac_dist_mat)
 
         dist_vect = np.array(dist_vect).reshape(-1, 1)
         gradD_list = np.array(gradD_list).reshape(-1, n)
@@ -125,9 +160,12 @@ def _control_demo_davinci(arm=0):
     # Target pose definition
     pose_tg = []
     #pose_tg.append(Utils.trn([0.2, 0.8, 0.7]) @ Utils.rotz(np.deg2rad(-200)) @ Utils.rotx(np.deg2rad(250)))
-    pose_tg.append(Utils.trn([0.3, 1, 1.2]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
-    pose_tg.append(Utils.trn([0.2, 0.7, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130))) # rotz -100 ou -130
-    pose_tg.append(Utils.trn([0.3, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
+    
+    #pose_tg.append(Utils.trn([0.2, 0.7, 1.2]) @ Utils.rotx(np.deg2rad(210)) @ Utils.rotz(np.deg2rad(-120)))
+    pose_tg.append(Utils.trn([0.3 - 0.8, 0.7, .7]) @ Utils.rotx(np.deg2rad(130)) @ Utils.rotz(np.deg2rad(-100)) @ Utils.roty(np.deg2rad(-12)))
+    #pose_tg.append(Utils.trn([0.2, 0.7, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130))) # rotz -100 ou -130
+    #pose_tg.append(Utils.trn([0.3, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
+    
     # pose_tg.append(Utils.trn([-0.1, 0.8, 1]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-130)))
     # pose_tg.append(Utils.trn([-0.5, 0.8, 0.7]) @ Utils.rotx(np.deg2rad(200)) @ Utils.rotz(np.deg2rad(-150)))
 
@@ -146,6 +184,7 @@ def _control_demo_davinci(arm=0):
     eta = 0.5
     sigma = 0.2
     dist_safe = 0.01
+    max_dist = np.inf
     xi = 1
     h = 0.00002
     q = robot.q.astype(float)
@@ -155,7 +194,11 @@ def _control_demo_davinci(arm=0):
 
     # Initializations
     obstacles = [wall1, wall2, wall3, wall4, wall5]
+    obstacles = [wall1, wall2, wall3, wall4]
+    #obstacles = [wall3]
     struct = [None,] * len(obstacles)
+    auto_struct = None
+    auto_struct2 = [None,] * len(stat_parts)
 
     i = 1
     imax = round((47.4/2)/dt)
@@ -175,6 +218,7 @@ def _control_demo_davinci(arm=0):
 
     # Changing Initial configuration
     qaux = q.copy()
+    qaux[3] = -np.deg2rad(179)
     qaux[4] = -np.pi/2
     qaux[5] = -np.deg2rad(120)
     qaux[6] = -np.deg2rad(110)
@@ -216,7 +260,7 @@ def _control_demo_davinci(arm=0):
 
             # Compute dist_vect, dist_vect_dot and the distance Jacobian
             build_t0 = time.time()
-            dist_vect, gradD_list, struct = dist_computation(q, struct, obstacles=obstacles)#, obstacles=[wall1, wall2, wall3, wall4])
+            dist_vect, gradD_list, struct = dist_computation(q, struct, obstacles=obstacles, max_dist=max_dist)#, obstacles=[wall1, wall2, wall3, wall4])
             if i == 1:
                 print(dist_vect.shape, gradD_list.shape)
             # dist_vect_next, gradD_list_next, struct = dist_computation(q + qdot * dt, struct)
@@ -234,26 +278,32 @@ def _control_demo_davinci(arm=0):
             qdot_min[1:-1] = -100
             
             # AutoCollision
-            auto_dist = robot.compute_dist_auto()
-            dist_vect_auto, jac_dist_auto = auto_dist.dist_vect, auto_dist.jac_dist_mat
+            auto_struct = robot.compute_dist_auto(max_dist=max_dist)
+            dist_vect_auto, jac_dist_auto = auto_struct.dist_vect, auto_struct.jac_dist_mat
             dist_vect_auto, jac_dist_auto = np.array(dist_vect_auto), np.array(jac_dist_auto)
             idx_auto = np.argsort(dist_vect_auto.ravel())
             b_auto = eta * (np.array(dist_vect_auto).reshape(-1, 1) - dist_safe)
-            b_auto = b_auto[idx_auto[:-1]]
+            b_auto = b_auto[idx_auto]
             A_auto = -np.array(jac_dist_auto).reshape(-1, n)
-            A_auto = A_auto[idx_auto[:-1], :]
+            A_auto = A_auto[idx_auto, :]
+            b_auto2, A_auto2, auto_struct2 = auto_collision_helper(robot, old_struct=auto_struct2, max_dist=max_dist)
+            b_auto2 = eta * (b_auto2 - dist_safe)
+            A_auto2 = -A_auto2
 
             H = 2 * (jac_r.T * jac_r) + 0.001 * np.identity(n)
             f = (2 * K * r.T @ jac_r).T
             q6_rest = np.array([0, 0, 0, 0, 0, -1, 1, 0, 0]).reshape(1, -1)
             q7_rest = np.array([0, 0, 0, 0, 0, -1, 0, 1, 0]).reshape(1, -1)
-            A = np.block([[A], [A_auto], [np.identity(n)], [-np.identity(n)], [q6_rest], [q7_rest], [-q6_rest], [-q7_rest]])
+            A = np.block([[A], [A_auto], [A_auto2], [np.identity(n)], [-np.identity(n)], [q6_rest], [q7_rest], [-q6_rest], [-q7_rest]])
             # ,
             # ,
-            b = np.block([[b], [b_auto], [xi * qdot_max], [-xi * qdot_min], [-sigma * (q[6] - q[5] - q65_c)], [-sigma * (q[7] - q[5] - q75_c)], [sigma * (q[6] - q[5] - q65_c)], [sigma * (q[7] - q[5] - q75_c)]])
+            b = np.block([[b], [b_auto], [b_auto2], [xi * qdot_max], [-xi * qdot_min], [-sigma * (q[6] - q[5] - q65_c)], [-sigma * (q[7] - q[5] - q75_c)], [sigma * (q[6] - q[5] - q65_c)], [sigma * (q[7] - q[5] - q75_c)]])
             deltaT_build = time.time() - build_t0
-            test1.append(-sigma * (q[6] - q[5] - q65_c))
-            test2.append(-sigma * (q[7] - q[5] - q75_c))
+            
+            if dist_vect.size <= 0:
+                dist_vect = np.array([[4]])
+            test1.append((dist_vect.shape, gradD_list.shape))
+            test2.append(((A_auto.shape, b_auto.shape), (A_auto2.shape, b_auto2.shape)))
 
             # Solve the quadratic program
             solve_t0 = time.time()
@@ -302,6 +352,7 @@ def _control_demo_davinci(arm=0):
     # Run simulation
     sim.run()
 
+    print(type(hist_dist))
     # Plot graphs
     Utils.plot(hist_time, hist_dist, "", "Time (s)", "True distance (m)", "dist")
     Utils.plot(hist_time, hist_q, "", "Time (s)", "Joint configuration (rad)", "q")
