@@ -24,6 +24,7 @@ from ._vector_field import _vector_field
 from ._task_function import _task_function
 from ._coop_task_function import _coop_task_function
 from ._const_control import _const_control
+from ._const_control_mod import _const_control_mod
 
 from ._gen_code import _gen_code
 from ._update_col_object import _update_col_object
@@ -42,6 +43,7 @@ from ._create_kuka_lbr_iiwa import _create_kuka_lbr_iiwa
 from ._create_abb_crb import _create_abb_crb
 from ._create_darwin_mini import _create_darwin_mini
 from ._create_kuka_kr5_per import _create_kuka_kr5_per
+from ._create_franka_ermika_3 import _create_franka_ermika_3
 
 #teste
 #from robot._create_davinci import _create_davinci
@@ -803,6 +805,15 @@ class Robot:
                               eta_obs, eta_joint, eta_auto, dist_safe_obs, dist_safe_auto,
                               max_dist_obs, max_dist_auto, task_rate_fun, eps)
 
+    def const_control_mod(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dist_struct=None,
+                   eta_obs=0.5, eta_joint=0.5, eta_auto=0.5,
+                   dist_safe_obs=0.01, dist_safe_auto=0.01,
+                   max_dist_obs=np.inf, max_dist_auto = np.inf, task_rate_fun = 0.5, eps=0.001):
+
+
+        return _const_control_mod(self, htm_des, q, htm, obstacles, dict_old_dist_struct,
+                              eta_obs, eta_joint, eta_auto, dist_safe_obs, dist_safe_auto,
+                              max_dist_obs, max_dist_auto, task_rate_fun, eps)
     #######################################
     # Methods for simulation
     #######################################
@@ -851,6 +862,9 @@ class Robot:
             Object to be detached.
     """
         _detach_object(self, obj)
+
+    def set_htm_to_eef(self, htm):
+        self._htm_n_eef = htm
 
     #######################################
     # Robot constructors
@@ -1019,6 +1033,39 @@ class Robot:
 
     """
         base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_kuka_lbr_iiwa(htm, name, color, opacity)
+        return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
+
+    @staticmethod
+    def create_franka_ermika_3(htm=np.identity(4), name='frankaermika', color="silver", opacity=1, eef_frame_visible=True):
+        """
+    Create a Franka Ermika 3, a seven degree of freedom manipulator.
+    Model taken from the ROS github repository (https://github.com/BolunDai0216/FR3Env/tree/d5218531471cadafd395428f8c2033f6feeb3555/FR3Env/robots/meshes/visual).
+
+    Parameters
+    ----------
+    htm : 4x4 numpy array or 4x4 nested list
+        The initial base configuration for the robot.
+        (default: np.identity(4))
+
+    name : string
+        The robot name.
+        (default: 'frankaermika').
+
+    htm : color
+        A HTML-compatible string representing the object color.
+        (default: 'silver')'.
+
+    opacity : positive float between 0 and 1
+        The opacity of the robot. 1 = fully opaque and 0 = transparent.
+        (default: 1)
+
+    Returns
+    -------
+    robot : Robot object
+        The robot.
+
+    """
+        base_3d_obj, links, htm_base_0, htm_n_eef, q0, joint_limits = _create_franka_ermika_3(htm, name, color, opacity)
         return Robot(name, links, base_3d_obj, htm, htm_base_0, htm_n_eef, q0, eef_frame_visible, joint_limits)
 
     @staticmethod

@@ -277,6 +277,30 @@ class Ball:
     """
         return 2 * self.radius, 2 * self.radius, 2 * self.radius
 
+    #Generate samples
+    def generate_samples(self, delta=0.025):
+
+        N = round(self.radius / delta)+1
+        P = np.matrix(np.zeros((3, 0)))
+        for i in range(N):
+            phi =  np.pi*(i/N)
+            M = round(N*np.sin(phi))+1
+            for j in range(M):
+                theta = 2 * np.pi *(j/M)
+                x = self.radius * np.sin(phi) * np.cos(theta)
+                y = self.radius * np.sin(phi) * np.sin(theta)
+                z = self.radius * np.cos(phi)
+                P = np.block([P, np.matrix([x, y,  z]).transpose()])
+
+
+
+        for i in range(np.shape(P)[1]):
+            P[:,i] = self.htm[0:3,0:3]*P[:,i]+self.htm[0:3,-1]
+
+        return P
+
+
+
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
         """

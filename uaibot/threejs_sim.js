@@ -1,6 +1,6 @@
 import { Object3D, Vector3, BoxBufferGeometry, Color, Mesh, MeshBasicMaterial, PerspectiveCamera, OrthographicCamera,
 Scene, WebGLRenderer, AmbientLight, DirectionalLight, HemisphereLight, MeshStandardMaterial,
-AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
+AxesHelper, GridHelper, Matrix4, SphereBufferGeometry, CylinderBufferGeometry, ConeGeometry, Group, LoadingManager, MeshPhysicalMaterial, Vector2, FrontSide,
 	BackSide, DoubleSide, PMREMGenerator, TextureLoader, PointLight, UVMapping, CubeReflectionMapping, CubeRefractionMapping,
 	EquirectangularReflectionMapping, EquirectangularRefractionMapping, CubeUVReflectionMapping,
 	CubeUVRefractionMapping, RepeatWrapping, ClampToEdgeWrapping, MirroredRepeatWrapping,
@@ -102,6 +102,18 @@ class Cylinder extends Objsim{
 		const cylinder = new Mesh( geometry, _material);
 		cylinder.matrixAutoUpdate = false;
 		this.shape = cylinder;
+	}
+}
+
+class Cone extends Objsim{
+	constructor(_radius, _height, _frames, _material){
+		super(_frames);
+		this.radius = _radius;
+		this.height = _height;
+		const geometry = new ConeGeometry( this.radius, this.height, 20, 5, false, 0.0, 6.28 );
+		const cone = new Mesh( geometry, _material);
+		cone.matrixAutoUpdate = false;
+		this.shape = cone;
 	}
 }
 
@@ -591,7 +603,7 @@ if (showWorldFrame) {
 }
 
 if (showGrid) {
-	const gridHelper = new GridHelper(3, 6);
+	const gridHelper = new GridHelper(6, 12);
 	scene.add(gridHelper);
 	gridHelper.rotation.x = 3.14 / 2;
 }

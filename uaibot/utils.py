@@ -31,12 +31,12 @@ class Utils:
                              'pointlight.', 'frame.', 'model3d.', 'links.', 'pointcloud.', 'vector.', 'rigidobject.',
                              '.group', '.htmldiv']
 
-    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.SmoothBox']
+    IS_SIMPLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.Cylinder', 'uaibot.SmoothBox', 'uaibot.Cone']
 
     IS_GROUPABLE = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Frame',
-                    'uaibot.RigidObject', 'uaibot.Group', 'uaibot.Robot', 'uaibot.PointLight']
+                    'uaibot.RigidObject', 'uaibot.Group', 'uaibot.Robot', 'uaibot.PointLight', 'uaibot.Cone']
 
-    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Robot',
+    IS_OBJ_SIM = ['uaibot.Ball', 'uaibot.Box', 'uaibot.SmoothBox', 'uaibot.Cylinder', 'uaibot.Cone', 'uaibot.Robot',
                   'uaibot.PointLight', 'uaibot.Frame', 'uaibot.PointCloud', 'uaibot.Vector',
                   'uaibot.RigidObject', 'uaibot.Group', 'uaibot.HTMLDiv']
 
@@ -308,6 +308,7 @@ class Utils:
 
         return alpha, beta, gamma
 
+
     @staticmethod
     def dp_inv(mat, eps = 0.001):
         """
@@ -363,7 +364,7 @@ class Utils:
         if not (str(type(f)) == "<class 'function'>"):
             raise Exception("The parameter 'f' must be a function handle.")
 
-        if not str(type(x)) == "<class 'numpy.array'>" and not str(type(x)) == "<class 'numpy.matrix'>":
+        if not str(type(x)) == "<class 'numpy.ndarray'>" and not str(type(x)) == "<class 'numpy.matrix'>":
             raise Exception("Parameter 'x' should be a numpy array/matrix")
 
         if not(np.shape(x)[1] == 1):
@@ -1337,19 +1338,17 @@ class Utils:
 
         coef = []
         for val in x:
-            coef.append(exp(-h * (val - minval)))
+            coef.append(exp(-(val - minval)/h))
             s += coef[-1]
 
         coef = [c/s for c in coef]
 
         sselect = 0 * y[0]
         for i in range(len(coef)):
-            sselect+=coef[i]*y[i]
+            sselect += coef[i] * y[i]
 
-        return sselect
+        return sselect, minval - h * np.log(s/len(coef))
 
-
-        return minval - (1 / h) * np.log(s)
 
     @staticmethod
     def softmax(x, h):
