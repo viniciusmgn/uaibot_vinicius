@@ -1184,6 +1184,7 @@ class Utils:
 
         fig.update_xaxes(title_text=xname)
         fig.update_yaxes(title_text=yname)
+        fig.update_layout(title=title)
         fig.show()
 
         return fig
