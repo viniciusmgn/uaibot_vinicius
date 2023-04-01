@@ -2,6 +2,7 @@ import sys
 import time
 import numpy as np
 import robot as rb
+import plotly.graph_objects as go
 from simulation import Simulation
 from utils import Utils
 from simobjects.box import Box
@@ -9,6 +10,7 @@ from simobjects.ball import Ball
 from simobjects.frame import Frame
 from cvxopt import matrix, solvers
 from graphics.meshmaterial import MeshMaterial, Texture
+from plotly.subplots import make_subplots
 
 
 def create_ballpoints(N):
@@ -344,26 +346,51 @@ def _control_demo_davinci(arm=0):
             i += 1
             converged, error_pos, error_ori = evaluate_error(r, 5e-4)
             if converged:
-                print(error_pos, error_ori)
+                print('\nConverged in {i} iterations. Posisition error: {poser}, Orientation error: {orier}'.format(i=i, poser=float(error_pos), orier=float(error_ori)))
 
             iteration_end = i > imax
-    print(converged, error_qp, iteration_end, i)
+    if i >= imax:
+        print('Max iterations reached')
+    elif error_qp:
+        print('QP error')
     # Show collision primitives
     # for i in robot.links:
     #     for j in i.col_objects:
     #         sim.add(j[0])
     # robot.update_col_object(0)
+
     # Run simulation
     sim.run()
 
     # Plot graphs
     Utils.plot(hist_time, hist_dist, "", "Time (s)",
                "True distance (m)", "dist")
-    Utils.plot(hist_time, hist_q, "", "Time (s)",
-               "Joint configuration (rad)", "q")
-    Utils.plot(hist_time, hist_qdot, "", "Time (s)",
-               "Joint speed (rad/s)", "qdot")
+    
+    fig =  make_subplots(specs=[[{"secondary_y": True}]])
+    for i in range(hist_q.shape[0]):
+        fig.add_trace(go.Scatter(x=hist_time, y=np.array(hist_q[i, :]).ravel(), name=f'q<sub>{i+1}</sub>'), secondary_y=(i==0 or i==8))
+    fig.update_yaxes(title_text="Rotative Joint configuration (rad)", secondary_y=False)
+    fig.update_yaxes(title_text="Prismatic Joint configuration (m)", secondary_y=True)
+    fig.update_xaxes(title_text='Time (s)')
+    fig.update_layout(width=800, height=400)
+    fig.show()
+
+    fig =  make_subplots(specs=[[{"secondary_y": True}]])
+    for i in range(hist_qdot.shape[0]):
+        fig.add_trace(go.Scatter(x=hist_time, y=np.array(hist_qdot[i, :]).ravel(), name=f'qdot<sub>{i+1}</sub>'), secondary_y=(i==0 or i==8))
+    fig.update_yaxes(title_text="Rotative Joint speed (rad/s)", secondary_y=False)
+    fig.update_yaxes(title_text="Prismatic Joint speed (m/s)", secondary_y=True)
+    fig.update_xaxes(title_text='Time (s)')
+    fig.update_layout(width=800, height=400)
+    fig.show()
+   
     fig = Utils.plot(hist_time, hist_r, "", "Time (s)", "Task function",
                      ["posx", "posy", "posz", "orix", "oriy", "oriz"])
+    Utils.plot(np.arange(len(build_ts)), np.block([build_ts, solve_ts]), 
+               'Efficiency Comparison: Time Spent Solving vs. Building the Problem',
+               'Iteration', 'Time [s]', ['Build Time', 'Solve Time'])
+    Utils.plot(np.arange(len(size_restrictions)), size_restrictions, 
+               'Number of Constraints x Iterations',
+               'Iteration', 'Size', ['Size'])
 
-    return sim, (build_ts, solve_ts, size_restrictions, (hist_time, hist_q, hist_dist, hist_qdot, hist_r))
+    # return sim, (build_ts, solve_ts, size_restrictions, (hist_time, hist_q, hist_dist, hist_qdot, hist_r))
