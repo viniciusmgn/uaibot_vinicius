@@ -81,8 +81,8 @@ class Vector:
         self._name = name
         self._color = color
         self._thickness = thickness
-        self._origin = origin
-        self._vector = vector
+        self._origin = np.matrix(origin).reshape((3,1))
+        self._vector = np.matrix(vector).reshape((3,1))
         self._frames = []
         self._max_time = 0
 
@@ -96,6 +96,8 @@ class Vector:
     def __repr__(self):
 
         string = "Vector '" + self.name + "': \n\n"
+        string += "Origin: "+str(self.origin)+" \n"
+        string += "Vector: " + str(self.vector) + " \n"
 
         return string
 
@@ -127,9 +129,9 @@ class Vector:
         #if length_vector < 0.0001:
         #    raise Exception("'origin' and 'vector' are too close to each other.")
 
-        self._origin = np.around(np.matrix(origin),4).tolist()
-        self._vector = np.matrix(vector).tolist()
-        dir = np.around((np.matrix(vector) / (0.0001+length_vector)),4).tolist()
+        self._origin = np.around(np.matrix(origin).reshape((3,1)),4).tolist()
+        self._vector = np.matrix(vector).reshape((3,1)).tolist()
+        dir = np.around((np.matrix(vector).reshape((3,1)) / (0.0001+length_vector)),4).tolist()
 
         self._frames.append([time, self.origin, dir, length_vector])
         self._max_time = max(self._max_time, time)

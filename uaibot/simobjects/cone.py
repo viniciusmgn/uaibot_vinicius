@@ -3,35 +3,31 @@ import numpy as np
 from graphics.meshmaterial import *
 
 
-class Box:
+class Cone:
     """
-  A box object.
+  A cone object.
 
   Parameters
   ----------
   htm : 4x4 numpy array or 4x4 nested list
-      The object's configuration
+      The object's configuration.
       (default: the same as the current HTM).
 
   name : string
       The object's name.
-      (default: 'genBox').
+      (default: 'genCylinder').
 
-  width : positive float
-      The object's width, in meters.
-      (default: 1).    
-
-  depth : positive float
-      The object's depth, in meters.
-      (default: 1).  
+  radius : positive float
+      The cylinder base radius, in meters.
+      (default: 1).
 
   height : positive float
-      The object's height, in meters.
-      (default: 1).  
+      The cylinder's height, in meters.
+      (default: 1).
 
   mass : positive float
       The object's mass, in kg.
-      (default: 1).  
+      (default: 1).
 
   color : string
       The object's color, a HTML - compatible string.
@@ -50,19 +46,14 @@ class Box:
     #######################################
 
     @property
-    def width(self):
-        """The box width, in meters."""
-        return self._width
+    def radius(self):
+        """The cylinder base radius, in meters."""
+        return self._radius
 
     @property
     def height(self):
-        """The box height, in meters."""
+        """The cylinder height, in meters."""
         return self._height
-
-    @property
-    def depth(self):
-        """The box depth, in meters."""
-        return self._depth
 
     @property
     def name(self):
@@ -98,7 +89,7 @@ class Box:
     # Constructor
     #######################################
 
-    def __init__(self, htm=np.identity(4), name="", width=1, height=1, depth=1, mass=1, color="red", opacity=1, \
+    def __init__(self, htm=np.identity(4), name="", radius=1, height=1, mass=1, color="red", opacity=1, \
                  mesh_material=None):
 
         # Error handling
@@ -108,17 +99,14 @@ class Box:
         if not Utils.is_a_number(mass) or mass < 0:
             raise Exception("The parameter 'mass' should be a positive float.")
 
-        if not Utils.is_a_number(width) or width < 0:
-            raise Exception("The parameter 'width' should be a positive float.")
+        if not Utils.is_a_number(radius) or radius < 0:
+            raise Exception("The parameter 'radius' should be a positive float.")
 
         if not Utils.is_a_number(height) or height < 0:
             raise Exception("The parameter 'height' should be a positive float.")
 
-        if not Utils.is_a_number(depth) or depth < 0:
-            raise Exception("The parameter 'depth' should be a positive float.")
-
         if name=="":
-            name="var_box_id_"+str(id(self))
+            name="var_cylinder_id_"+str(id(self))
 
         if not (Utils.is_a_name(name)):
             raise Exception(
@@ -132,17 +120,16 @@ class Box:
                 "The parameter 'mesh_material' should be either 'None' or a 'uaibot.MeshMaterial' object.")
 
         if (not Utils.is_a_number(opacity)) or opacity < 0 or opacity > 1:
-            raise Exception("The parameter 'opacity' should be a float between 0 and 1")
-            # end error handling
+            raise Exception("The parameter 'opacity' should be a float between 0 and 1.")
+        # end error handling
 
-        self._width = width
+        self._radius = radius
         self._height = height
-        self._depth = depth
         self._htm = np.matrix(htm)
         self._name = name
         self._mass = 1
         self._frames = []
-        self._volume = self.width * self.depth * self.height
+        self._volume = np.pi * self.height * self.radius * self.radius
         self._max_time = 0
 
         if mesh_material is None:
@@ -159,9 +146,8 @@ class Box:
 
     def __repr__(self):
 
-        string = "Box with name '" + self.name + "': \n\n"
-        string += " Width (m): " + str(self.width) + "\n"
-        string += " Depth (m): " + str(self.depth) + "\n"
+        string = "Cone with name '" + self.name + "': \n\n"
+        string += " Radius (m): " + str(self.radius) + "\n"
         string += " Height (m): " + str(self.height) + "\n"
         string += " Color: " + str(self.color) + "\n"
         string += " Mass (kg): " + str(self.mass) + "\n"
@@ -211,7 +197,7 @@ class Box:
 
     def set_ani_frame(self, htm=None):
         """
-    Reset object's animation queue and add a single configuration to the 
+    Reset object's animation queue and add a single configuration to the
     object's animation queue.
 
     Parameters
@@ -242,12 +228,13 @@ class Box:
         """Generate code for injection."""
 
         string = "\n"
-        string += "//BEGIN DECLARATION OF THE BOX '" + self.name + "'\n\n"
-        string += self.mesh_material.gen_code(self.name) + "\n"
-        string += "const var_" + self.name + " = new Box(" + str(self.width) + "," + str(
-            self.height) + "," + str(self.depth) + "," + str(self._frames) + ", material_" + self.name + ");\n"
-        string += "sceneElements.push(var_" + self.name + ");\n"
+        string += "//BEGIN DECLARATION OF THE CONE '" + self.name + "'\n\n"
+        string += self.mesh_material.gen_code(self._name) + "\n"
+        string += "const var_" + self._name + " = new Cone(" + str(self._radius) + "," + str(
+            self._height) + "," + str(self._frames) + ", material_" + self._name + ");\n"
+        string += "sceneElements.push(var_" + self._name + ");\n"
         string += "//USER INPUT GOES HERE"
+
         return string
 
     # Compute inertia matrix with respect to the inertia frame
@@ -273,12 +260,12 @@ class Box:
 
         # Error handling
         if not Utils.is_a_matrix(htm, 4, 4):
-            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
+            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix")
         # end error handling
 
-        Ixx = (1 / 12) * self.mass * (self.height * self.height + self.depth * self.depth)
-        Iyy = (1 / 12) * self.mass * (self.width * self.width + self.depth * self.depth)
-        Izz = (1 / 12) * self.mass * (self.height * self.height + self.width * self.width)
+        Ixx = (1 / 12) * self.mass * (3 * self.radius * self.radius + self.height * self.height)
+        Iyy = (1 / 12) * self.mass * (3 * self.radius * self.radius + self.height * self.height)
+        Izz = (1 / 2) * self.mass * (self.radius * self.radius)
         Q = htm[0:3, 0:3]
         S = Utils.S(htm[0:3, 3])
 
@@ -286,7 +273,7 @@ class Box:
 
     def copy(self):
         """Return a deep copy of the object, without copying the animation frames."""
-        return Box(self.htm, self.name + "_copy", self.width, self.height, self.depth, self.mass, self.color)
+        return Cylinder(self.htm, self.name + "_copy", self.radius, self.height, self.mass, self.color)
 
     def aabb(self):
         """
@@ -304,10 +291,11 @@ class Box:
      height : positive float
         The depth of the box, in meters.
     """
-        p1 = self.width * self.htm[:,0] + self.depth * self.htm[:,1] + self.height * self.htm[:,2]
-        p2 = -self.width * self.htm[:, 0] + self.depth * self.htm[:, 1] + self.height * self.htm[:, 2]
-        p3 = self.width * self.htm[:, 0] - self.depth * self.htm[:, 1] + self.height * self.htm[:, 2]
-        p4 = self.width * self.htm[:, 0] + self.depth * self.htm[:, 1] - self.height * self.htm[:, 2]
+
+        p1 = 2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p2 = -2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p3 = 2*self.radius * self.htm[:, 0] - 2*self.radius * self.htm[:, 1] + self.height * self.htm[:, 2]
+        p4 = 2*self.radius * self.htm[:, 0] + 2*self.radius * self.htm[:, 1] - self.height * self.htm[:, 2]
 
         w = np.max([abs(p1[0, 0]), abs(p2[0, 0]), abs(p3[0, 0]), abs(p4[0, 0])])
         d = np.max([abs(p1[1, 0]), abs(p2[1, 0]), abs(p3[1, 0]), abs(p4[1, 0])])
@@ -315,61 +303,42 @@ class Box:
 
         return w, d, h
 
+    # NEED TO MODIFY
     def generate_samples(self, delta=0.025):
 
         P = np.matrix(np.zeros((3, 0)))
 
-        W = round(self.width / delta)+1
-        D = round(self.depth / delta)+1
+        T = round(2*np.pi*self.radius / delta)+1
+        R = round(self.radius/delta)+1
         H = round(self.height / delta)+1
 
 
-        for i in range(W):
-            u = i/(W-1)
-            for j in range(D):
-                v = j/(D-1)
+        for i in range(T):
+            u = (2*np.pi)*i/(T-1)
+            for j in range(H):
+                v = j/(H-1)
 
-                x = -self.width/2 + self.width*u
-                y = -self.depth/2 + self.depth*v
-                z = -self.height/2
+                x = self.radius*np.cos(u)
+                y = self.radius*np.sin(u)
+                z = (-self.height/2 + v*self.height)
                 P = np.block([P, np.matrix([x,y,z]).transpose()])
 
-                x = -self.width/2 + self.width*u
-                y = -self.depth/2 + self.depth*v
-                z = self.height/2
-                P = np.block([P, np.matrix([x,y,z]).transpose()])
 
-        for i in range(W):
-            u = i / (W - 1)
-            for j in range(H):
-                v = j / (H - 1)
+        for i in range(R):
+            v = self.radius * (i/(R-1))
+            T = round(2 * np.pi * v / delta)
+            for j in range(T):
+                u = (2*np.pi)*j/(T-1)
 
-                x = -self.width / 2 + self.width * u
-                y = -self.depth/2
-                z = -self.height/2 + self.height * v
+                x = v * np.cos(u)
+                y = v * np.sin(u)
+                z = -self.height / 2
                 P = np.block([P, np.matrix([x, y, z]).transpose()])
 
-                x = -self.width / 2 + self.width * u
-                y = self.depth/2
-                z = -self.height/2 + self.height * v
+                x = v * np.cos(u)
+                y = v * np.sin(u)
+                z = self.height / 2
                 P = np.block([P, np.matrix([x, y, z]).transpose()])
-
-
-        for i in range(D):
-            u = i / (D - 1)
-            for j in range(H):
-                v = j / (H - 1)
-
-                x = -self.width/2
-                y = -self.depth / 2 + self.depth * u
-                z = -self.height / 2 + self.height * v
-                P = np.block([P, np.matrix([x, y, z]).transpose()])
-
-                x = self.width/2
-                y =  -self.depth / 2 + self.depth * u
-                z = -self.height / 2 + self.height * v
-                P = np.block([P, np.matrix([x, y, z]).transpose()])
-
 
         for i in range(np.shape(P)[1]):
             P[:,i] = self.htm[0:3,0:3]*P[:,i]+self.htm[0:3,-1]
@@ -377,6 +346,7 @@ class Box:
         return P
 
     # Compute the projection of a point into an object
+    #NEED TO MODIFY
     def projection(self, point, htm=None):
         """
     The projection of a point in the object, that is, the
@@ -389,7 +359,7 @@ class Box:
 
     htm : 4x4 numpy array or 4x4 nested list
         The object's configuration
-        (default: the same as the current HTM).            
+        (default: the same as the current HTM).
 
     Returns
     -------
@@ -405,27 +375,25 @@ class Box:
 
         # Error handling
         if not Utils.is_a_matrix(htm, 4, 4):
-            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix.")
+            raise Exception("The optional parameter 'htm' should be a 4x4 homogeneous transformation matrix")
 
         if not Utils.is_a_vector(point, 3):
-            raise Exception("The parameter 'point' should be a 3D vector.")
+            raise Exception("The parameter 'point' should be a 3D vector")
 
         # end error handling
         tpoint = htm[0:3, 0:3].T * (point - htm[0:3, 3])
 
-        if abs(tpoint[0,0]) < self.width/2:
-            x = tpoint[0,0]
-            dx2 = 0
-        else:
-            x = self.width/2 if tpoint[0,0] > 0 else -self.width/2
-            dx2 = (abs(tpoint[0,0]) - self.width/2)**2
 
-        if abs(tpoint[1,0]) < self.depth/2:
+        r = sqrt(tpoint[0,0] ** 2 + tpoint[1,0] ** 2)
+
+        if r < self.radius:
+            x = tpoint[0,0]
             y = tpoint[1,0]
-            dy2 = 0
+            dr2=0
         else:
-            y = self.depth/2 if tpoint[1,0] > 0 else -self.depth/2
-            dy2 = (abs(tpoint[1,0]) - self.depth/2)**2
+            x = self.radius * tpoint[0,0] / r
+            y = self.radius * tpoint[1,0] / r
+            dr2 = (r-self.radius)**2
 
         if abs(tpoint[2,0]) < self.height/2:
             z = tpoint[2,0]
@@ -434,6 +402,6 @@ class Box:
             z = self.height/2 if tpoint[2,0] > 0 else -self.height/2
             dz2 = (abs(tpoint[2,0]) - self.height/2)**2
 
-        d = sqrt(dx2+dy2+dz2)
+        d = sqrt(dr2+dz2)
 
         return htm[0:3, 0:3] * np.matrix([[x], [y], [z]]) + htm[0:3, 3], d

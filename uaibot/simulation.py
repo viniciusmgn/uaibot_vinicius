@@ -95,10 +95,10 @@ class Simulation:
     _STRJAVASCRIPT += "</div>\n"
     _STRJAVASCRIPT += "\n <script type=\"module\">\n"
 
-    _STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
+    #_STRJAVASCRIPT += httplib2.Http().request(_URL)[1].decode()
 
-    #for line in open("D:\\PycharmProjects\\UAIbot\\uaibot\\threejs_sim.js").readlines():
-    #    _STRJAVASCRIPT += line
+    for line in open("/home/viniciusmg/PycharmProjects/uaibot_vinicius/uaibot/threejs_sim.js").readlines():
+        _STRJAVASCRIPT += line
 
     _STRJAVASCRIPT += "\n </script>"
     _STRJAVASCRIPT += "\n </body>"
@@ -296,6 +296,96 @@ class Simulation:
         ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/LDR/factory_"
         ldr_list = [ldr_url + "px.png", ldr_url + "nx.png", ldr_url + "py.png", ldr_url + "ny.png", ldr_url + "nz.png",
                     ldr_url + "nz.png"]
+
+        sim = Simulation(objects, ambient_light_intensity=5, ldr_urls=ldr_list)
+        sim.add(ground)
+        sim.add(light1)
+        sim.add(light2)
+        sim.add(light3)
+        sim.add(light4)
+
+        return sim
+    @staticmethod
+    def create_sim_outside(objects):
+        """
+    Create an environment of a the Kinesis lab.
+    Outside panorama taken from:
+    'https://opengameart.org/content/skiingpenguins-skybox-pack'
+
+    Parameters
+    ----------
+    objects: list of objects that can be simulated (see Utils.IS_OBJ_SIM)
+        The objects to be added to the scenario.
+
+    Returns
+    -------
+    sim: 'Simulation' object
+        Simulation object.
+    """
+
+        texture_ground = Texture(
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/Textures/grass.png',
+            wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[100, 100])
+
+        mesh_ground = MeshMaterial(texture_map=texture_ground, metalness=1, roughness=1)
+
+        ground = Box(name="ground", width=100, depth=100, height=0.01, htm=Utils.trn([0, 0, -0.005]),
+                     mesh_material=mesh_ground)
+
+        light1 = PointLight(name="light1", color="white", intensity=2.5, htm=Utils.trn([-1,-1, 1.5]))
+        light2 = PointLight(name="light2", color="white", intensity=2.5, htm=Utils.trn([-1, 1, 1.5]))
+        light3 = PointLight(name="light3", color="white", intensity=2.5, htm=Utils.trn([ 1,-1, 1.5]))
+        light4 = PointLight(name="light4", color="white", intensity=2.5, htm=Utils.trn([ 1, 1, 1.5]))
+
+        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/LDR/green_"
+        ldr_list = [ldr_url + "px.jpg", ldr_url + "nx.jpg", ldr_url + "py.jpg", ldr_url + "ny.jpg", ldr_url + "pz.jpg",
+                    ldr_url + "nz.jpg"]
+
+
+        sim = Simulation(objects, ambient_light_intensity=5, ldr_urls=ldr_list)
+        sim.add(ground)
+        sim.add(light1)
+        sim.add(light2)
+        sim.add(light3)
+        sim.add(light4)
+
+        return sim
+
+    @staticmethod
+    def create_sim_kinesis(objects):
+        """
+    Create an environment of a the Kinesis lab.
+    Factory panorama taken from:
+    'https://www.samrohn.com/360-panorama/chrysler-factory-detroit-usa-360-tour/chrysler-factory-360-panorama-tour-007/'
+
+    Parameters
+    ----------
+    objects: list of objects that can be simulated (see Utils.IS_OBJ_SIM)
+        The objects to be added to the scenario.
+
+    Returns
+    -------
+    sim: 'Simulation' object
+        Simulation object.
+    """
+
+        texture_ground = Texture(
+            url='https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/Textures/groundkinesis.png',
+            wrap_s='RepeatWrapping', wrap_t='RepeatWrapping', repeat=[100, 100])
+
+        mesh_ground = MeshMaterial(texture_map=texture_ground, metalness=1, roughness=1)
+
+        ground = Box(name="ground", width=100, depth=100, height=0.01, htm=Utils.trn([0, 0, -0.005]),
+                     mesh_material=mesh_ground)
+
+        light1 = PointLight(name="light1", color="white", intensity=2.5, htm=Utils.trn([-1,-1, 1.5]))
+        light2 = PointLight(name="light2", color="white", intensity=2.5, htm=Utils.trn([-1, 1, 1.5]))
+        light3 = PointLight(name="light3", color="white", intensity=2.5, htm=Utils.trn([ 1,-1, 1.5]))
+        light4 = PointLight(name="light4", color="white", intensity=2.5, htm=Utils.trn([ 1, 1, 1.5]))
+
+        ldr_url = "https://raw.githubusercontent.com/viniciusmgn/uaibot_content/master/contents/LDR/green_"
+        ldr_list = [ldr_url + "px.png", ldr_url + "nx.png", ldr_url + "py.png", ldr_url + "ny.png", ldr_url + "nz.png",
+                    ldr_url + "pz.png"]
 
         sim = Simulation(objects, ambient_light_intensity=5, ldr_urls=ldr_list)
         sim.add(ground)

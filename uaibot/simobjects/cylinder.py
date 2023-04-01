@@ -303,6 +303,47 @@ class Cylinder:
 
         return w, d, h
 
+    def generate_samples(self, delta=0.025):
+
+        P = np.matrix(np.zeros((3, 0)))
+
+        T = round(2*np.pi*self.radius / delta)+1
+        R = round(self.radius/delta)+1
+        H = round(self.height / delta)+1
+
+
+        for i in range(T):
+            u = (2*np.pi)*i/(T-1)
+            for j in range(H):
+                v = j/(H-1)
+
+                x = self.radius*np.cos(u)
+                y = self.radius*np.sin(u)
+                z = (-self.height/2 + v*self.height)
+                P = np.block([P, np.matrix([x,y,z]).transpose()])
+
+
+        for i in range(R):
+            v = self.radius * (i/(R-1))
+            T = round(2 * np.pi * v / delta)
+            for j in range(T):
+                u = (2*np.pi)*j/(T-1)
+
+                x = v * np.cos(u)
+                y = v * np.sin(u)
+                z = -self.height / 2
+                P = np.block([P, np.matrix([x, y, z]).transpose()])
+
+                x = v * np.cos(u)
+                y = v * np.sin(u)
+                z = self.height / 2
+                P = np.block([P, np.matrix([x, y, z]).transpose()])
+
+        for i in range(np.shape(P)[1]):
+            P[:,i] = self.htm[0:3,0:3]*P[:,i]+self.htm[0:3,-1]
+
+        return P
+
     # Compute the projection of a point into an object
     def projection(self, point, htm=None):
         """

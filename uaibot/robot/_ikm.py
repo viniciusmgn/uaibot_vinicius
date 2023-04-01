@@ -24,7 +24,7 @@ def _evolve_config(self, q, p_tol, a_tol, htm_target, iter_remain, ignore_orient
         else:
             r[3:6] = np.sqrt(r[3:6])
 
-        u = Utils.dp_inv(jac_r, eps) @ (-K * r)
+        u = Utils.dp_inv(jac_r, eps) * (-K * r)
         q = q + u * dt
 
         e_pos = max(abs(r[0:3]))

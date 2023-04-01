@@ -13,7 +13,7 @@ class Model3D:
    ----------
    url : string
       The url that contains the 3d object.
-      It must have one of the following formats: 'obj'.
+      It must have one of the following formats: 'obj', 'stl', 'dae'.
 
    scale : positive float
        The scaling parameter of the object.

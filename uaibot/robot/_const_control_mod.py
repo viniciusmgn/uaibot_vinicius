@@ -3,8 +3,7 @@ import numpy as np
 from cvxopt import matrix, solvers
 import math
 
-
-def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dist_struct=None,
+def _const_control_mod(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dist_struct=None,
                    eta_obs=0.5, eta_joint=0.5, eta_auto=0.5,
                    dist_safe_obs=0.01, dist_safe_auto=0.01,
                    max_dist_obs=np.inf, max_dist_auto = np.inf, task_rate_fun = 0.5, eps=0.001):
@@ -36,8 +35,7 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
         if not Utils.is_a_simple_object(obs):
             raise Exception("The parameter 'list' should be a list of simple objects.")
 
-    if not Utils.is_a_number(eta_obs) or eta_obs <= 0:
-        raise Exception("The parameter 'eta_obs' should be a positive number.")
+
 
     if not Utils.is_a_number(eta_joint) or eta_joint <= 0:
         raise Exception("The parameter 'eta_joint' should be a positive number.")
@@ -45,8 +43,7 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
     if not Utils.is_a_number(eta_auto) or eta_auto <= 0:
         raise Exception("The parameter 'eta_auto' should be a positive number.")
 
-    if not Utils.is_a_number(dist_safe_obs) or dist_safe_obs <= 0:
-        raise Exception("The parameter 'dist_safe_obs' should be a positive number.")
+
 
     if not Utils.is_a_number(dist_safe_auto) or dist_safe_auto <= 0:
         raise Exception("The parameter 'dist_safe_auto' should be a positive number.")
@@ -82,7 +79,7 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
     b = np.matrix(np.zeros(( 0, 1 )))
 
     #Create constraint due to collision with obstacles
-    if not math.isinf(eta_obs):
+    if True:
         dict_dist_struct = {}
 
         for obs in obstacles:
@@ -90,7 +87,7 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
             dist_struct = self.compute_dist(obs, q, htm, old_dist_struct, max_dist=max_dist_obs)
             dict_dist_struct[obs] = dist_struct
             A = np.block([[A], [dist_struct.jac_dist_mat]])
-            b = np.block([[b], [-eta_obs * (dist_struct.dist_vect - dist_safe_obs)]])
+            b = np.block([[b], [-eta_obs[obs] * (dist_struct.dist_vect - dist_safe_obs[obs])]])
 
     #Create joint limits constraints
     if not math.isinf(eta_joint):
@@ -107,12 +104,9 @@ def _const_control(self, htm_des, q=None, htm=None, obstacles = [], dict_old_dis
     H = 2 * Jr.T * Jr + 2 * eps*np.identity(n)
     f = 2 * Jr.T * tg_dot_r
 
-
     try:
         qdot = solvers.qp(matrix(H), matrix(f), matrix(-A), matrix(-b))['x']
         failure = False
-
-        ##
     except:
         qdot = np.matrix(np.zeros( (n,1) ))
         failure=True
