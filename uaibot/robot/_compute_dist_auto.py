@@ -55,7 +55,7 @@ def _compute_dist_auto(self, q=None, old_dist_struct=None, tol=0.0005, no_iter_m
             for isub in range(len(self.links[i].col_objects)):
                 for jsub in range(len(self.links[j].col_objects)):
 
-                    est_dist = 0 if math.isinf(max_dist) else Utils.compute_aabbdist(col_object_copy[i][isub], col_object_copy[j][jsub])
+                    est_dist = 0 if np.isinf(max_dist) else Utils.compute_aabbdist(col_object_copy[i][isub], col_object_copy[j][jsub])
 
                     if est_dist <= max_dist:
 

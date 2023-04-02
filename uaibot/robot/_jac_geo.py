@@ -52,7 +52,7 @@ def _jac_geo(self, q=None, axis='eef', htm=None):
 
             if self.links[j].joint_type == 1:
                 jac[i][0:3, j] = z_j_ant
-                jac[i][3:6, j] = np.matrix(np.zeros((3,)))
+                jac[i][3:6, j] = np.zeros((3, 1))
 
     if axis == 'dh' or axis == 'com':
         return jac, htm_for_jac

@@ -11,6 +11,8 @@ from ._control_demo_3 import _control_demo_3
 
 from ._lesson_demo_3 import _lesson_demo_3
 
+from ._control_davinci import _control_demo_davinci
+
 class Demo:
     """
   A class that contains demonstrations in robotics.
@@ -61,3 +63,26 @@ class Demo:
     collision avoidance.
     """
         return _lesson_demo_3(robot_creator, width, height)
+
+    @staticmethod
+    def control_demo_davinci(arm=1):
+        """Demonstrates kinematic control of a daVinci manipulator to achieve a 
+        pose inside a hole using the specified <arm> while avoiding collisions. 
+
+        This function solves a constrained optimization problem using convex QP 
+        by minimizing the objective function and control effort. Hard constraints 
+        include external and autocollision, joint limits, and passive (by design)
+        joints.
+
+        Given the large amount of collision primitives, the algorithm long
+        distances in order to reduce the number of constraints and improve
+        efficiency.
+
+        Params:
+            arm (int): The index of the arm to be used (default=1). Possible
+            values: 0, 1, 2, 3.
+
+        Returns:
+            None
+        """
+        return _control_demo_davinci(arm=arm)

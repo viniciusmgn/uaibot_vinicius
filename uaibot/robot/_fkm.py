@@ -39,7 +39,7 @@ def _fkm(self, q=None, axis='eef', htm=None):
             htm_dh[i][:, :] = htm_dh[i][:, :] * Utils.rotz(self._links[i].theta)
 
         if self.links[i].joint_type == 1:
-            htm_dh[i][:, :] = htm_dh[i][:, :] * Utils.trn([0, 0, q[i]])
+            htm_dh[i][:, :] = htm_dh[i][:, :] * Utils.trn([0, 0, float(q[i])])
         else:
             htm_dh[i][:, :] = htm_dh[i][:, :] * Utils.trn([0, 0, self._links[i].d])
 

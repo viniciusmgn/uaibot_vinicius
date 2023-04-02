@@ -44,6 +44,7 @@ from ._create_abb_crb import _create_abb_crb
 from ._create_darwin_mini import _create_darwin_mini
 from ._create_kuka_kr5_per import _create_kuka_kr5_per
 from ._create_franka_ermika_3 import _create_franka_ermika_3
+from robot._create_davinci import _create_davinci
 
 #teste
 #from robot._create_davinci import _create_davinci
@@ -1157,6 +1158,42 @@ class Robot:
                                 param_leg_right[2], param_leg_right[3], [np.pi/2, 0, 0, np.pi/2], eef_frame_visible, param_leg_right[5])
 
         return Group([robot_arm_left, robot_arm_right, robot_leg_left, robot_leg_right, head, chest])
+
+    @staticmethod
+    def create_davinci(htm=np.identity(4), name="davinci", color="#3e3f42", opacity=1, eef_frame_visible=True):
+        """
+        Create a da Vinci Si, a surgical robot.
+        Thanks to Koray Okan for the 3D model (https://grabcad.com/library/da-vinci-surgical-robot-1/details).
+
+        Parameters
+        ----------
+        htm : 4x4 numpy array or 4x4 nested list
+            The initial base configuration for the robot.
+            (default: np.identity(4))
+
+        name : string
+            The robot name.
+            (default: 'darwin_mini').
+
+        htm : color
+            A HTML-compatible string representing the object color.
+            (default: '#3e3f42').
+
+        opacity : positive float between 0 and 1
+            The opacity of the robot. 1 = fully opaque and 0 = transparent.
+            (default: 1)
+
+        Returns
+        -------
+        robot : Group object
+            The robot. It is composed of a group of six objects: the two arms and legs (members of 'Robot' class)
+            and the chest and head (both 'RigidObject' class)
+
+
+        """
+
+        return _create_davinci(htm, name, color, opacity, eef_frame_visible)
+
 
     #######################################
     # Distance computation and collision
